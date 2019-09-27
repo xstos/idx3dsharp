@@ -66,13 +66,13 @@ namespace IDx3DSharp
 
 		public void importFromStream(Stream inStream, Scene targetscene)
 		{
-			System.Console.WriteLine(">> Importing scene from 3ds stream ...");
+			Console.WriteLine(">> Importing scene from 3ds stream ...");
 			scene = targetscene;
 			var input = new BinaryReader(inStream);
 			readJunkHeader(input);
 			if (currentJunkId != 0x4D4D)
 			{
-				System.Console.WriteLine("Error: This is no valid 3ds file.");
+				Console.WriteLine("Error: This is no valid 3ds file.");
 				return;
 			}
 			while (!endOfStream) readNextJunk(input);
@@ -103,7 +103,7 @@ namespace IDx3DSharp
 
         float readFloat(BinaryReader input)
 		{
-			var num = this.readInt(input);
+			var num = readInt(input);
 			var num2 = ((num >> 0x1f) == 0) ? 1 : -1;
 			var num3 = (num >> 0x17) & 0xff;
 			var num4 = (num3 == 0) ? ((num & 0x7fffff) << 1) : ((num & 0x7fffff) | 0x800000);
@@ -127,7 +127,7 @@ namespace IDx3DSharp
 			if (currentJunkId == 0x4000) // Object block
 			{
 				currentObjectName = readString(input);
-				System.Console.WriteLine(">> Importing object: " + currentObjectName);
+				Console.WriteLine(">> Importing object: " + currentObjectName);
 				return;
 			}
 			if (currentJunkId == 0x4100)  // Triangular polygon object
@@ -159,14 +159,14 @@ namespace IDx3DSharp
 		{
 			try
 			{
-				for (var i = 0; (i < (this.nextJunkOffset - 6)) && !this.endOfStream; i++)
+				for (var i = 0; (i < (nextJunkOffset - 6)) && !endOfStream; i++)
 				{
-					this.endOfStream = inStream.ReadByte() < 0;
+					endOfStream = inStream.ReadByte() < 0;
 				}
 			}
 			catch (Exception)
 			{
-				this.endOfStream = true;
+				endOfStream = true;
 			}
 		}
 

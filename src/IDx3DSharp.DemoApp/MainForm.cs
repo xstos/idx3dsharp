@@ -53,8 +53,8 @@ namespace IDx3DSharp.DemoApp
 				if (_autorotation)
 				{
 					float speed = 1;
-					var dx = (float) Math.Sin((float) System.Environment.TickCount / 1000) / 20;
-					var dy = (float) Math.Cos((float) System.Environment.TickCount / 1000) / 20;
+					var dx = (float) Math.Sin((float) Environment.TickCount / 1000) / 20;
+					var dy = (float) Math.Cos((float) Environment.TickCount / 1000) / 20;
 					_scene.rotate(-speed * dx, speed * dy, speed * 0.04f);
 				}
 				_scene.render();
@@ -78,7 +78,7 @@ namespace IDx3DSharp.DemoApp
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.F) { System.Console.WriteLine(_scene.getFPS() + ""); e.Handled = true; }
+			if (e.KeyCode == Keys.F) { Console.WriteLine(_scene.getFPS() + ""); e.Handled = true; }
 			if (e.KeyCode == Keys.PageUp) { _scene.shift(0f, 0f, 0.2f); e.Handled = true; }
 			if (e.KeyCode == Keys.PageDown) { _scene.shift(0f, 0f, -0.2f); e.Handled = true; }
 			if (e.KeyCode == Keys.Up) { _scene.shift(0f, -0.2f, 0f); e.Handled = true; }

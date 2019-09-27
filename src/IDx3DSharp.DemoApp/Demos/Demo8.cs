@@ -13,7 +13,7 @@ namespace IDx3DSharp.DemoApp.Demos
 			{
 				new Importer3ds().importFromStream(File.OpenRead("mech.3ds"), scene);
 			}
-			catch (Exception e) { System.Console.WriteLine(e + ""); }
+			catch (Exception e) { Console.WriteLine(e + ""); }
 
 			scene.rebuild();
 			for (var i = 0; i < scene.objects; i++)

@@ -191,10 +191,10 @@ namespace IDx3DSharp
 
         void readSettings(BinaryReader inStream)
 		{
-			this.setColor((uint) this.readInt(inStream));
-			this.setTransparency(inStream.ReadByte());
-			this.setReflectivity(inStream.ReadByte());
-			this.setFlat(inStream.ReadBoolean());
+			setColor((uint) readInt(inStream));
+			setTransparency(inStream.ReadByte());
+			setReflectivity(inStream.ReadByte());
+			setFlat(inStream.ReadBoolean());
 		}
 
         int readInt(BinaryReader inStream)
@@ -222,25 +222,25 @@ namespace IDx3DSharp
 					t = new Texture(readString(inStream));
 					if ((t != null) && textureId)
 					{
-						this.texturePath = t.path;
-						this.textureSettings = null;
-						this.setTexture(t);
+						texturePath = t.path;
+						textureSettings = null;
+						setTexture(t);
 					}
 					if (!((t == null) || textureId))
 					{
-						this.envmapPath = t.path;
-						this.envmapSettings = null;
-						this.setEnvmap(t);
+						envmapPath = t.path;
+						envmapSettings = null;
+						setEnvmap(t);
 					}
 					break;
 
 				case 2:
 					{
-						var w = this.readInt(inStream);
-						var h = this.readInt(inStream);
+						var w = readInt(inStream);
+						var h = readInt(inStream);
 						int num4 = inStream.ReadSByte();
-						float persistency = this.readInt(inStream);
-						float density = this.readInt(inStream);
+						float persistency = readInt(inStream);
+						float density = readInt(inStream);
 						persistency = 0.5f;
 						density = 0.5f;
 						int samples = inStream.ReadByte();
@@ -248,7 +248,7 @@ namespace IDx3DSharp
 						var colors = new uint[num8];
 						for (var i = 0; i < num8; i++)
 						{
-							colors[i] = (uint) this.readInt(inStream);
+							colors[i] = (uint) readInt(inStream);
 						}
 						switch (num4)
 						{
@@ -266,15 +266,15 @@ namespace IDx3DSharp
 						}
 						if (textureId)
 						{
-							this.texturePath = null;
-							this.textureSettings = new TextureSettings(t, w, h, num4, persistency, density, samples, colors);
-							this.setTexture(t);
+							texturePath = null;
+							textureSettings = new TextureSettings(t, w, h, num4, persistency, density, samples, colors);
+							setTexture(t);
 						}
 						else
 						{
-							this.envmapPath = null;
-							this.envmapSettings = new TextureSettings(t, w, h, num4, persistency, density, samples, colors);
-							this.setEnvmap(t);
+							envmapPath = null;
+							envmapSettings = new TextureSettings(t, w, h, num4, persistency, density, samples, colors);
+							setEnvmap(t);
 						}
 						return;
 					}

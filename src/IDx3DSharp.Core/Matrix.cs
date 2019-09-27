@@ -120,7 +120,7 @@ namespace IDx3DSharp
         public static Matrix scaleMatrix(float d)
         // matrix for scaling
         {
-            return Matrix.scaleMatrix(d, d, d);
+            return scaleMatrix(d, d, d);
         }
 
         public static Matrix rotateMatrix(float dx, float dy, float dz)
@@ -207,7 +207,7 @@ namespace IDx3DSharp
         public void transform(Matrix n)
         // transforms this matrix by matrix n from left (this=n x this)
         {
-            var m = this.Clone();
+            var m = Clone();
 
             m00 = n.m00 * m.m00 + n.m01 * m.m10 + n.m02 * m.m20;
             m01 = n.m00 * m.m01 + n.m01 * m.m11 + n.m02 * m.m21;
@@ -226,7 +226,7 @@ namespace IDx3DSharp
         public void preTransform(Matrix n)
         // transforms this matrix by matrix n from right (this=this x n)
         {
-            var m = this.Clone();
+            var m = Clone();
 
             m00 = m.m00 * n.m00 + m.m01 * n.m10 + m.m02 * n.m20;
             m01 = m.m00 * n.m01 + m.m01 * n.m11 + m.m02 * n.m21;

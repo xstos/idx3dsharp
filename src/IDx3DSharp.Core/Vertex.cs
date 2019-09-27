@@ -89,8 +89,8 @@ namespace IDx3DSharp
 		public Vertex(float xpos, float ypos, float zpos, float u, float v)
 		{
 			pos = new Vector(xpos, ypos, zpos);
-			this.Tu = u;
-			this.Tv = v;
+			Tu = u;
+			Tv = v;
 		}
 
 		public Vertex(Vector ppos)
@@ -101,8 +101,8 @@ namespace IDx3DSharp
 		public Vertex(Vector ppos, float u, float v)
 		{
 			pos = ppos.Clone();
-			this.Tu = u;
-			this.Tv = v;
+			Tu = u;
+			Tv = v;
 		}
 
 		#endregion
@@ -133,8 +133,8 @@ namespace IDx3DSharp
 
 		public void setUV(float u, float v)
 		{
-			this.Tu = u;
-			this.Tv = v;
+			Tu = u;
+			Tv = v;
 		}
 
 		public void clipFrustrum(int w, int h)

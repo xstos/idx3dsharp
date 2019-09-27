@@ -86,7 +86,7 @@ namespace IDx3DSharp
 			{
 				bitmap = new Bitmap(path, false);
 			}
-			this.loadTexture(bitmap);
+			loadTexture(bitmap);
 		}
 
 		// P U B L I C   M E T H O D S
@@ -225,9 +225,9 @@ namespace IDx3DSharp
 		/// <param name="map"></param>
         unsafe void loadTexture(Bitmap map)
 {
-    this.width = map.Width;
-    this.height = map.Height;
-    this.pixel = new uint[this.width * this.height];
+    width = map.Width;
+    height = map.Height;
+    pixel = new uint[width * height];
     var bitmapdata = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
     var stride = bitmapdata.Stride;
     var ptr = bitmapdata.Scan0;
@@ -241,13 +241,13 @@ namespace IDx3DSharp
             int num6 = numPtr[0];
             int num7 = numPtr[1];
             int num8 = numPtr[2];
-						this.pixel[num3++] = (uint) (((ColorUtility.ALPHA | (num8 << 0x10)) | (num7 << 8)) | num6);
+						pixel[num3++] = (uint) (((ColorUtility.ALPHA | (num8 << 0x10)) | (num7 << 8)) | num6);
             numPtr += 3;
         }
         numPtr += num2;
     }
     map.UnlockBits(bitmapdata);
-    this.Resize();
+    Resize();
 }
 
 

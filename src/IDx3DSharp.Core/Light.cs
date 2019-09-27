@@ -75,8 +75,8 @@ public class Light : CoreObject
 		{
 			v=direction.Clone();
 			v.Normalize();
-			this.diffuse=color;
-			this.specular=color;
+			diffuse=color;
+			specular=color;
 			this.highlightSheen=highlightSheen;
 			this.highlightSpread=highlightSpread;
 		}

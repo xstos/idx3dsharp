@@ -81,7 +81,7 @@ public sealed class Lightmap
 	
 	public void rebuildLightmap()
 	{
-		System.Console.WriteLine(">> Rebuilding Light Map  ...  ["+lights+" light sources]");
+		Console.WriteLine(">> Rebuilding Light Map  ...  ["+lights+" light sources]");
 		Vector l;
 		float fnx,fny,angle,phongfact,sheen, spread;
 		uint diffuse, specular, cos, dr, dg, db, sr, sg, sb;

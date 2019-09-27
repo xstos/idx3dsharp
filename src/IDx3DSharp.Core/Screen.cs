@@ -77,9 +77,9 @@ namespace IDx3DSharp
 			this.h = height;
 			pixel = new uint[w * h];
 			p = pixel;
-			this.handle = GCHandle.Alloc(this.pixel, GCHandleType.Pinned);
-			var ptr = Marshal.UnsafeAddrOfPinnedArrayElement(this.pixel, 0);
-			this.image = new Bitmap(w, h, w * 4, PixelFormat.Format32bppPArgb, ptr);
+			handle = GCHandle.Alloc(pixel, GCHandleType.Pinned);
+			var ptr = Marshal.UnsafeAddrOfPinnedArrayElement(pixel, 0);
+			image = new Bitmap(w, h, w * 4, PixelFormat.Format32bppPArgb, ptr);
 		}
 
 
@@ -161,7 +161,7 @@ namespace IDx3DSharp
 			probes += 1;
 			if (probes > 32)
 			{
-				time = System.Environment.TickCount;
+				time = Environment.TickCount;
 				FPS = 32f / ((float) (time - timestamp) / 1000);
 				timestamp = time;
 				probes = 0;

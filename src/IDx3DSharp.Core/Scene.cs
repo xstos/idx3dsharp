@@ -95,13 +95,13 @@ namespace IDx3DSharp
 		public void showInfo()
 		{
 			if (instancesRunning) return;
-			System.Console.WriteLine();
-			System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-			System.Console.WriteLine(" idx3d Kernel " + version + " [Build " + release + "]");
-			System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-			System.Console.WriteLine(" (c)1999 by Peter Walser, all rights reserved.");
-			System.Console.WriteLine(" http://www2.active.ch/~proxima/idx3d");
-			System.Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+			Console.WriteLine();
+			Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+			Console.WriteLine(" idx3d Kernel " + version + " [Build " + release + "]");
+			Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+			Console.WriteLine(" (c)1999 by Peter Walser, all rights reserved.");
+			Console.WriteLine(" http://www2.active.ch/~proxima/idx3d");
+			Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 			instancesRunning = true;
 		}
 
@@ -168,7 +168,7 @@ namespace IDx3DSharp
 			if (preparedForRendering) return;
 			preparedForRendering = true;
 
-			System.Console.WriteLine(">> Preparing structures for realtime rendering ...   ");
+			Console.WriteLine(">> Preparing structures for realtime rendering ...   ");
 			rebuild();
 			renderPipeline.buildLightMap();
 			printSceneInfo();
@@ -176,9 +176,9 @@ namespace IDx3DSharp
 
 		public void printSceneInfo()
 		{
-			System.Console.WriteLine(">> | Objects   : " + objects);
-			System.Console.WriteLine(">> | Vertices  : " + countVertices());
-			System.Console.WriteLine(">> | Triangles : " + countTriangles());
+			Console.WriteLine(">> | Objects   : " + objects);
+			Console.WriteLine(">> | Vertices  : " + countVertices());
+			Console.WriteLine(">> | Triangles : " + countTriangles());
 		}
 
 
@@ -189,7 +189,7 @@ namespace IDx3DSharp
 
 		public void render()
 		{
-			renderPipeline.render(this.defaultCamera);
+			renderPipeline.render(defaultCamera);
 		}
 
 		public Image getImage()

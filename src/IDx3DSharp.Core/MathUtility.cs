@@ -72,7 +72,7 @@ namespace IDx3DSharp
 
         static void BuildTrig()
 		{
-			System.Console.WriteLine(">> Building idx3d_Math LUT");
+			Console.WriteLine(">> Building idx3d_Math LUT");
 			_sinus = new float[4096];
 			_cosinus = new float[4096];
 
