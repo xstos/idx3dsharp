@@ -45,6 +45,8 @@ namespace IDx3DSharp.DemoApp
 			base.OnPaint(e);
 		}
 
+        float dxyFrac = 1f / 20f;
+        float tickFrac = 1f / 1000f;
 		public void UpdateScene()
 		{
 			lock (this)
@@ -52,9 +54,9 @@ namespace IDx3DSharp.DemoApp
 				if (!_initialized) return;
 				if (_autorotation)
 				{
-					float speed = 1;
-					var dx = (float) Math.Sin((float) Environment.TickCount / 1000) / 20;
-					var dy = (float) Math.Cos((float) Environment.TickCount / 1000) / 20;
+					const float speed = 1;
+					var dx = (float) Math.Sin(Environment.TickCount * tickFrac) * dxyFrac;
+					var dy = (float) Math.Cos(Environment.TickCount * tickFrac) * dxyFrac;
 					_scene.rotate(-speed * dx, speed * dy, speed * 0.04f);
 				}
 				_scene.render();

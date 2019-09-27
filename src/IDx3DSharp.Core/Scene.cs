@@ -130,14 +130,12 @@ namespace IDx3DSharp
 				}
 			}
 
-			if (lightsNeedRebuild)
-			{
-				lightsNeedRebuild = false;
-				lights = (uint) lightData.Count;
-				_light = new Light[lights];
-				lightData.Values.CopyTo(_light, 0);
-			}
-		}
+            if (!lightsNeedRebuild) return;
+            lightsNeedRebuild = false;
+            lights = (uint) lightData.Count;
+            _light = new Light[lights];
+            lightData.Values.CopyTo(_light, 0);
+        }
 
 		// A C C E S S O R S
 
