@@ -46,9 +46,9 @@ public static class ColorUtility
 	public static uint MASK7Bit=0xFEFEFF;  // mask for additive/subtractive shading
 	public static uint MASK6Bit=0xFCFCFC;  // mask for additive/subtractive shading
 	public static uint RGB=0xFFFFFF;  // rgb mask
-	
-	private static int color,_scale;
-	private static uint pixel, overflow, r, g, b;
+
+    static int color,_scale;
+    static uint pixel, overflow, r, g, b;
 
 	// PUBLIC STATIC METHODS
 	

@@ -6,7 +6,7 @@ using IDx3DSharp.DemoApp.Demos;
 
 namespace IDx3DSharp.DemoApp
 {
-	static class Program
+    internal static class Program
 	{
 		/// <summary>
 		/// The main entry point for the application.

@@ -45,11 +45,11 @@ public sealed class Lightmap
 {
 	public uint[] diffuse=new uint[65536];
 	public uint[] specular=new uint[65536];
-	private float[] sphere=new float[65536];
-	private Light[] light;
-	private uint lights;
-	private uint ambient;
-	private int temp,overflow,color,pos,r,g,b;
+    float[] sphere=new float[65536];
+    Light[] light;
+    uint lights;
+    uint ambient;
+    int temp,overflow,color,pos,r,g,b;
 	
 	public Lightmap(Scene scene)
 	{
@@ -60,8 +60,8 @@ public sealed class Lightmap
 		buildSphereMap();
 		rebuildLightmap();
 	}
-	
-	private void buildSphereMap()
+
+    void buildSphereMap()
 	{
 		float fnx,fny,fnz;
 		int pos;

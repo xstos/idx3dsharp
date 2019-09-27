@@ -54,8 +54,8 @@ namespace IDx3DSharp
 		public Vector n;  // Normal vector of flat triangle
 		public Vector n2; // Projected Normal vector
 
-		private int minx, maxx, miny, maxy; // for clipping
-		private Vector triangleCenter = new Vector();
+        int minx, maxx, miny, maxy; // for clipping
+        Vector triangleCenter = new Vector();
 		public float dist;
 
 		public uint id = 0;

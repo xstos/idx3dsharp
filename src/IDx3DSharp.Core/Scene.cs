@@ -62,14 +62,14 @@ namespace IDx3DSharp
 		public uint objects;
 		public uint lights;
 
-		private bool objectsNeedRebuild = true;
-		private bool lightsNeedRebuild = true;
+        bool objectsNeedRebuild = true;
+        bool lightsNeedRebuild = true;
 
 		protected bool preparedForRendering;
 
 		public Vector normalizedOffset = new Vector(0f, 0f, 0f);
 		public float normalizedScale = 1f;
-		private static bool instancesRunning;
+        static bool instancesRunning;
 
 		// D A T A   S T R U C T U R E S
 
@@ -81,7 +81,7 @@ namespace IDx3DSharp
 
 		// C O N S T R U C T O R S
 
-		private Scene()
+        Scene()
 		{
 		}
 

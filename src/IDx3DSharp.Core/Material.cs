@@ -181,7 +181,7 @@ namespace IDx3DSharp
 
 		// Material import
 
-		private void importFromStream(Stream inStream, Object baseURL)
+        void importFromStream(Stream inStream, Object baseURL)
 		{
 			var input = new BinaryReader(inStream);
 			readSettings(input);
@@ -189,7 +189,7 @@ namespace IDx3DSharp
 			readTexture(input, false);
 		}
 
-		private void readSettings(BinaryReader inStream)
+        void readSettings(BinaryReader inStream)
 		{
 			this.setColor((uint) this.readInt(inStream));
 			this.setTransparency(inStream.ReadByte());
@@ -197,12 +197,12 @@ namespace IDx3DSharp
 			this.setFlat(inStream.ReadBoolean());
 		}
 
-		private int readInt(BinaryReader inStream)
+        int readInt(BinaryReader inStream)
 		{
 			return ((((inStream.ReadByte() << 0x18) | (inStream.ReadByte() << 0x10)) | (inStream.ReadByte() << 8)) | inStream.ReadByte());
 		}
 
-		private string readString(BinaryReader inStream)
+        string readString(BinaryReader inStream)
 		{
 			byte num;
 			var str = "";
@@ -213,7 +213,7 @@ namespace IDx3DSharp
 			return str;
 		}
 
-		private void readTexture(BinaryReader inStream, bool textureId)
+        void readTexture(BinaryReader inStream, bool textureId)
 		{
 			Texture t = null;
 			switch (inStream.ReadSByte())

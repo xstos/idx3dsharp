@@ -55,15 +55,15 @@ namespace IDx3DSharp
 		public uint[] p; // pixel array before antialiasing
 		public int w, h; // dimensions before antialiasing
 
-		private Image image;
+        Image image;
 		public bool antialias;
 
-		private GCHandle handle;
+        GCHandle handle;
 
 		// BENCHMARK STUFF
-		private long timestamp;
-		private long time;
-		private int probes = 32;
+        long timestamp;
+        long time;
+        int probes = 32;
 		public float FPS;
 
 
@@ -156,7 +156,7 @@ namespace IDx3DSharp
 
 		// P R I V A T E   M E T H O D S
 
-		private void performBench()
+        void performBench()
 		{
 			probes += 1;
 			if (probes > 32)
@@ -168,7 +168,7 @@ namespace IDx3DSharp
 			}
 		}
 
-		private void performAntialiasing()
+        void performAntialiasing()
 		{
 			int offset;
 			var pos = 0;
@@ -206,7 +206,7 @@ namespace IDx3DSharp
 
 		// Private part of image overlaying
 
-		private void draw(uint[] buffer, int width, int height, Texture texture, int posx, int posy, int xsize, int ysize)
+        void draw(uint[] buffer, int width, int height, Texture texture, int posx, int posy, int xsize, int ysize)
 		{
 			if (texture == null) return;
 			var w = xsize;
@@ -242,7 +242,7 @@ namespace IDx3DSharp
 		}
 
 
-		private void add(uint[] buffer, int width, int height, Texture texture, int posx, int posy, int xsize, int ysize)
+        void add(uint[] buffer, int width, int height, Texture texture, int posx, int posy, int xsize, int ysize)
 		{
 			var w = xsize;
 			var h = ysize;

@@ -52,8 +52,8 @@ public class Light : CoreObject
 
 
 	// C O N S T R U C T O R S
-	
-		private Light()
+
+    Light()
 		// Default constructor not accessible
 		{
 		}		

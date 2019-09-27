@@ -13,13 +13,13 @@ namespace IDx3DSharp.DemoApp
 {
 	public partial class MainForm : Form
 	{
-		private readonly Scene _scene;
-		private readonly bool _initialized;
-		private bool _antialias;
+        readonly Scene _scene;
+        readonly bool _initialized;
+        bool _antialias;
 
-		private int _oldx;
-		private int _oldy;
-		private bool _autorotation = true;
+        int _oldx;
+        int _oldy;
+        bool _autorotation = true;
 
 		public MainForm(BaseDemo demo)
 		{
@@ -116,12 +116,12 @@ namespace IDx3DSharp.DemoApp
 			base.OnMouseUp(e);
 		}
 
-		private void SetMovingCursor()
+        void SetMovingCursor()
 		{
 			Cursor = Cursors.SizeAll;
 		}
 
-		private void SetNormalCursor()
+        void SetNormalCursor()
 		{
 			Cursor = Cursors.Hand;
 		}

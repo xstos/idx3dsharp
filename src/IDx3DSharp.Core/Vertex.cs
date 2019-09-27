@@ -70,8 +70,8 @@ namespace IDx3DSharp
 		public int clipcode;
 		public int id; // Vertex index
 
-		private float fact;
-		private List<Triangle> neighbor = new List<Triangle>(); //Neighbor triangles of vertex
+        float fact;
+        List<Triangle> neighbor = new List<Triangle>(); //Neighbor triangles of vertex
 
 
 		#region Constructors

@@ -55,7 +55,7 @@ public class SceneObject : CoreObject
 		public bool visible=true; // Visibility tag
 		
 		public Scene parent=null;
-		private bool dirty=true;  // Flag for dirty handling
+        bool dirty=true;  // Flag for dirty handling
 		
 		public Vertex[] vertex;
 		public Triangle[] triangle;
@@ -385,7 +385,7 @@ public class SceneObject : CoreObject
 
 	// P R I V A T E   M E T H O D S
 
-		private void edgeCollapse(Edge edge)
+    void edgeCollapse(Edge edge)
 		// Collapses the edge [u,v] by replacing v by u
 		{
 			var u=edge.start();

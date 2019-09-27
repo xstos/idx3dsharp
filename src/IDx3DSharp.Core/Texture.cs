@@ -223,7 +223,7 @@ namespace IDx3DSharp
 		/// Grabs the pixels out of an image.
 		/// </summary>
 		/// <param name="map"></param>
-		private unsafe void loadTexture(Bitmap map)
+        unsafe void loadTexture(Bitmap map)
 {
     this.width = map.Width;
     this.height = map.Height;
@@ -250,12 +250,8 @@ namespace IDx3DSharp
     this.Resize();
 }
 
- 
 
- 
-
-
-		private void setSize(int w, int h)
+        void setSize(int w, int h)
 		// resizes the texture
 		{
 			var offset = w * h;
@@ -274,7 +270,7 @@ namespace IDx3DSharp
 			}
 		}
 
-		private bool InRange(int a, int b, int c)
+        bool InRange(int a, int b, int c)
 		{
 			return (a >= b) & (a < c);
 		}

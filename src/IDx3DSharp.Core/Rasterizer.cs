@@ -43,43 +43,44 @@ namespace IDx3DSharp
 	/// </summary>
 	public sealed class Rasterizer
 	{
-		private bool materialLoaded;
-		private bool lightmapLoaded;
+        bool materialLoaded;
+        bool lightmapLoaded;
 		public bool ready;
 
 		// Current material settings
-		private uint color;
-		private uint currentColor;
-		private uint transparency;
-		private uint reflectivity;
-		private int refraction = 0;
-		private Texture texture;
-		private uint[] envmap;
-		private uint[] diffuse;
-		private uint[] specular;
-		private short[] refractionMap = null;
-		private int tw;
-		private int th;
-		private int tbitW;
-		private int tbitH;
+        uint color;
+        uint currentColor;
+        uint transparency;
+        uint reflectivity;
+        int refraction = 0;
+        Texture texture;
+        uint[] envmap;
+        uint[] diffuse;
+        uint[] specular;
+        short[] refractionMap = null;
+        int tw;
+        int th;
+        int tbitW;
+        int tbitH;
 
 		// Rasterizer hints
 
-		private int mode;
-		private const int F = 0;   	// FLAT
-		private const int W = 1;	// WIREFRAME
-		private const int P = 2;  	// PHONG
-		private const int E = 4;  	// ENVMAP
-		private const int T = 8; 	// TEXTURED
-		private const int SHADED = P | E | T;
+        int mode;
+        const int F = 0;   	// FLAT
+        const int W = 1;	// WIREFRAME
+        const int P = 2;  	// PHONG
+        const int E = 4;  	// ENVMAP
+        const int T = 8; 	// TEXTURED
+        const int SHADED = P | E | T;
 
 		//  R E G I S T E R S
 
 		Vertex p1, p2, p3, tempVertex;
-		private uint
+
+        uint
 			bkgrd, c, s;
 
-		private int
+        int
 			lutID, r,   //lutID is position in LUT (diffuse,envmap,specular)
 
 			x1, x2, x3, x4, y1, y2, y3, z1, z2, z3, z4,
@@ -332,7 +333,7 @@ namespace IDx3DSharp
 			}
 		}
 
-		private void renderLine()
+        void renderLine()
 		{
 			xL = xBase >> 16;
 			xR = xMax >> 16;
@@ -373,7 +374,7 @@ namespace IDx3DSharp
 
 		// Fast scanline rendering
 
-		private void renderLineF()
+        void renderLineF()
 		{
 			for (x = xL; x < xR; x++)
 			{
@@ -392,7 +393,7 @@ namespace IDx3DSharp
 
 		}
 
-		private void renderLineP()
+        void renderLineP()
 		{
 			for (x = xL; x < xR; x++)
 			{
@@ -418,7 +419,7 @@ namespace IDx3DSharp
 
 		}
 
-		private void renderLineE()
+        void renderLineE()
 		{
 			for (x = xL; x < xR; x++)
 			{
@@ -442,7 +443,7 @@ namespace IDx3DSharp
 
 		}
 
-		private void renderLineT()
+        void renderLineT()
 		{
 			for (x = xL; x < xR; x++)
 			{
@@ -464,7 +465,7 @@ namespace IDx3DSharp
 
 		}
 
-		private void renderLinePE()
+        void renderLinePE()
 		{
 			for (x = xL; x < xR; x++)
 			{
@@ -489,7 +490,7 @@ namespace IDx3DSharp
 			}
 		}
 
-		private void renderLinePT()
+        void renderLinePT()
 		{
 			for (x = xL; x < xR; x++)
 			{
@@ -517,7 +518,7 @@ namespace IDx3DSharp
 			}
 		}
 
-		private void renderLinePET()
+        void renderLinePET()
 		{
 			for (x = xL; x < xR; x++)
 			{
@@ -545,7 +546,7 @@ namespace IDx3DSharp
 			}
 		}
 
-		private void drawWireframe(Triangle tri, uint defaultcolor)
+        void drawWireframe(Triangle tri, uint defaultcolor)
 		{
 			drawLine(tri.p1, tri.p2, defaultcolor);
 			drawLine(tri.p2, tri.p3, defaultcolor);
@@ -553,7 +554,7 @@ namespace IDx3DSharp
 		}
 
 
-		private void drawLine(Vertex a, Vertex b, uint color)
+        void drawLine(Vertex a, Vertex b, uint color)
 		{
 			Vertex temp;
 			if ((a.clipcode & b.clipcode) != 0) return;

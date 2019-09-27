@@ -45,13 +45,13 @@ namespace IDx3DSharp
 	{
 		// F I E L D S
 
-		private int currentJunkId;
-		private int nextJunkOffset;
+        int currentJunkId;
+        int nextJunkOffset;
 
-		private Scene scene;
-		private string currentObjectName;
-		private SceneObject currentObject;
-		private bool endOfStream;
+        Scene scene;
+        string currentObjectName;
+        SceneObject currentObject;
+        bool endOfStream;
 
 
 		// P U B L I C   M E T H O D S
@@ -86,7 +86,7 @@ namespace IDx3DSharp
 
 		// P R I V A T E   M E T H O D S
 
-		private string readString(BinaryReader inStream)
+        string readString(BinaryReader inStream)
 		{
 			byte num;
 			var str = "";
@@ -95,17 +95,17 @@ namespace IDx3DSharp
 			return str;
 		}
 
-		private int readInt(BinaryReader inStream)
+        int readInt(BinaryReader inStream)
 		{
 			return (((inStream.ReadByte() | (inStream.ReadByte() << 8)) | (inStream.ReadByte() << 0x10)) | (inStream.ReadByte() << 0x18));
 		}
 
-		private int readShort(BinaryReader inStream)
+        int readShort(BinaryReader inStream)
 		{
 			return (inStream.ReadByte() | (inStream.ReadByte() << 8));
 		}
 
-		private float readFloat(BinaryReader input)
+        float readFloat(BinaryReader input)
 		{
 			var num = this.readInt(input);
 			var num2 = ((num >> 0x1f) == 0) ? 1 : -1;
@@ -116,14 +116,14 @@ namespace IDx3DSharp
 		}
 
 
-		private void readJunkHeader(BinaryReader input)
+        void readJunkHeader(BinaryReader input)
 		{
 			currentJunkId = readShort(input);
 			nextJunkOffset = readInt(input);
 			endOfStream = currentJunkId < 0;
 		}
 
-		private void readNextJunk(BinaryReader input)
+        void readNextJunk(BinaryReader input)
 		{
 			readJunkHeader(input);
 
@@ -159,7 +159,7 @@ namespace IDx3DSharp
 			skipJunk(input);
 		}
 
-		private void skipJunk(BinaryReader inStream)
+        void skipJunk(BinaryReader inStream)
 		{
 			try
 			{
@@ -174,7 +174,7 @@ namespace IDx3DSharp
 			}
 		}
 
-		private void readVertexList(BinaryReader input)
+        void readVertexList(BinaryReader input)
 		{
 			float x, y, z;
 			var vertices = readShort(input);
@@ -187,7 +187,7 @@ namespace IDx3DSharp
 			}
 		}
 
-		private void readPointList(BinaryReader input)
+        void readPointList(BinaryReader input)
 		{
 			int v1, v2, v3;
 			var triangles = readShort(input);
@@ -204,7 +204,7 @@ namespace IDx3DSharp
 			}
 		}
 
-		private void readMappingCoordinates(BinaryReader input)
+        void readMappingCoordinates(BinaryReader input)
 		{
 			var vertices = readShort(input);
 			for (var i = 0; i < vertices; i++)

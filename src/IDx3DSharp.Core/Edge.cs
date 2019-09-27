@@ -45,7 +45,7 @@ namespace IDx3DSharp
 
         // C O N S T R U C T O R S
 
-        private Edge()
+        Edge()
         {
         }
 

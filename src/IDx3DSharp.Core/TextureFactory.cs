@@ -43,8 +43,8 @@ namespace IDx3DSharp
 	{
 		public const float pi = 3.1415926535f;
 		public const float deg2rad = pi / 180;
-		private static float[,] noiseBuffer;
-		private static bool noiseBufferInitialized;
+        static float[,] noiseBuffer;
+        static bool noiseBufferInitialized;
 		static int minx, maxx, miny, maxy;
 
 		// E X A M P L E   M A T E R I A L S
@@ -154,7 +154,7 @@ namespace IDx3DSharp
 
 		// Perlin noise functions
 
-		private static float perlin2d(float x, float y, float wavelength, float persistence, int samples)
+        static float perlin2d(float x, float y, float wavelength, float persistence, int samples)
 		{
 			float sum = 0;
 			var freq = 1f / wavelength;
@@ -173,7 +173,7 @@ namespace IDx3DSharp
 
 		// Helper methods
 
-		private static float interpolatedNoise(float x, float y, int octave)
+        static float interpolatedNoise(float x, float y, int octave)
 		{
 			var intx = (int) x;
 			var inty = (int) y;
@@ -186,19 +186,19 @@ namespace IDx3DSharp
 			return MathUtility.Interpolate(i1, i2, fracy);
 		}
 
-		private static float smoothNoise(int x, int y, int o)
+        static float smoothNoise(int x, int y, int o)
 		{
 			return (noise(x - 1, y - 1, o) + noise(x + 1, y - 1, o) + noise(x - 1, y + 1, o) + noise(x + 1, y + 1, o)) / 16
 				+ (noise(x - 1, y, o) + noise(x + 1, y, o) + noise(x, y - 1, o) + noise(x, y + 1, o)) / 8
 				+ noise(x, y, o) / 4;
 		}
 
-		private static float noise(int x, int y, int octave)
+        static float noise(int x, int y, int octave)
 		{
 			return noiseBuffer[octave & 3, (x + y * 57) & 8191];
 		}
 
-		private static float noise(int seed, int octave)
+        static float noise(int seed, int octave)
 		{
 			var id = octave & 3;
 			var n = (seed << 13) ^ seed;
@@ -209,7 +209,7 @@ namespace IDx3DSharp
 			return (float) (1f - ((n * (n * n * 16267 + 694541) + 1345679501) & 0x7FFFFFFF) * 0.000000000931322574615478515625f);
 		}
 
-		private static void initNoiseBuffer()
+        static void initNoiseBuffer()
 		{
 			if (noiseBufferInitialized) return;
 			noiseBuffer = new float[4, 8192];

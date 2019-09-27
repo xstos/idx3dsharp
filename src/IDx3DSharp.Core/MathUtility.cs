@@ -42,11 +42,11 @@ namespace IDx3DSharp
 	{
 		#region Trigonometry
 
-		private static float[] _sinus;
-		private static float[] _cosinus;
-		private static bool _trig;
-		private static float _rad2Scale = 4096f / 3.14159265f / 2f;
-		private static float _pad = 256 * 3.14159265f;
+        static float[] _sinus;
+        static float[] _cosinus;
+        static bool _trig;
+        static float _rad2Scale = 4096f / 3.14159265f / 2f;
+        static float _pad = 256 * 3.14159265f;
 
 		public static float DegreesToRadians(float deg)
 		{
@@ -70,7 +70,7 @@ namespace IDx3DSharp
 			return _cosinus[(int) ((angle + _pad) * _rad2Scale) & 0xFFF];
 		}
 
-		private static void BuildTrig()
+        static void BuildTrig()
 		{
 			System.Console.WriteLine(">> Building idx3d_Math LUT");
 			_sinus = new float[4096];

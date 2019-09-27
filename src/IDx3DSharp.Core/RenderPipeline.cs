@@ -46,11 +46,11 @@ namespace IDx3DSharp
 		Scene scene;
 		public Lightmap lightmap;
 
-		private bool resizingRequested;
-		private bool antialiasChangeRequested;
-		private int requestedWidth;
-		private int requestedHeight;
-		private bool requestedAntialias;
+        bool resizingRequested;
+        bool antialiasChangeRequested;
+        int requestedWidth;
+        int requestedHeight;
+        bool requestedAntialias;
 		public bool useIdBuffer;
 
 		Rasterizer rasterizer;
@@ -193,7 +193,7 @@ namespace IDx3DSharp
 
 		// P R I V A T E   M E T H O D S
 
-		private void performResizing()
+        void performResizing()
 		{
 			resizingRequested = false;
 			screen.resize(requestedWidth, requestedHeight);
@@ -201,7 +201,7 @@ namespace IDx3DSharp
 			if (useIdBuffer) idBuffer = new uint[screen.w * screen.h];
 		}
 
-		private void performAntialiasChange()
+        void performAntialiasChange()
 		{
 			antialiasChangeRequested = false;
 			screen.setAntialias(requestedAntialias);
@@ -211,13 +211,13 @@ namespace IDx3DSharp
 
 		// Triangle sorting
 
-		private void emptyQueues()
+        void emptyQueues()
 		{
 			opaqueQueue.Clear();
 			transparentQueue.Clear();
 		}
 
-		private void enqueueTriangle(Triangle tri)
+        void enqueueTriangle(Triangle tri)
 		{
 			if (tri.parent.material == null) return;
 			if (tri.visible == false) return;
@@ -227,7 +227,7 @@ namespace IDx3DSharp
 			else opaqueQueue.Add(tri);
 		}
 
-		private Triangle[] getOpaqueQueue()
+        Triangle[] getOpaqueQueue()
 		{
 			if (opaqueQueue.Count == 0) return null;
 			var tri = new Triangle[opaqueQueue.Count];
@@ -236,7 +236,7 @@ namespace IDx3DSharp
 			return sortTriangles(tri, 0, tri.Length - 1);
 		}
 
-		private Triangle[] getTransparentQueue()
+        Triangle[] getTransparentQueue()
 		{
 			if (transparentQueue.Count == 0) return null;
 			var tri = new Triangle[transparentQueue.Count];
@@ -245,7 +245,7 @@ namespace IDx3DSharp
 			return sortTriangles(tri, 0, tri.Length - 1);
 		}
 
-		private Triangle[] sortTriangles(Triangle[] tri, int L, int R)
+        Triangle[] sortTriangles(Triangle[] tri, int L, int R)
 		{
 			var m = (tri[L].dist + tri[R].dist) / 2;
 			var i = L;
