@@ -224,31 +224,31 @@ namespace IDx3DSharp
 		/// </summary>
 		/// <param name="map"></param>
         unsafe void loadTexture(Bitmap map)
-{
-    width = map.Width;
-    height = map.Height;
-    pixel = new uint[width * height];
-    var bitmapdata = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-    var stride = bitmapdata.Stride;
-    var ptr = bitmapdata.Scan0;
-    var numPtr = (byte*) ptr;
-    var num2 = bitmapdata.Stride - (map.Width * 3);
-    var num3 = 0;
-    for (var i = 0; i < map.Height; i++)
-    {
-        for (var j = 0; j < map.Width; j++)
         {
-            int num6 = numPtr[0];
-            int num7 = numPtr[1];
-            int num8 = numPtr[2];
-						pixel[num3++] = (uint) (((ColorUtility.ALPHA | (num8 << 0x10)) | (num7 << 8)) | num6);
-            numPtr += 3;
+            width = map.Width;
+            height = map.Height;
+            pixel = new uint[width * height];
+            var bitmapdata = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            var stride = bitmapdata.Stride;
+            var ptr = bitmapdata.Scan0;
+            var numPtr = (byte*) ptr;
+            var num2 = bitmapdata.Stride - (map.Width * 3);
+            var num3 = 0;
+            for (var i = 0; i < map.Height; i++)
+            {
+                for (var j = 0; j < map.Width; j++)
+                {
+                    int num6 = numPtr[0];
+                    int num7 = numPtr[1];
+                    int num8 = numPtr[2];
+						        pixel[num3++] = (uint) (((ColorUtility.ALPHA | (num8 << 0x10)) | (num7 << 8)) | num6);
+                    numPtr += 3;
+                }
+                numPtr += num2;
+            }
+            map.UnlockBits(bitmapdata);
+            Resize();
         }
-        numPtr += num2;
-    }
-    map.UnlockBits(bitmapdata);
-    Resize();
-}
 
 
         void setSize(int w, int h)
