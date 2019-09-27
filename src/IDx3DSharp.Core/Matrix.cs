@@ -42,22 +42,22 @@ namespace IDx3DSharp
     /// <summary>
     /// Defines a 3D matrix.
     /// </summary>
-    public class Matrix : ICloneable
+    public struct Matrix : ICloneable
     {
         // M A T R I X   D A T A
 
-        public float m00 = 1, m01, m02, m03;
-        public float m10, m11 = 1, m12, m13;
-        public float m20, m21, m22 = 1, m23;
-        public float m30, m31, m32, m33 = 1;
-
+        public float m00, m01, m02, m03;
+        public float m10, m11, m12, m13;
+        public float m20, m21, m22, m23;
+        public float m30, m31, m32, m33;
 
         // C O N S T R U C T O R S
-
-        public Matrix()
+        public Matrix(bool init) //dummy arg to deal with c# not supporting parameterless default ctors
         {
+            m01 = m02 = m03 = m10 = m12 = m13 = m20 = m21 = m23 = m30 = m31 = m32 = 0;
+            m00 = m11 = m22 = m33 = 1;
         }
-
+        
         public Matrix(Vector right, Vector up, Vector forward)
         {
             m00 = right.X;
@@ -69,6 +69,13 @@ namespace IDx3DSharp
             m02 = forward.X;
             m12 = forward.Y;
             m22 = forward.Z;
+            m03 = 0;
+            m13 = 0;
+            m23 = 0;
+            m30 = 0;
+            m31 = 0;
+            m32 = 0;
+            m33 = 1;
         }
 
         public void ImportFromArray(float[,] data)
@@ -100,7 +107,7 @@ namespace IDx3DSharp
         public static Matrix shiftMatrix(float dx, float dy, float dz)
         // matrix for shifting
         {
-            var m = new Matrix();
+            var m = new Matrix(true);
             m.m03 = dx;
             m.m13 = dy;
             m.m23 = dz;
@@ -110,7 +117,7 @@ namespace IDx3DSharp
         public static Matrix scaleMatrix(float dx, float dy, float dz)
         // matrix for scaling
         {
-            var m = new Matrix();
+            var m = new Matrix(true);
             m.m00 = dx;
             m.m11 = dy;
             m.m22 = dz;
@@ -126,13 +133,13 @@ namespace IDx3DSharp
         public static Matrix rotateMatrix(float dx, float dy, float dz)
         // matrix for rotation
         {
-            var result = new Matrix();
+            var result = new Matrix(true);
             float SIN;
             float COS;
 
             if (dx != 0)
             {
-                var m = new Matrix();
+                var m = new Matrix(true);
                 SIN = MathUtility.Sin(dx);
                 COS = MathUtility.Cos(dx);
                 m.m11 = COS;
@@ -143,7 +150,7 @@ namespace IDx3DSharp
             }
             if (dy != 0)
             {
-                var m = new Matrix();
+                var m = new Matrix(true);
                 SIN = MathUtility.Sin(dy);
                 COS = MathUtility.Cos(dy);
                 m.m00 = COS;
@@ -154,7 +161,7 @@ namespace IDx3DSharp
             }
             if (dz != 0)
             {
-                var m = new Matrix();
+                var m = new Matrix(true);
                 SIN = MathUtility.Sin(dz);
                 COS = MathUtility.Cos(dz);
                 m.m00 = COS;
@@ -245,7 +252,7 @@ namespace IDx3DSharp
         public static Matrix multiply(Matrix m1, Matrix m2)
         // returns m1 x m2
         {
-            var m = new Matrix();
+            var m = new Matrix(true);
 
             m.m00 = m1.m00 * m2.m00 + m1.m01 * m2.m10 + m1.m02 * m2.m20;
             m.m01 = m1.m00 * m2.m01 + m1.m01 * m2.m11 + m1.m02 * m2.m21;
@@ -274,12 +281,12 @@ namespace IDx3DSharp
 
         public Matrix Clone()
         {
-            var m = new Matrix();
-            m.m00 = m00; m.m01 = m01; m.m02 = m02; m.m03 = m03;
-            m.m10 = m10; m.m11 = m11; m.m12 = m12; m.m13 = m13;
-            m.m20 = m20; m.m21 = m21; m.m22 = m22; m.m23 = m23;
-            m.m30 = m30; m.m31 = m31; m.m32 = m32; m.m33 = m33;
-            return m;
+            //var m = new Matrix();
+            //m.m00 = m00; m.m01 = m01; m.m02 = m02; m.m03 = m03;
+            //m.m10 = m10; m.m11 = m11; m.m12 = m12; m.m13 = m13;
+            //m.m20 = m20; m.m21 = m21; m.m22 = m22; m.m23 = m23;
+            //m.m30 = m30; m.m31 = m31; m.m32 = m32; m.m33 = m33;
+            return this;
         }
 
         object ICloneable.Clone()
@@ -291,7 +298,7 @@ namespace IDx3DSharp
         // Returns the inverse of this matrix
         // Code generated with MapleV and handoptimized
         {
-            var m = new Matrix();
+            var m = new Matrix(true);
 
             var q1 = m12; var q6 = m10 * m01; var q7 = m10 * m21; var q8 = m02;
             var q13 = m20 * m01; var q14 = m20 * m11; var q21 = m02 * m21; var q22 = m03 * m21;

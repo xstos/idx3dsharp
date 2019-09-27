@@ -296,8 +296,8 @@ namespace IDx3DSharp
 			Vector min, max, tempmax, tempmin;
 			if (objects == 0) return;
 
-			matrix = new Matrix();
-			normalmatrix = new Matrix();
+			matrix = new Matrix(true);
+			normalmatrix = new Matrix(true);
 
 			max = _object[0].Max();
 			min = _object[0].Min();

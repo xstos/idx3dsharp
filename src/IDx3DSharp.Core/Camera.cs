@@ -42,8 +42,8 @@ namespace IDx3DSharp
     {
         // F I E L D S
 
-		public Matrix matrix=new Matrix();
-		public Matrix normalmatrix=new Matrix();
+		public Matrix matrix=new Matrix(true);
+		public Matrix normalmatrix=new Matrix(true);
 	
 		bool needsRebuild=true;   // Flag indicating changes on matrix
 
