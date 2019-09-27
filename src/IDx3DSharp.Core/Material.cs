@@ -107,8 +107,8 @@ namespace IDx3DSharp
 		public void setTexture(Texture t)
 		{
 			texture = t;
-			if (texture != null) texture.Resize();
-		}
+            texture?.Resize();
+        }
 
 		public void setEnvmap(Texture env)
 		{

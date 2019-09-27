@@ -126,8 +126,7 @@ namespace IDx3DSharp
 			Z = (int) (65536f * pos2.Z);
 			nx = (int) (n2.X * 127 + 127);
 			ny = (int) (n2.Y * 127 + 127);
-			if (parent.material == null) return;
-			if (parent.material.texture == null) return;
+            if (parent.material?.texture == null) return;
 			tx = (int) ((float) parent.material.texture.width * Tu);
 			ty = (int) ((float) parent.material.texture.height * Tv);
 		}

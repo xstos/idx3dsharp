@@ -234,8 +234,7 @@ namespace IDx3DSharp
 		public SceneObject identifyObjectAt(int xpos, int ypos)
 		{
 			Triangle tri = identifyTriangleAt(xpos, ypos);
-			if (tri == null) return null;
-			return tri.parent;
+            return tri?.parent;
 		}
 
 		// P U B L I C   M E T H O D S

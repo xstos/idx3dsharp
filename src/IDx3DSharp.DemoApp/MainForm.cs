@@ -128,9 +128,8 @@ namespace IDx3DSharp.DemoApp
 
 		protected override void OnResize(EventArgs e)
 		{
-			if (_scene != null)
-				_scene.resize(Size.Width, Size.Height);
-			base.OnResize(e);
+            _scene?.resize(Size.Width, Size.Height);
+            base.OnResize(e);
 		}
 	}
 }
