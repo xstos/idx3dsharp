@@ -49,7 +49,7 @@ namespace IDx3DSharp.DemoApp
         float tickFrac = 1f / 1000f;
 		public void UpdateScene()
 		{
-			lock (this)
+			//lock (this)
 			{
 				if (!_initialized) return;
 				if (_autorotation)
