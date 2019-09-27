@@ -57,16 +57,12 @@ namespace IDx3DSharp
 		// P U B L I C   M E T H O D S
 
 		public void importFromURL(Uri url, Scene targetscene)
-		{
-			if (url.Scheme == "http")
-			{
-				importFromStream(WebRequest.Create(url).GetResponse().GetResponseStream(), targetscene);
-			}
-			else
-			{
-				importFromStream(File.OpenRead(url.ToString()), targetscene);
-			}
-		}
+        {
+            importFromStream(
+                url.Scheme == "http"
+                    ? WebRequest.Create(url).GetResponse().GetResponseStream()
+                    : File.OpenRead(url.ToString()), targetscene);
+        }
 
 		public void importFromStream(Stream inStream, Scene targetscene)
 		{
@@ -111,7 +107,7 @@ namespace IDx3DSharp
 			var num2 = ((num >> 0x1f) == 0) ? 1 : -1;
 			var num3 = (num >> 0x17) & 0xff;
 			var num4 = (num3 == 0) ? ((num & 0x7fffff) << 1) : ((num & 0x7fffff) | 0x800000);
-			var num5 = (num2 * num4) * Math.Pow(2.0, (double) (num3 - 150));
+			var num5 = (num2 * num4) * Math.Pow(2.0, num3 - 150);
 			return (float) num5;
 		}
 

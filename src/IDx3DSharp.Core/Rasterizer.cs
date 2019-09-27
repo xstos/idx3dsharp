@@ -147,10 +147,9 @@ namespace IDx3DSharp
 			transparency = material.transparency;
 			reflectivity = material.reflectivity;
 			texture = material.texture;
-			if (material.envmap != null) envmap = material.envmap.pixel;
-			else envmap = null;
+			envmap = material.envmap?.pixel;
 
-			if (texture != null)
+            if (texture != null)
 			{
 				tw = texture.width - 1;
 				th = texture.height - 1;
@@ -559,8 +558,8 @@ namespace IDx3DSharp
 			Vertex temp;
 			if ((a.clipcode & b.clipcode) != 0) return;
 
-			dx = (int) Math.Abs(a.X - b.X);
-			dy = (int) Math.Abs(a.Y - b.Y);
+			dx = Math.Abs(a.X - b.X);
+			dy = Math.Abs(a.Y - b.Y);
 			dz = 0;
 
 			if (dx > dy)

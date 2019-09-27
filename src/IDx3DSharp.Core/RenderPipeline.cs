@@ -90,7 +90,7 @@ namespace IDx3DSharp
 
 		public float getFPS()
 		{
-			return (float) ((screen.FPS * 100)) / 100;
+			return screen.FPS * 100 / 100;
 		}
 
 		public void resize(int w, int h)
@@ -184,11 +184,10 @@ namespace IDx3DSharp
 		}
 
 		public void UseIdBuffer(bool useIdBuffer)
-		{
-			this.useIdBuffer = useIdBuffer;
-			if (useIdBuffer) idBuffer = new uint[screen.w * screen.h];
-			else idBuffer = null;
-		}
+        {
+            this.useIdBuffer = useIdBuffer;
+            idBuffer = useIdBuffer ? new uint[screen.w * screen.h] : null;
+        }
 
 
 		// P R I V A T E   M E T H O D S

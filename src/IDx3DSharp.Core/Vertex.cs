@@ -127,8 +127,8 @@ namespace IDx3DSharp
 			nx = (int) (n2.X * 127 + 127);
 			ny = (int) (n2.Y * 127 + 127);
             if (parent.material?.texture == null) return;
-			tx = (int) ((float) parent.material.texture.width * Tu);
-			ty = (int) ((float) parent.material.texture.height * Tv);
+			tx = (int) (parent.material.texture.width * Tu);
+			ty = (int) (parent.material.texture.height * Tv);
 		}
 
 		public void setUV(float u, float v)

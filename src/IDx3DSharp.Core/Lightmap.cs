@@ -101,7 +101,7 @@ public sealed class Lightmap
 					l=light[i].v;
 					diffuse=light[i].diffuse;
 					specular=light[i].specular;
-					sheen=(float)light[i].highlightSheen/255f;
+					sheen=light[i].highlightSheen/255f;
 					spread=(float)light[i].highlightSpread/4096;
 					spread=(spread<0.01f)?0.01f:spread;
 					cos=(uint)(255*Vector.Angle(light[i].v,new Vector(fnx,fny,sphere[pos])));
@@ -109,10 +109,10 @@ public sealed class Lightmap
 					dr += (ColorUtility.getRed(diffuse) * cos) >> 8;
 					dg += (ColorUtility.getGreen(diffuse) * cos) >> 8;
 					db += (ColorUtility.getBlue(diffuse) * cos) >> 8;
-					phongfact=sheen*(float)Math.Pow((float)cos/255f,1/spread);
-					sr += (uint) ((float) ColorUtility.getRed(specular) * phongfact);
-					sg += (uint) ((float) ColorUtility.getGreen(specular) * phongfact);
-					sb += (uint) ((float) ColorUtility.getBlue(specular) * phongfact);
+					phongfact=sheen*(float)Math.Pow(cos/255f,1/spread);
+					sr += (uint) (ColorUtility.getRed(specular) * phongfact);
+					sg += (uint) (ColorUtility.getGreen(specular) * phongfact);
+					sb += (uint) (ColorUtility.getBlue(specular) * phongfact);
 				}
 				this.diffuse[pos] = ColorUtility.getCropColor(dr, dg, db);
 				this.specular[pos] = ColorUtility.getCropColor(sr, sg, sb);

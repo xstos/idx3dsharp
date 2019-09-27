@@ -75,12 +75,12 @@ public class SceneObject : CoreObject
 	
 		public Vertex Vertex(int id)
 		{
-			return (Vertex) vertexData[id];
+			return vertexData[id];
 		}
 		
 		public Triangle Triangle(int id)
 		{
-			return (Triangle) triangleData[id];
+			return triangleData[id];
 		}		
 
 		public void addVertex(Vertex newVertex)
@@ -194,7 +194,7 @@ public class SceneObject : CoreObject
         {
             var buffer = new StringBuilder();
             buffer.Append("<object id=" + name + ">\r\n");
-            for (var i = 0; i < vertices; i++) buffer.Append(vertex[i].ToString());
+            for (var i = 0; i < vertices; i++) buffer.Append(vertex[i]);
             return buffer.ToString();
         }
 		

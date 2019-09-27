@@ -178,9 +178,9 @@ public static class ColorUtility
 			var r=(color>>16)&255;
 			var g=(color>>8)&255;
 			var b=color&255;
-			r+=(uint)(MathUtility.Random()*(float)delta);
-			g+=(uint)(MathUtility.Random()*(float)delta);
-			b+=(uint)(MathUtility.Random()*(float)delta);
+			r+=(uint)(MathUtility.Random()*delta);
+			g+=(uint)(MathUtility.Random()*delta);
+			b+=(uint)(MathUtility.Random()*delta);
 			return getCropColor(r,g,b);
 		}
 		

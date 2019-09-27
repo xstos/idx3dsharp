@@ -78,8 +78,8 @@ namespace IDx3DSharp
 
 			for (var i = 0; i < 4096; i++)
 			{
-				_sinus[i] = (float) Math.Sin((float) i / _rad2Scale);
-				_cosinus[i] = (float) Math.Cos((float) i / _rad2Scale);
+				_sinus[i] = (float) Math.Sin(i / _rad2Scale);
+				_cosinus[i] = (float) Math.Cos(i / _rad2Scale);
 			}
 			_trig = true;
 		}

@@ -113,11 +113,11 @@ namespace IDx3DSharp
 			initNoiseBuffer();
 			var t = new Texture(w, h);
 			var pos = 0;
-			var wavelength = (float) ((w > h) ? w : h) / density;
+			var wavelength = ((w > h) ? w : h) / density;
 
 			for (var y = 0; y < h; y++)
 				for (var x = 0; x < w; x++)
-					t.pixel[pos++] = (uint) ((float) scale * perlin2d(x, y, wavelength, persistency, samples));
+					t.pixel[pos++] = (uint) (scale * perlin2d(x, y, wavelength, persistency, samples));
 			return t;
 		}
 
@@ -126,11 +126,11 @@ namespace IDx3DSharp
 			initNoiseBuffer();
 			var t = new Texture(w, h);
 			var pos = 0;
-			var wavelength = (float) ((w > h) ? w : h) / density;
+			var wavelength = ((w > h) ? w : h) / density;
 
 			for (var y = 0; y < h; y++)
 				for (var x = 0; x < w; x++)
-					t.pixel[pos++] = (uint) ((double) scale * (Math.Sin(32 * perlin2d(x, y, wavelength, persistency, samples)) * 0.5 + 0.5));
+					t.pixel[pos++] = (uint) (scale * (Math.Sin(32 * perlin2d(x, y, wavelength, persistency, samples)) * 0.5 + 0.5));
 			return t;
 		}
 
@@ -140,14 +140,14 @@ namespace IDx3DSharp
 			initNoiseBuffer();
 			var t = new Texture(w, h);
 			var pos = 0;
-			var wavelength = (float) ((w > h) ? w : h) / density;
+			var wavelength = ((w > h) ? w : h) / density;
 			float perlin;
 
 			for (var y = 0; y < h; y++)
 				for (var x = 0; x < w; x++)
 				{
-					perlin = (float) levels * perlin2d(x, y, wavelength, persistency, samples);
-					t.pixel[pos++] = (uint) ((float) scale * (perlin - (float) (int) perlin));
+					perlin = levels * perlin2d(x, y, wavelength, persistency, samples);
+					t.pixel[pos++] = (uint) (scale * (perlin - (int) perlin));
 				}
 			return t;
 		}
@@ -177,8 +177,8 @@ namespace IDx3DSharp
 		{
 			var intx = (int) x;
 			var inty = (int) y;
-			var fracx = x - (float) intx;
-			var fracy = y - (float) inty;
+			var fracx = x - intx;
+			var fracy = y - inty;
 
 			var i1 = MathUtility.Interpolate(noise(intx, inty, octave), noise(intx + 1, inty, octave), fracx);
 			var i2 = MathUtility.Interpolate(noise(intx, inty + 1, octave), noise(intx + 1, inty + 1, octave), fracx);
@@ -203,10 +203,10 @@ namespace IDx3DSharp
 			var id = octave & 3;
 			var n = (seed << 13) ^ seed;
 
-			if (id == 0) return (float) (1f - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7FFFFFFF) * 0.000000000931322574615478515625f);
-			if (id == 1) return (float) (1f - ((n * (n * n * 12497 + 604727) + 1345679039) & 0x7FFFFFFF) * 0.000000000931322574615478515625f);
-			if (id == 2) return (float) (1f - ((n * (n * n * 19087 + 659047) + 1345679627) & 0x7FFFFFFF) * 0.000000000931322574615478515625f);
-			return (float) (1f - ((n * (n * n * 16267 + 694541) + 1345679501) & 0x7FFFFFFF) * 0.000000000931322574615478515625f);
+			if (id == 0) return 1f - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7FFFFFFF) * 0.000000000931322574615478515625f;
+			if (id == 1) return 1f - ((n * (n * n * 12497 + 604727) + 1345679039) & 0x7FFFFFFF) * 0.000000000931322574615478515625f;
+			if (id == 2) return 1f - ((n * (n * n * 19087 + 659047) + 1345679627) & 0x7FFFFFFF) * 0.000000000931322574615478515625f;
+			return 1f - ((n * (n * n * 16267 + 694541) + 1345679501) & 0x7FFFFFFF) * 0.000000000931322574615478515625f;
 		}
 
         static void initNoiseBuffer()

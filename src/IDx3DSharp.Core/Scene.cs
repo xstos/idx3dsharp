@@ -65,7 +65,7 @@ namespace IDx3DSharp
         bool objectsNeedRebuild = true;
         bool lightsNeedRebuild = true;
 
-		protected bool preparedForRendering;
+		bool preparedForRendering;
 
 		public Vector normalizedOffset = new Vector(0f, 0f, 0f);
 		public float normalizedScale = 1f;
@@ -141,10 +141,10 @@ namespace IDx3DSharp
 
 		// A C C E S S O R S
 
-		public SceneObject Object(string key) { return (SceneObject) objectData[key]; }
-		public Light Light(string key) { return (Light) lightData[key]; }
-		public Material material(string key) { return (Material) materialData[key]; }
-		public Camera camera(string key) { return (Camera) cameraData[key]; }
+		public SceneObject Object(string key) { return objectData[key]; }
+		public Light Light(string key) { return lightData[key]; }
+		public Material material(string key) { return materialData[key]; }
+		public Camera camera(string key) { return cameraData[key]; }
 
 		// O B J E C T   M A N A G E M E N T
 
@@ -285,7 +285,7 @@ namespace IDx3DSharp
 		{
 			var buffer = new StringBuilder();
 			buffer.Append("<scene>\r\n");
-			for (var i = 0; i < objects; i++) buffer.Append(_object[i].ToString());
+			for (var i = 0; i < objects; i++) buffer.Append(_object[i]);
 			return buffer.ToString();
 		}
 
