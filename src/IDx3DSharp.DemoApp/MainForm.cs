@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using IDx3DSharp.DemoApp.Demos;
@@ -11,6 +12,8 @@ namespace IDx3DSharp.DemoApp
 {
 	public partial class MainForm : Form
 	{
+        [DllImport("user32.dll")]
+        public static extern int SendNotifyMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
         readonly Scene _scene;
         readonly bool _initialized;
         bool _antialias;
@@ -35,13 +38,26 @@ namespace IDx3DSharp.DemoApp
 
 			_scene = new Scene(Width, Height);
 			demo.PopulateScene(_scene);
-
+            g = CreateGraphics();
 			_initialized = true;
 		}
 
+        Graphics g;
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0x000F)
+            {
+                UpdateScene();
+                g.DrawImageUnscaled(GetImage(), 0, 0);
+                SendNotifyMessage(this.Handle, 0x000F, IntPtr.Zero, IntPtr.Zero);
+            }
+            else
+                base.WndProc(ref m);
+
+        }
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			e.Graphics.DrawImageUnscaled(GetImage(), 0, 0);
+			//e.Graphics.DrawImageUnscaled(GetImage(), 0, 0);
 			base.OnPaint(e);
 		}
 
