@@ -48,9 +48,9 @@ namespace IDx3DSharp
 
 		public SceneObject parent;
 
-		public Vector pos = new Vector();   //(x,y,z) Coordinate of vertex
+		public Vector pos = new Vector(true);   //(x,y,z) Coordinate of vertex
 		public Vector pos2;  //Transformed vertex coordinate
-		public Vector n = new Vector();   //Normal Vector at vertex
+		public Vector n = new Vector(true);   //Normal Vector at vertex
 		public Vector n2;  //Transformed normal vector (camera space)
 
 		public int X;  //Projected x coordinate

@@ -41,7 +41,7 @@ namespace IDx3DSharp
     /// <summary>
     /// Defines a 3D vector.
     /// </summary>
-    public class Vector : ICloneable
+    public struct Vector : ICloneable
     {
 #region Properties
 
@@ -52,10 +52,14 @@ namespace IDx3DSharp
         public float Theta;  //Cylindric
 
 #endregion
-        // C O N S T R U C T O R S
-
-        public Vector()
+        // C O N [S T R U C T O R S
+        public Vector(bool ignored)
         {
+            X = 0;
+            Y = 0;
+            Z = 0;
+            Theta = 0;
+            R = 0;
         }
 
         public Vector(float xpos, float ypos, float zpos)
@@ -63,6 +67,8 @@ namespace IDx3DSharp
             X = xpos;
             Y = ypos;
             Z = zpos;
+            Theta = 0;
+            R = 0;
         }
 
         // P U B L I C   M E T H O D S
@@ -250,7 +256,7 @@ namespace IDx3DSharp
 
         public Vector Clone()
         {
-            return new Vector(X, Y, Z);
+            return this;
         }
 
         object ICloneable.Clone()
