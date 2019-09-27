@@ -93,7 +93,7 @@ namespace IDx3DSharp
 		public Material(string filename)
 		// Call from Application
 		{
-			string @base = filename.Substring(0, filename.Length - (Path.GetFileName(filename).Length));
+			var @base = filename.Substring(0, filename.Length - (Path.GetFileName(filename).Length));
 			try
 			{
 				importFromStream(File.OpenRead(filename), @base);
@@ -183,7 +183,7 @@ namespace IDx3DSharp
 
 		private void importFromStream(Stream inStream, Object baseURL)
 		{
-			BinaryReader input = new BinaryReader(inStream);
+			var input = new BinaryReader(inStream);
 			readSettings(input);
 			readTexture(input, true);
 			readTexture(input, false);
@@ -205,7 +205,7 @@ namespace IDx3DSharp
 		private string readString(BinaryReader inStream)
 		{
 			byte num;
-			string str = "";
+			var str = "";
 			while ((num = inStream.ReadByte()) != 60)
 			{
 				str = str + ((char) num);
@@ -236,8 +236,8 @@ namespace IDx3DSharp
 
 				case 2:
 					{
-						int w = this.readInt(inStream);
-						int h = this.readInt(inStream);
+						var w = this.readInt(inStream);
+						var h = this.readInt(inStream);
 						int num4 = inStream.ReadSByte();
 						float persistency = this.readInt(inStream);
 						float density = this.readInt(inStream);
@@ -245,8 +245,8 @@ namespace IDx3DSharp
 						density = 0.5f;
 						int samples = inStream.ReadByte();
 						int num8 = inStream.ReadByte();
-						uint[] colors = new uint[num8];
-						for (int i = 0; i < num8; i++)
+						var colors = new uint[num8];
+						for (var i = 0; i < num8; i++)
 						{
 							colors[i] = (uint) this.readInt(inStream);
 						}

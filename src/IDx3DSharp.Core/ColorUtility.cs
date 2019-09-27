@@ -79,10 +79,10 @@ public static class ColorUtility
 		public static uint getGray(uint color)
 		// Converts the color to gray
 		{
-			uint r=((color&RED)>>16);
-			uint g=((color&GREEN)>>8);
-			uint b=(color&BLUE);
-			uint Y=(r*3+g*6+b)/10;
+			var r=((color&RED)>>16);
+			var g=((color&GREEN)>>8);
+			var b=(color&BLUE);
+			var Y=(r*3+g*6+b)/10;
 			return ALPHA|(Y<<16)|(Y<<8)|Y;
 		}
 		
@@ -175,9 +175,9 @@ public static class ColorUtility
 		
 		public static uint random(uint color, int delta)
 		{
-			uint r=(color>>16)&255;
-			uint g=(color>>8)&255;
-			uint b=color&255;
+			var r=(color>>16)&255;
+			var g=(color>>8)&255;
+			var b=color&255;
 			r+=(uint)(MathUtility.Random()*(float)delta);
 			g+=(uint)(MathUtility.Random()*(float)delta);
 			b+=(uint)(MathUtility.Random()*(float)delta);
@@ -191,18 +191,18 @@ public static class ColorUtility
 			
 		public static uint[] makeGradient(uint[] colors, int size)
 		{
-			uint[] pal=new uint[size];
+			var pal=new uint[size];
 			int pos1,pos2,range;
 			uint c1, c2;
 			uint r, g, b, r1, g1, b1, r2, g2, b2, dr, dg, db;
 			if (colors.Length==1)
 			{
 				c1=colors[0];
-				for (int i=0;i<size;i++) pal[i]=c1;
+				for (var i=0;i<size;i++) pal[i]=c1;
 				return pal;
 			}
 			
-			for (int c=0;c<colors.Length-1;c++)
+			for (var c=0;c<colors.Length-1;c++)
 			{
 				c1=colors[c];
 				c2=colors[c+1];
@@ -219,7 +219,7 @@ public static class ColorUtility
 				dg=(uint) ((g2-g1)/range);
 				db=(uint) ((b2-b1)/range);
 				r=r1;  g=g1;  b=b1;
-				for (int i=pos1;i<pos2;i++)
+				for (var i=pos1;i<pos2;i++)
 				{
 					pal[i]=getColor(r>>16,g>>16,b>>16);
 					r+=dr;  g+=dg;  b+=db;

@@ -65,10 +65,10 @@ public sealed class Lightmap
 	{
 		float fnx,fny,fnz;
 		int pos;
-		for (int ny=-128;ny<128;ny++)
+		for (var ny=-128;ny<128;ny++)
 		{
 			fny=(float)ny/128;
-			for (int nx=-128;nx<128;nx++)
+			for (var nx=-128;nx<128;nx++)
 			{
 				pos=nx+128+((ny+128)<<8);
 				fnx=(float)nx/128;
@@ -85,10 +85,10 @@ public sealed class Lightmap
 		Vector l;
 		float fnx,fny,angle,phongfact,sheen, spread;
 		uint diffuse, specular, cos, dr, dg, db, sr, sg, sb;
-		for (int ny=-128;ny<128;ny++)
+		for (var ny=-128;ny<128;ny++)
 		{
 			fny=(float)ny/128;
-			for (int nx=-128;nx<128;nx++)
+			for (var nx=-128;nx<128;nx++)
 			{
 				pos=nx+128+((ny+128)<<8);
 				fnx=(float)nx/128;
@@ -96,7 +96,7 @@ public sealed class Lightmap
 				dr=ColorUtility.getRed(ambient);
 				dg = ColorUtility.getGreen(ambient);
 				db = ColorUtility.getBlue(ambient);
-				for (int i=0;i<lights;i++)
+				for (var i=0;i<lights;i++)
 				{		
 					l=light[i].v;
 					diffuse=light[i].diffuse;

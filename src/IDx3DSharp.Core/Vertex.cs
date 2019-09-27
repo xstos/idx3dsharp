@@ -170,9 +170,9 @@ namespace IDx3DSharp
 			float nx = 0;
 			float ny = 0;
 			float nz = 0;
-			foreach (Triangle tri in neighbor)
+			foreach (var tri in neighbor)
 			{
-				Vector wn = tri.getWeightedNormal();
+				var wn = tri.getWeightedNormal();
 				nx += wn.X;
 				ny += wn.Y;
 				nz += wn.Z;
@@ -188,7 +188,7 @@ namespace IDx3DSharp
 
 		public Vertex Clone()
 		{
-			Vertex newVertex = new Vertex();
+			var newVertex = new Vertex();
 			newVertex.pos = pos.Clone();
 			newVertex.n = n.Clone();
 			newVertex.Tu = Tu;

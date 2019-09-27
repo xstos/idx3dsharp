@@ -55,8 +55,8 @@ namespace IDx3DSharp.DemoApp
 				if (_autorotation)
 				{
 					float speed = 1;
-					float dx = (float) Math.Sin((float) System.Environment.TickCount / 1000) / 20;
-					float dy = (float) Math.Cos((float) System.Environment.TickCount / 1000) / 20;
+					var dx = (float) Math.Sin((float) System.Environment.TickCount / 1000) / 20;
+					var dy = (float) Math.Cos((float) System.Environment.TickCount / 1000) / 20;
 					_scene.rotate(-speed * dx, speed * dy, speed * 0.04f);
 				}
 				_scene.render();
@@ -98,8 +98,8 @@ namespace IDx3DSharp.DemoApp
 		{
 			if (!_autorotation)
 			{
-				float dx = (float) (e.Y - _oldy) / 50;
-				float dy = (float) (_oldx - e.X) / 50;
+				var dx = (float) (e.Y - _oldy) / 50;
+				var dy = (float) (_oldx - e.X) / 50;
 				_scene.rotate(dx, dy, 0);
 				_oldx = e.X;
 				_oldy = e.Y;

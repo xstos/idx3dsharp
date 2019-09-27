@@ -23,7 +23,7 @@ namespace IDx3DSharp.DemoApp.Demos
 			catch (Exception e) { System.Console.WriteLine(e + ""); }
 
 			scene.rebuild();
-			for (int i = 0; i < scene.objects; i++)
+			for (var i = 0; i < scene.objects; i++)
 				TextureProjector.ProjectFrontal(scene._object[i]);
 
 			scene.Object("Sphere1").setMaterial(scene.material("Stone1"));

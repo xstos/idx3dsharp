@@ -17,7 +17,7 @@ namespace IDx3DSharp.DemoApp
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			using (MainForm testApp = new MainForm(new TestComponent2()))
+			using (var testApp = new MainForm(new TestComponent2()))
 			{
 				testApp.Show();
 				while (testApp.Created)

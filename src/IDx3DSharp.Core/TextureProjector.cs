@@ -41,11 +41,11 @@ namespace IDx3DSharp
 		public static void ProjectFrontal(SceneObject obj)
 		{
 			obj.rebuild();
-			Vector min = obj.Min();
-			Vector max = obj.Max();
-			float du = 1 / (max.X - min.X);
-			float dv = 1 / (max.Y - min.Y);
-			for (int i = 0; i < obj.vertices; i++)
+			var min = obj.Min();
+			var max = obj.Max();
+			var du = 1 / (max.X - min.X);
+			var dv = 1 / (max.Y - min.Y);
+			for (var i = 0; i < obj.vertices; i++)
 			{
 				obj.vertex[i].Tu = (obj.vertex[i].pos.X - min.X) * du;
 				obj.vertex[i].Tv = 1 - (obj.vertex[i].pos.Y - min.Y) * dv;
@@ -55,11 +55,11 @@ namespace IDx3DSharp
 		public static void ProjectTop(SceneObject obj)
 		{
 			obj.rebuild();
-			Vector min = obj.Min();
-			Vector max = obj.Max();
-			float du = 1 / (max.X - min.X);
-			float dv = 1 / (max.Z - min.Z);
-			for (int i = 0; i < obj.vertices; i++)
+			var min = obj.Min();
+			var max = obj.Max();
+			var du = 1 / (max.X - min.X);
+			var dv = 1 / (max.Z - min.Z);
+			for (var i = 0; i < obj.vertices; i++)
 			{
 				obj.vertex[i].Tu = (obj.vertex[i].pos.X - min.X) * du;
 				obj.vertex[i].Tv = (obj.vertex[i].pos.Z - min.Z) * dv;
@@ -69,10 +69,10 @@ namespace IDx3DSharp
 		public static void ProjectCylindric(SceneObject obj)
 		{
 			obj.rebuild();
-			Vector min = obj.Min();
-			Vector max = obj.Max();
-			float dz = 1 / (max.Z - min.Z);
-			for (int i = 0; i < obj.vertices; i++)
+			var min = obj.Min();
+			var max = obj.Max();
+			var dz = 1 / (max.Z - min.Z);
+			for (var i = 0; i < obj.vertices; i++)
 			{
 				obj.vertex[i].pos.BuildCylindric();
 				obj.vertex[i].Tu = obj.vertex[i].pos.Theta / (2 * 3.14159265f);

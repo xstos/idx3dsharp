@@ -76,7 +76,7 @@ namespace IDx3DSharp
 			_sinus = new float[4096];
 			_cosinus = new float[4096];
 
-			for (int i = 0; i < 4096; i++)
+			for (var i = 0; i < 4096; i++)
 			{
 				_sinus[i] = (float) Math.Sin((float) i / _rad2Scale);
 				_cosinus[i] = (float) Math.Cos((float) i / _rad2Scale);
@@ -124,9 +124,9 @@ namespace IDx3DSharp
 
 		public static void clearBuffer(uint[] buffer, uint value)
 		{
-			int size = buffer.Length - 1;
-			int cleared = 1;
-			int index = 1;
+			var size = buffer.Length - 1;
+			var cleared = 1;
+			var index = 1;
 			buffer[0] = value;
 
 			while (cleared < size)
@@ -141,7 +141,7 @@ namespace IDx3DSharp
 
 		public static void cropBuffer(int[] buffer, int min, int max)
 		{
-			for (int i = buffer.Length - 1; i >= 0; i--) buffer[i] = Crop(buffer[i], min, max);
+			for (var i = buffer.Length - 1; i >= 0; i--) buffer[i] = Crop(buffer[i], min, max);
 		}
 
 		public static void copyBuffer(uint[] source, uint[] target)
@@ -168,7 +168,7 @@ namespace IDx3DSharp
 
 		public static float Interpolate(float a, float b, float d)
 		{
-			float f = (1 - Cos(d * (float) Math.PI)) * 0.5f;
+			var f = (1 - Cos(d * (float) Math.PI)) * 0.5f;
 			return a + f * (b - a);
 		}
 	}

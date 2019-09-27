@@ -78,7 +78,7 @@ namespace IDx3DSharp
 			pixel = new uint[w * h];
 			p = pixel;
 			this.handle = GCHandle.Alloc(this.pixel, GCHandleType.Pinned);
-			IntPtr ptr = Marshal.UnsafeAddrOfPinnedArrayElement(this.pixel, 0);
+			var ptr = Marshal.UnsafeAddrOfPinnedArrayElement(this.pixel, 0);
 			this.image = new Bitmap(w, h, w * 4, PixelFormat.Format32bppPArgb, ptr);
 		}
 
@@ -171,11 +171,11 @@ namespace IDx3DSharp
 		private void performAntialiasing()
 		{
 			int offset;
-			int pos = 0;
-			for (int y = 0; y < (h >> 1); y++)
+			var pos = 0;
+			for (var y = 0; y < (h >> 1); y++)
 			{
 				offset = (y << 1) * w;
-				for (int x = 0; x < (w >> 1); x++)
+				for (var x = 0; x < (w >> 1); x++)
 				{
 					pixel[pos] = ((p[offset] & 0xFCFCFC) >> 2) +
 						((p[offset + 1] & 0xFCFCFC) >> 2) +
@@ -209,30 +209,30 @@ namespace IDx3DSharp
 		private void draw(uint[] buffer, int width, int height, Texture texture, int posx, int posy, int xsize, int ysize)
 		{
 			if (texture == null) return;
-			int w = xsize;
-			int h = ysize;
-			int xBase = posx;
-			int yBase = posy;
-			int tx = texture.width * 255;
-			int ty = texture.height * 255;
-			int tw = texture.width;
-			int dtx = tx / w;
-			int dty = ty / h;
-			int txBase = MathUtility.Crop(-xBase * dtx, 0, 255 * tx);
-			int tyBase = MathUtility.Crop(-yBase * dty, 0, 255 * ty);
-			int xend = MathUtility.Crop(xBase + w, 0, width);
-			int yend = MathUtility.Crop(yBase + h, 0, height);
+			var w = xsize;
+			var h = ysize;
+			var xBase = posx;
+			var yBase = posy;
+			var tx = texture.width * 255;
+			var ty = texture.height * 255;
+			var tw = texture.width;
+			var dtx = tx / w;
+			var dty = ty / h;
+			var txBase = MathUtility.Crop(-xBase * dtx, 0, 255 * tx);
+			var tyBase = MathUtility.Crop(-yBase * dty, 0, 255 * ty);
+			var xend = MathUtility.Crop(xBase + w, 0, width);
+			var yend = MathUtility.Crop(yBase + h, 0, height);
 			int pos, offset1, offset2;
 			xBase = MathUtility.Crop(xBase, 0, width);
 			yBase = MathUtility.Crop(yBase, 0, height);
 
 			ty = tyBase;
-			for (int j = yBase; j < yend; j++)
+			for (var j = yBase; j < yend; j++)
 			{
 				tx = txBase;
 				offset1 = j * width;
 				offset2 = (ty >> 8) * tw;
-				for (int i = xBase; i < xend; i++)
+				for (var i = xBase; i < xend; i++)
 				{
 					buffer[i + offset1] = texture.pixel[(tx >> 8) + offset2];
 					tx += dtx;
@@ -244,30 +244,30 @@ namespace IDx3DSharp
 
 		private void add(uint[] buffer, int width, int height, Texture texture, int posx, int posy, int xsize, int ysize)
 		{
-			int w = xsize;
-			int h = ysize;
-			int xBase = posx;
-			int yBase = posy;
-			int tx = texture.width * 255;
-			int ty = texture.height * 255;
-			int tw = texture.width;
-			int dtx = tx / w;
-			int dty = ty / h;
-			int txBase = MathUtility.Crop(-xBase * dtx, 0, 255 * tx);
-			int tyBase = MathUtility.Crop(-yBase * dty, 0, 255 * ty);
-			int xend = MathUtility.Crop(xBase + w, 0, width);
-			int yend = MathUtility.Crop(yBase + h, 0, height);
+			var w = xsize;
+			var h = ysize;
+			var xBase = posx;
+			var yBase = posy;
+			var tx = texture.width * 255;
+			var ty = texture.height * 255;
+			var tw = texture.width;
+			var dtx = tx / w;
+			var dty = ty / h;
+			var txBase = MathUtility.Crop(-xBase * dtx, 0, 255 * tx);
+			var tyBase = MathUtility.Crop(-yBase * dty, 0, 255 * ty);
+			var xend = MathUtility.Crop(xBase + w, 0, width);
+			var yend = MathUtility.Crop(yBase + h, 0, height);
 			int pos, offset1, offset2;
 			xBase = MathUtility.Crop(xBase, 0, width);
 			yBase = MathUtility.Crop(yBase, 0, height);
 
 			ty = tyBase;
-			for (int j = yBase; j < yend; j++)
+			for (var j = yBase; j < yend; j++)
 			{
 				tx = txBase;
 				offset1 = j * width;
 				offset2 = (ty >> 8) * tw;
-				for (int i = xBase; i < xend; i++)
+				for (var i = xBase; i < xend; i++)
 				{
 					buffer[i + offset1] = ColorUtility.add(texture.pixel[(tx >> 8) + offset2], pixel[i + offset1]);
 					tx += dtx;

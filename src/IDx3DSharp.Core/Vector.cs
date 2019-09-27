@@ -70,9 +70,9 @@ namespace IDx3DSharp
         public Vector Normalize()
         // Normalizes the vector
         {
-            float dist = Length();
+            var dist = Length();
             if (dist == 0) return this;
-            float invdist = 1 / dist;
+            var invdist = 1 / dist;
             X *= invdist;
             Y *= invdist;
             Z *= invdist;
@@ -107,9 +107,9 @@ namespace IDx3DSharp
         /// <returns></returns>
         public Vector Transform(Matrix m)
         {
-            float newx = X * m.m00 + Y * m.m01 + Z * m.m02 + m.m03;
-            float newy = X * m.m10 + Y * m.m11 + Z * m.m12 + m.m13;
-            float newz = X * m.m20 + Y * m.m21 + Z * m.m22 + m.m23;
+            var newx = X * m.m00 + Y * m.m01 + Z * m.m02 + m.m03;
+            var newy = X * m.m10 + Y * m.m11 + Z * m.m12 + m.m13;
+            var newz = X * m.m20 + Y * m.m21 + Z * m.m22 + m.m23;
             return new Vector(newx, newy, newz);
         }
 

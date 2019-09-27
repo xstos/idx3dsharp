@@ -179,28 +179,28 @@ namespace IDx3DSharp
 		
 		public static Camera FRONT()
 		{
-			Camera cam=new Camera();
+			var cam=new Camera();
 			cam.setPos(0,0,-2f);
 			return cam;
 		}
 		
 		public static Camera LEFT()
 		{
-			Camera cam=new Camera();
+			var cam=new Camera();
 			cam.setPos(2f,0,0);
 			return cam;
 		}
 		
 		public static Camera RIGHT()
 		{
-			Camera cam=new Camera();
+			var cam=new Camera();
 			cam.setPos(-2f,0,0);
 			return cam;
 		}
 		
 		public static Camera TOP()
 		{
-			Camera cam=new Camera();
+			var cam=new Camera();
 			cam.setPos(0,-2f,0);
 			return cam;
 		}

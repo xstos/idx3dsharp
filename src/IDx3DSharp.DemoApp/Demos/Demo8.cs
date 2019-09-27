@@ -16,7 +16,7 @@ namespace IDx3DSharp.DemoApp.Demos
 			catch (Exception e) { System.Console.WriteLine(e + ""); }
 
 			scene.rebuild();
-			for (int i = 0; i < scene.objects; i++)
+			for (var i = 0; i < scene.objects; i++)
 				scene._object[i].setMaterial(scene.material("Chrome"));
 			scene.normalize();
 			scene.rotate(3.14159265f / 2, 3.14159265f / 2, 0f);

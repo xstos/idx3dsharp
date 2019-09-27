@@ -93,9 +93,9 @@ namespace IDx3DSharp
 
 		public void Resize()
 		{
-			double log2inv = 1 / Math.Log(2);
-			int w = (int) Math.Pow(2, bitWidth = (int) (Math.Log(width) * log2inv));
-			int h = (int) Math.Pow(2, bitHeight = (int) (Math.Log(height) * log2inv));
+			var log2inv = 1 / Math.Log(2);
+			var w = (int) Math.Pow(2, bitWidth = (int) (Math.Log(width) * log2inv));
+			var h = (int) Math.Pow(2, bitHeight = (int) (Math.Log(height) * log2inv));
 			resize(w, h);
 		}
 
@@ -118,7 +118,7 @@ namespace IDx3DSharp
 		public Texture mix(Texture newData)
 		// mixes the texture with another one
 		{
-			for (int i = width * height - 1; i >= 0; i--)
+			for (var i = width * height - 1; i >= 0; i--)
 				pixel[i] = ColorUtility.mix(pixel[i], newData.pixel[i]);
 			return this;
 		}
@@ -126,7 +126,7 @@ namespace IDx3DSharp
 		public Texture add(Texture additive)
 		// additive blends another texture with this
 		{
-			for (int i = width * height - 1; i >= 0; i--)
+			for (var i = width * height - 1; i >= 0; i--)
 				pixel[i] = ColorUtility.add(pixel[i], additive.pixel[i]);
 			return this;
 		}
@@ -134,7 +134,7 @@ namespace IDx3DSharp
 		public Texture sub(Texture subtractive)
 		// subtractive blends another texture with this
 		{
-			for (int i = width * height - 1; i >= 0; i--)
+			for (var i = width * height - 1; i >= 0; i--)
 				pixel[i] = ColorUtility.sub(pixel[i], subtractive.pixel[i]);
 			return this;
 		}
@@ -142,7 +142,7 @@ namespace IDx3DSharp
 		public Texture inv()
 		// inverts the texture
 		{
-			for (int i = width * height - 1; i >= 0; i--)
+			for (var i = width * height - 1; i >= 0; i--)
 				pixel[i] = ColorUtility.inv(pixel[i]);
 			return this;
 		}
@@ -150,7 +150,7 @@ namespace IDx3DSharp
 		public Texture multiply(Texture multiplicative)
 		// inverts the texture
 		{
-			for (int i = width * height - 1; i >= 0; i--)
+			for (var i = width * height - 1; i >= 0; i--)
 				pixel[i] = ColorUtility.multiply(pixel[i], multiplicative.pixel[i]);
 			return this;
 		}
@@ -165,7 +165,7 @@ namespace IDx3DSharp
 		public Texture toAverage()
 		// builds the averidge of the channels
 		{
-			for (int i = width * height - 1; i >= 0; i--)
+			for (var i = width * height - 1; i >= 0; i--)
 				pixel[i] = ColorUtility.getAverage(pixel[i]);
 			return this;
 		}
@@ -173,7 +173,7 @@ namespace IDx3DSharp
 		public Texture toGray()
 		// converts this texture to gray
 		{
-			for (int i = width * height - 1; i >= 0; i--)
+			for (var i = width * height - 1; i >= 0; i--)
 				pixel[i] = ColorUtility.getGray(pixel[i]);
 			return this;
 		}
@@ -181,7 +181,7 @@ namespace IDx3DSharp
 		public Texture valToGray()
 		{
 			uint intensity;
-			for (int i = width * height - 1; i >= 0; i--)
+			for (var i = width * height - 1; i >= 0; i--)
 			{
 				intensity = MathUtility.Crop(pixel[i], 0, 255);
 				pixel[i] = ColorUtility.getColor(intensity, intensity, intensity);
@@ -192,8 +192,8 @@ namespace IDx3DSharp
 
 		public Texture colorize(uint[] pal)
 		{
-			uint range = (uint) pal.Length - 1;
-			for (int i = width * height - 1; i >= 0; i--)
+			var range = (uint) pal.Length - 1;
+			for (var i = width * height - 1; i >= 0; i--)
 				pixel[i] = pal[MathUtility.Crop(pixel[i], 0, range)];
 			return this;
 		}
@@ -201,13 +201,13 @@ namespace IDx3DSharp
 		public static Texture blendTopDown(Texture top, Texture down)
 		{
 			down.resize(top.width, top.height);
-			Texture t = new Texture(top.width, top.height);
-			int pos = 0;
+			var t = new Texture(top.width, top.height);
+			var pos = 0;
 			uint alpha;
-			for (int y = 0; y < top.height; y++)
+			for (var y = 0; y < top.height; y++)
 			{
 				alpha = (uint) (255 * y / (top.height - 1));
-				for (int x = 0; x < top.width; x++)
+				for (var x = 0; x < top.width; x++)
 				{
 					t.pixel[pos] = ColorUtility.transparency(down.pixel[pos], top.pixel[pos], alpha);
 					pos++;
@@ -228,15 +228,15 @@ namespace IDx3DSharp
     this.width = map.Width;
     this.height = map.Height;
     this.pixel = new uint[this.width * this.height];
-    BitmapData bitmapdata = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-    int stride = bitmapdata.Stride;
-    IntPtr ptr = bitmapdata.Scan0;
-    byte* numPtr = (byte*) ptr;
-    int num2 = bitmapdata.Stride - (map.Width * 3);
-    int num3 = 0;
-    for (int i = 0; i < map.Height; i++)
+    var bitmapdata = map.LockBits(new Rectangle(0, 0, map.Width, map.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+    var stride = bitmapdata.Stride;
+    var ptr = bitmapdata.Scan0;
+    var numPtr = (byte*) ptr;
+    var num2 = bitmapdata.Stride - (map.Width * 3);
+    var num3 = 0;
+    for (var i = 0; i < map.Height; i++)
     {
-        for (int j = 0; j < map.Width; j++)
+        for (var j = 0; j < map.Width; j++)
         {
             int num6 = numPtr[0];
             int num7 = numPtr[1];
@@ -258,16 +258,16 @@ namespace IDx3DSharp
 		private void setSize(int w, int h)
 		// resizes the texture
 		{
-			int offset = w * h;
+			var offset = w * h;
 			int offset2;
 			if (w * h != 0)
 			{
-				uint[] newpixels = new uint[w * h];
-				for (int j = h - 1; j >= 0; j--)
+				var newpixels = new uint[w * h];
+				for (var j = h - 1; j >= 0; j--)
 				{
 					offset -= w;
 					offset2 = (j * height / h) * width;
-					for (int i = w - 1; i >= 0; i--)
+					for (var i = w - 1; i >= 0; i--)
 						newpixels[i + offset] = pixel[(i * width / w) + offset2];
 				}
 				width = w; height = h; pixel = newpixels;
@@ -281,7 +281,7 @@ namespace IDx3DSharp
 
 		public Texture Clone()
 		{
-			Texture t = new Texture(width, height);
+			var t = new Texture(width, height);
 			MathUtility.copyBuffer(pixel, t.pixel);
 			return t;
 		}

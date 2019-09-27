@@ -72,7 +72,7 @@ namespace IDx3DSharp
 		{
 			System.Console.WriteLine(">> Importing scene from 3ds stream ...");
 			scene = targetscene;
-			BinaryReader input = new BinaryReader(inStream);
+			var input = new BinaryReader(inStream);
 			readJunkHeader(input);
 			if (currentJunkId != 0x4D4D)
 			{
@@ -89,7 +89,7 @@ namespace IDx3DSharp
 		private string readString(BinaryReader inStream)
 		{
 			byte num;
-			string str = "";
+			var str = "";
 			while ((num = inStream.ReadByte()) != 0)
 				str = str + ((char) num);
 			return str;
@@ -107,11 +107,11 @@ namespace IDx3DSharp
 
 		private float readFloat(BinaryReader input)
 		{
-			int num = this.readInt(input);
-			int num2 = ((num >> 0x1f) == 0) ? 1 : -1;
-			int num3 = (num >> 0x17) & 0xff;
-			int num4 = (num3 == 0) ? ((num & 0x7fffff) << 1) : ((num & 0x7fffff) | 0x800000);
-			double num5 = (num2 * num4) * Math.Pow(2.0, (double) (num3 - 150));
+			var num = this.readInt(input);
+			var num2 = ((num >> 0x1f) == 0) ? 1 : -1;
+			var num3 = (num >> 0x17) & 0xff;
+			var num4 = (num3 == 0) ? ((num & 0x7fffff) << 1) : ((num & 0x7fffff) | 0x800000);
+			var num5 = (num2 * num4) * Math.Pow(2.0, (double) (num3 - 150));
 			return (float) num5;
 		}
 
@@ -163,7 +163,7 @@ namespace IDx3DSharp
 		{
 			try
 			{
-				for (int i = 0; (i < (this.nextJunkOffset - 6)) && !this.endOfStream; i++)
+				for (var i = 0; (i < (this.nextJunkOffset - 6)) && !this.endOfStream; i++)
 				{
 					this.endOfStream = inStream.ReadByte() < 0;
 				}
@@ -177,8 +177,8 @@ namespace IDx3DSharp
 		private void readVertexList(BinaryReader input)
 		{
 			float x, y, z;
-			int vertices = readShort(input);
-			for (int i = 0; i < vertices; i++)
+			var vertices = readShort(input);
+			for (var i = 0; i < vertices; i++)
 			{
 				x = readFloat(input);
 				y = readFloat(input);
@@ -190,8 +190,8 @@ namespace IDx3DSharp
 		private void readPointList(BinaryReader input)
 		{
 			int v1, v2, v3;
-			int triangles = readShort(input);
-			for (int i = 0; i < triangles; i++)
+			var triangles = readShort(input);
+			for (var i = 0; i < triangles; i++)
 			{
 				v1 = readShort(input);
 				v2 = readShort(input);
@@ -206,8 +206,8 @@ namespace IDx3DSharp
 
 		private void readMappingCoordinates(BinaryReader input)
 		{
-			int vertices = readShort(input);
-			for (int i = 0; i < vertices; i++)
+			var vertices = readShort(input);
+			for (var i = 0; i < vertices; i++)
 			{
 				currentObject.Vertex(i).Tu = readFloat(input);
 				currentObject.Vertex(i).Tv = readFloat(input);

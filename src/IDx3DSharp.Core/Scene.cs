@@ -224,16 +224,16 @@ namespace IDx3DSharp
 			if (xpos < 0 || xpos >= width) return null;
 			if (ypos < 0 || ypos >= height) return null;
 
-			int pos = xpos + renderPipeline.screen.w * ypos;
+			var pos = xpos + renderPipeline.screen.w * ypos;
 			if (renderPipeline.screen.antialias) pos *= 2;
-			uint idCode = renderPipeline.idBuffer[pos];
+			var idCode = renderPipeline.idBuffer[pos];
 			if (idCode == uint.MaxValue) return null;
 			return _object[idCode >> 16].triangle[idCode & 0xFFFF];
 		}
 
 		public SceneObject identifyObjectAt(int xpos, int ypos)
 		{
-			Triangle tri = identifyTriangleAt(xpos, ypos);
+			var tri = identifyTriangleAt(xpos, ypos);
             return tri?.parent;
 		}
 
@@ -269,23 +269,23 @@ namespace IDx3DSharp
 
 		public int countVertices()
 		{
-			int counter = 0;
-			for (int i = 0; i < objects; i++) counter += _object[i].vertices;
+			var counter = 0;
+			for (var i = 0; i < objects; i++) counter += _object[i].vertices;
 			return counter;
 		}
 
 		public int countTriangles()
 		{
 			uint counter = 0;
-			for (int i = 0; i < objects; i++) counter += _object[i].triangles;
+			for (var i = 0; i < objects; i++) counter += _object[i].triangles;
 			return (int) counter;
 		}
 
 		public override string ToString()
 		{
-			StringBuilder buffer = new StringBuilder();
+			var buffer = new StringBuilder();
 			buffer.Append("<scene>\r\n");
-			for (int i = 0; i < objects; i++) buffer.Append(_object[i].ToString());
+			for (var i = 0; i < objects; i++) buffer.Append(_object[i].ToString());
 			return buffer.ToString();
 		}
 
@@ -304,7 +304,7 @@ namespace IDx3DSharp
 			max = _object[0].Max();
 			min = _object[0].Min();
 
-			for (int i = 0; i < objects; i++)
+			for (var i = 0; i < objects; i++)
 			{
 				tempmax = _object[i].Max();
 				tempmin = _object[i].Min();
@@ -315,14 +315,14 @@ namespace IDx3DSharp
 				if (tempmin.Y < min.Y) min.Y = tempmin.Y;
 				if (tempmin.Z < min.Z) min.Z = tempmin.Z;
 			}
-			float xdist = max.X - min.X;
-			float ydist = max.Y - min.Y;
-			float zdist = max.Z - min.Z;
-			float xmed = (max.X + min.X) / 2;
-			float ymed = (max.Y + min.Y) / 2;
-			float zmed = (max.Z + min.Z) / 2;
+			var xdist = max.X - min.X;
+			var ydist = max.Y - min.Y;
+			var zdist = max.Z - min.Z;
+			var xmed = (max.X + min.X) / 2;
+			var ymed = (max.Y + min.Y) / 2;
+			var zmed = (max.Z + min.Z) / 2;
 
-			float diameter = (xdist > ydist) ? xdist : ydist;
+			var diameter = (xdist > ydist) ? xdist : ydist;
 			diameter = (zdist > diameter) ? zdist : diameter;
 
 			normalizedOffset = new Vector(xmed, ymed, zmed);

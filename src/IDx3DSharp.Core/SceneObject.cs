@@ -173,7 +173,7 @@ public class SceneObject : CoreObject
 		
 		public void addVertex(float x, float y, float z, float u, float v)
 		{
-			Vertex vert=new Vertex(x,y,z);
+			var vert=new Vertex(x,y,z);
 			vert.setUV(u,v);
 			addVertex(vert);
 		}
@@ -186,28 +186,28 @@ public class SceneObject : CoreObject
 		public void regenerate()
 		// Regenerates the vertex normals
 		{
-			for (int i=0;i<triangles;i++) triangle[i].regenerateNormal();
-			for (int i=0;i<vertices;i++) vertex[i].regenerateNormal();
+			for (var i=0;i<triangles;i++) triangle[i].regenerateNormal();
+			for (var i=0;i<vertices;i++) vertex[i].regenerateNormal();
 		}
 
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            var buffer = new StringBuilder();
             buffer.Append("<object id=" + name + ">\r\n");
-            for (int i = 0; i < vertices; i++) buffer.Append(vertex[i].ToString());
+            for (var i = 0; i < vertices; i++) buffer.Append(vertex[i].ToString());
             return buffer.ToString();
         }
 		
 		public void scaleTextureCoordinates(float fu, float fv)
 		{
 			rebuild();
-			for (int i=0;i<vertices;i++) vertex[i].scaleTextureCoordinates(fu,fv);
+			for (var i=0;i<vertices;i++) vertex[i].scaleTextureCoordinates(fu,fv);
 		}
 		
 		public void tilt(float fact)
 		{
 			rebuild();
-			for (int i=0;i<vertices;i++)
+			for (var i=0;i<vertices;i++)
 				vertex[i].pos=Vector.Add(vertex[i].pos,Vector.Random(fact));
 			regenerate();
 		}
@@ -215,10 +215,10 @@ public class SceneObject : CoreObject
 		public Vector Min()
 		{
 			if (vertices==0) return new Vector(0f,0f,0f);
-			float minX=vertex[0].pos.X;
-			float minY=vertex[0].pos.Y;
-			float minZ=vertex[0].pos.Z;
-			for (int i=1; i<vertices; i++) 
+			var minX=vertex[0].pos.X;
+			var minY=vertex[0].pos.Y;
+			var minZ=vertex[0].pos.Z;
+			for (var i=1; i<vertices; i++) 
 			{
 				if(vertex[i].pos.X<minX) minX=vertex[i].pos.X;
 				if(vertex[i].pos.Y<minY) minY=vertex[i].pos.Y;
@@ -230,10 +230,10 @@ public class SceneObject : CoreObject
 		public Vector Max()
 		{
 			if (vertices==0) return new Vector(0f,0f,0f);
-			float maxX=vertex[0].pos.X;
-			float maxY=vertex[0].pos.Y;
-			float maxZ=vertex[0].pos.Z;
-			for (int i=1; i<vertices; i++) 
+			var maxX=vertex[0].pos.X;
+			var maxY=vertex[0].pos.Y;
+			var maxZ=vertex[0].pos.Z;
+			for (var i=1; i<vertices; i++) 
 			{
 				if(vertex[i].pos.X>maxX) maxX=vertex[i].pos.X;
 				if(vertex[i].pos.Y>maxY) maxY=vertex[i].pos.Y;
@@ -249,9 +249,9 @@ public class SceneObject : CoreObject
 		// so your object actually does not move.
 		// Usefull if you want prepare objects for self rotation.
 		{
-			Vector center=getCenter();
+			var center=getCenter();
 			
-			for (int i=0;i<vertices;i++)
+			for (var i=0;i<vertices;i++)
 			{
 				vertex[i].pos.X-=center.X;	
 				vertex[i].pos.Y-=center.Y;	
@@ -263,16 +263,16 @@ public class SceneObject : CoreObject
 		public Vector getCenter()
 		// Returns the center of this object
 		{
-			Vector max=Max();
-			Vector min=Min();
+			var max=Max();
+			var min=Min();
 			return new Vector((max.X+min.X)/2,(max.Y+min.Y)/2,(max.Z+min.Z)/2);
 		}
 		
 		public Vector getDimension()
 		// Returns the x,y,z - Dimension of this object
 		{
-			Vector max=Max();
-			Vector min=Min();
+			var max=Max();
+			var min=Min();
 			return new Vector(max.X-min.X,max.Y-min.Y,max.Z-min.Z);
 		}			
 		
@@ -281,7 +281,7 @@ public class SceneObject : CoreObject
 		// and resets the matrix to untransformed.
 		{
 			rebuild();
-			for (int i=vertices-1;i>=0;i--)
+			for (var i=vertices-1;i>=0;i--)
 				vertex[i].pos=vertex[i].pos.Transform(matrix);
 			regenerate();
 			matrix.reset();
@@ -290,10 +290,10 @@ public class SceneObject : CoreObject
 		
 		public SceneObject Clone()
 		{
-			SceneObject obj=new SceneObject();
+			var obj=new SceneObject();
 			rebuild();
-			for(int i=0;i<vertices;i++) obj.addVertex(vertex[i].Clone());
-			for(int i=0;i<triangles;i++) obj.addTriangle(triangle[i].Clone());
+			for(var i=0;i<vertices;i++) obj.addVertex(vertex[i].Clone());
+			for(var i=0;i<triangles;i++) obj.addTriangle(triangle[i].Clone());
 			obj.name=name+" [cloned]";
 			obj.material=material;
 			obj.matrix=matrix.Clone();
@@ -305,12 +305,12 @@ public class SceneObject : CoreObject
 		public void removeDuplicateVertices()
 		{
 			rebuild();
-            List<Edge> edgesToCollapse = new List<Edge>();
-			for (int i=0;i<vertices;i++)
-				for (int j=i+1;j<vertices;j++)
+            var edgesToCollapse = new List<Edge>();
+			for (var i=0;i<vertices;i++)
+				for (var j=i+1;j<vertices;j++)
 					if (vertex[i].equals(vertex[j],0.0001f))
 						edgesToCollapse.Add(new Edge(vertex[i],vertex[j]));
-            foreach (Edge edge in edgesToCollapse)
+            foreach (var edge in edgesToCollapse)
 			    edgeCollapse(edge);
 		
 			removeDegeneratedTriangles();
@@ -319,7 +319,7 @@ public class SceneObject : CoreObject
 		public void removeDegeneratedTriangles()
 		{
 			rebuild();
-			for (int i=0;i<triangles;i++)
+			for (var i=0;i<triangles;i++)
 				if (triangle[i].degenerated()) removeTriangleAt(i);
 			
 			dirty=true;
@@ -335,9 +335,9 @@ public class SceneObject : CoreObject
 			Vector ab,bc,ca,nab,nbc,nca,center;
 			float sab,sbc,sca,rab,rbc,rca;
 			float uab,vab,ubc,vbc,uca,vca;
-			float sqrt3=(float)Math.Sqrt(3f);
+			var sqrt3=(float)Math.Sqrt(3f);
 			
-			for (int i=0;i<triangles;i++)
+			for (var i=0;i<triangles;i++)
 			{
 				tri=Triangle(i);
 				a=tri.p1;
@@ -388,13 +388,13 @@ public class SceneObject : CoreObject
 		private void edgeCollapse(Edge edge)
 		// Collapses the edge [u,v] by replacing v by u
 		{
-			Vertex u=edge.start();
-			Vertex v=edge.end();
+			var u=edge.start();
+			var v=edge.end();
 			if (!vertexData.Contains(u)) return;
             if (!vertexData.Contains(v)) return;
 			rebuild();
 			Triangle tri;
-			for (int i=0; i<triangles; i++)
+			for (var i=0; i<triangles; i++)
 			{
 				tri=Triangle(i);
 				if (tri.p1==v) tri.p1=u;

@@ -85,7 +85,7 @@ namespace IDx3DSharp
 
         public float[,] ExportToArray()
         {
-            float[,] data = new float[4, 4];
+            var data = new float[4, 4];
             data[0, 0] = m00; data[0, 1] = m01; data[0, 2] = m02; data[0, 3] = m03;
             data[1, 0] = m10; data[1, 1] = m11; data[1, 2] = m12; data[1, 3] = m13;
             data[2, 0] = m20; data[2, 1] = m21; data[2, 2] = m22; data[2, 3] = m23;
@@ -100,7 +100,7 @@ namespace IDx3DSharp
         public static Matrix shiftMatrix(float dx, float dy, float dz)
         // matrix for shifting
         {
-            Matrix m = new Matrix();
+            var m = new Matrix();
             m.m03 = dx;
             m.m13 = dy;
             m.m23 = dz;
@@ -110,7 +110,7 @@ namespace IDx3DSharp
         public static Matrix scaleMatrix(float dx, float dy, float dz)
         // matrix for scaling
         {
-            Matrix m = new Matrix();
+            var m = new Matrix();
             m.m00 = dx;
             m.m11 = dy;
             m.m22 = dz;
@@ -126,13 +126,13 @@ namespace IDx3DSharp
         public static Matrix rotateMatrix(float dx, float dy, float dz)
         // matrix for rotation
         {
-            Matrix result = new Matrix();
+            var result = new Matrix();
             float SIN;
             float COS;
 
             if (dx != 0)
             {
-                Matrix m = new Matrix();
+                var m = new Matrix();
                 SIN = MathUtility.Sin(dx);
                 COS = MathUtility.Cos(dx);
                 m.m11 = COS;
@@ -143,7 +143,7 @@ namespace IDx3DSharp
             }
             if (dy != 0)
             {
-                Matrix m = new Matrix();
+                var m = new Matrix();
                 SIN = MathUtility.Sin(dy);
                 COS = MathUtility.Cos(dy);
                 m.m00 = COS;
@@ -154,7 +154,7 @@ namespace IDx3DSharp
             }
             if (dz != 0)
             {
-                Matrix m = new Matrix();
+                var m = new Matrix();
                 SIN = MathUtility.Sin(dz);
                 COS = MathUtility.Cos(dz);
                 m.m00 = COS;
@@ -207,7 +207,7 @@ namespace IDx3DSharp
         public void transform(Matrix n)
         // transforms this matrix by matrix n from left (this=n x this)
         {
-            Matrix m = this.Clone();
+            var m = this.Clone();
 
             m00 = n.m00 * m.m00 + n.m01 * m.m10 + n.m02 * m.m20;
             m01 = n.m00 * m.m01 + n.m01 * m.m11 + n.m02 * m.m21;
@@ -226,7 +226,7 @@ namespace IDx3DSharp
         public void preTransform(Matrix n)
         // transforms this matrix by matrix n from right (this=this x n)
         {
-            Matrix m = this.Clone();
+            var m = this.Clone();
 
             m00 = m.m00 * n.m00 + m.m01 * n.m10 + m.m02 * n.m20;
             m01 = m.m00 * n.m01 + m.m01 * n.m11 + m.m02 * n.m21;
@@ -245,7 +245,7 @@ namespace IDx3DSharp
         public static Matrix multiply(Matrix m1, Matrix m2)
         // returns m1 x m2
         {
-            Matrix m = new Matrix();
+            var m = new Matrix();
 
             m.m00 = m1.m00 * m2.m00 + m1.m01 * m2.m10 + m1.m02 * m2.m20;
             m.m01 = m1.m00 * m2.m01 + m1.m01 * m2.m11 + m1.m02 * m2.m21;
@@ -264,7 +264,7 @@ namespace IDx3DSharp
 
         public override string ToString()
         {
-            StringBuilder result = new StringBuilder("<Matrix: \r\n");
+            var result = new StringBuilder("<Matrix: \r\n");
             result.Append(m00 + "," + m01 + "," + m02 + "," + m03 + ",\r\n");
             result.Append(m10 + "," + m11 + "," + m12 + "," + m13 + ",\r\n");
             result.Append(m20 + "," + m21 + "," + m22 + "," + m23 + ",\r\n");
@@ -274,7 +274,7 @@ namespace IDx3DSharp
 
         public Matrix Clone()
         {
-            Matrix m = new Matrix();
+            var m = new Matrix();
             m.m00 = m00; m.m01 = m01; m.m02 = m02; m.m03 = m03;
             m.m10 = m10; m.m11 = m11; m.m12 = m12; m.m13 = m13;
             m.m20 = m20; m.m21 = m21; m.m22 = m22; m.m23 = m23;
@@ -291,18 +291,18 @@ namespace IDx3DSharp
         // Returns the inverse of this matrix
         // Code generated with MapleV and handoptimized
         {
-            Matrix m = new Matrix();
+            var m = new Matrix();
 
-            float q1 = m12; float q6 = m10 * m01; float q7 = m10 * m21; float q8 = m02;
-            float q13 = m20 * m01; float q14 = m20 * m11; float q21 = m02 * m21; float q22 = m03 * m21;
-            float q25 = m01 * m12; float q26 = m01 * m13; float q27 = m02 * m11; float q28 = m03 * m11;
-            float q29 = m10 * m22; float q30 = m10 * m23; float q31 = m20 * m12; float q32 = m20 * m13;
-            float q35 = m00 * m22; float q36 = m00 * m23; float q37 = m20 * m02; float q38 = m20 * m03;
-            float q41 = m00 * m12; float q42 = m00 * m13; float q43 = m10 * m02; float q44 = m10 * m03;
-            float q45 = m00 * m11; float q48 = m00 * m21;
-            float q49 = q45 * m22 - q48 * q1 - q6 * m22 + q7 * q8;
-            float q50 = q13 * q1 - q14 * q8;
-            float q51 = 1 / (q49 + q50);
+            var q1 = m12; var q6 = m10 * m01; var q7 = m10 * m21; var q8 = m02;
+            var q13 = m20 * m01; var q14 = m20 * m11; var q21 = m02 * m21; var q22 = m03 * m21;
+            var q25 = m01 * m12; var q26 = m01 * m13; var q27 = m02 * m11; var q28 = m03 * m11;
+            var q29 = m10 * m22; var q30 = m10 * m23; var q31 = m20 * m12; var q32 = m20 * m13;
+            var q35 = m00 * m22; var q36 = m00 * m23; var q37 = m20 * m02; var q38 = m20 * m03;
+            var q41 = m00 * m12; var q42 = m00 * m13; var q43 = m10 * m02; var q44 = m10 * m03;
+            var q45 = m00 * m11; var q48 = m00 * m21;
+            var q49 = q45 * m22 - q48 * q1 - q6 * m22 + q7 * q8;
+            var q50 = q13 * q1 - q14 * q8;
+            var q51 = 1 / (q49 + q50);
 
             m.m00 = (m11 * m22 * m33 - m11 * m23 * m32 - m21 * m12 * m33 + m21 * m13 * m32 + m31 * m12 * m23 - m31 * m13 * m22) * q51;
             m.m01 = -(m01 * m22 * m33 - m01 * m23 * m32 - q21 * m33 + q22 * m32) * q51;

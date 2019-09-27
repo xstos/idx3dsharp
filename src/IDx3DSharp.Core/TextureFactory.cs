@@ -51,7 +51,7 @@ namespace IDx3DSharp
 
 		public static Texture SKY(int w, int h, float density)
 		{
-			uint[] colors = new uint[2];
+			var colors = new uint[2];
 			colors[0] = 0x003399;
 			colors[1] = 0xFFFFFF;
 			return PERLIN(w, h, 0.5f, 2.8f * density, 8, 1024).colorize(
@@ -60,7 +60,7 @@ namespace IDx3DSharp
 
 		public static Texture MARBLE(int w, int h, float density)
 		{
-			uint[] colors = new uint[3];
+			var colors = new uint[3];
 			colors[0] = 0x111111;
 			colors[1] = 0x696070;
 			colors[2] = 0xFFFFFF;
@@ -70,7 +70,7 @@ namespace IDx3DSharp
 
 		public static Texture WOOD(int w, int h, float density)
 		{
-			uint[] colors = new uint[3];
+			var colors = new uint[3];
 			colors[0] = 0x332211;
 			colors[1] = 0x523121;
 			colors[2] = 0x996633;
@@ -81,14 +81,14 @@ namespace IDx3DSharp
 
 		public static Texture RANDOM(int w, int h)
 		{
-			int nc = (int) MathUtility.Random(2, 6);
-			uint[] colors = new uint[nc];
-			for (int i = 0; i < nc; i++)
+			var nc = (int) MathUtility.Random(2, 6);
+			var colors = new uint[nc];
+			for (var i = 0; i < nc; i++)
 				colors[i] = ColorUtility.random();
 
-			float persistency = MathUtility.Random(0.4f, 0.9f);
-			float density = MathUtility.Random(0.5f, 3f);
-			int samples = (int) MathUtility.Random(1, 7f);
+			var persistency = MathUtility.Random(0.4f, 0.9f);
+			var density = MathUtility.Random(0.5f, 3f);
+			var samples = (int) MathUtility.Random(1, 7f);
 
 			return PERLIN(w, h, persistency, density, samples, 1024).colorize(
 				ColorUtility.makeGradient(colors, 1024));
@@ -96,11 +96,11 @@ namespace IDx3DSharp
 
 		public static Texture CHECKERBOARD(int w, int h, int cellbits, uint oddColor, uint evenColor)
 		{
-			Texture t = new Texture(w, h);
+			var t = new Texture(w, h);
 
-			int pos = 0;
-			for (int y = 0; y < h; y++)
-				for (int x = 0; x < w; x++)
+			var pos = 0;
+			for (var y = 0; y < h; y++)
+				for (var x = 0; x < w; x++)
 					t.pixel[pos++] = (((x >> cellbits) + (y >> cellbits)) & 1) == 0 ? evenColor : oddColor;
 
 			return t;
@@ -111,12 +111,12 @@ namespace IDx3DSharp
 		public static Texture PERLIN(int w, int h, float persistency, float density, int samples, int scale)
 		{
 			initNoiseBuffer();
-			Texture t = new Texture(w, h);
-			int pos = 0;
-			float wavelength = (float) ((w > h) ? w : h) / density;
+			var t = new Texture(w, h);
+			var pos = 0;
+			var wavelength = (float) ((w > h) ? w : h) / density;
 
-			for (int y = 0; y < h; y++)
-				for (int x = 0; x < w; x++)
+			for (var y = 0; y < h; y++)
+				for (var x = 0; x < w; x++)
 					t.pixel[pos++] = (uint) ((float) scale * perlin2d(x, y, wavelength, persistency, samples));
 			return t;
 		}
@@ -124,12 +124,12 @@ namespace IDx3DSharp
 		public static Texture WAVE(int w, int h, float persistency, float density, int samples, int scale)
 		{
 			initNoiseBuffer();
-			Texture t = new Texture(w, h);
-			int pos = 0;
-			float wavelength = (float) ((w > h) ? w : h) / density;
+			var t = new Texture(w, h);
+			var pos = 0;
+			var wavelength = (float) ((w > h) ? w : h) / density;
 
-			for (int y = 0; y < h; y++)
-				for (int x = 0; x < w; x++)
+			for (var y = 0; y < h; y++)
+				for (var x = 0; x < w; x++)
 					t.pixel[pos++] = (uint) ((double) scale * (Math.Sin(32 * perlin2d(x, y, wavelength, persistency, samples)) * 0.5 + 0.5));
 			return t;
 		}
@@ -138,13 +138,13 @@ namespace IDx3DSharp
 		// TIP: For wooden textures
 		{
 			initNoiseBuffer();
-			Texture t = new Texture(w, h);
-			int pos = 0;
-			float wavelength = (float) ((w > h) ? w : h) / density;
+			var t = new Texture(w, h);
+			var pos = 0;
+			var wavelength = (float) ((w > h) ? w : h) / density;
 			float perlin;
 
-			for (int y = 0; y < h; y++)
-				for (int x = 0; x < w; x++)
+			for (var y = 0; y < h; y++)
+				for (var x = 0; x < w; x++)
 				{
 					perlin = (float) levels * perlin2d(x, y, wavelength, persistency, samples);
 					t.pixel[pos++] = (uint) ((float) scale * (perlin - (float) (int) perlin));
@@ -157,11 +157,11 @@ namespace IDx3DSharp
 		private static float perlin2d(float x, float y, float wavelength, float persistence, int samples)
 		{
 			float sum = 0;
-			float freq = 1f / wavelength;
-			float amp = persistence;
+			var freq = 1f / wavelength;
+			var amp = persistence;
 			float range = 0;
 
-			for (int i = 0; i < samples; i++)
+			for (var i = 0; i < samples; i++)
 			{
 				sum += amp * interpolatedNoise(x * freq, y * freq, i);
 				range += amp;
@@ -175,13 +175,13 @@ namespace IDx3DSharp
 
 		private static float interpolatedNoise(float x, float y, int octave)
 		{
-			int intx = (int) x;
-			int inty = (int) y;
-			float fracx = x - (float) intx;
-			float fracy = y - (float) inty;
+			var intx = (int) x;
+			var inty = (int) y;
+			var fracx = x - (float) intx;
+			var fracy = y - (float) inty;
 
-			float i1 = MathUtility.Interpolate(noise(intx, inty, octave), noise(intx + 1, inty, octave), fracx);
-			float i2 = MathUtility.Interpolate(noise(intx, inty + 1, octave), noise(intx + 1, inty + 1, octave), fracx);
+			var i1 = MathUtility.Interpolate(noise(intx, inty, octave), noise(intx + 1, inty, octave), fracx);
+			var i2 = MathUtility.Interpolate(noise(intx, inty + 1, octave), noise(intx + 1, inty + 1, octave), fracx);
 
 			return MathUtility.Interpolate(i1, i2, fracy);
 		}
@@ -200,8 +200,8 @@ namespace IDx3DSharp
 
 		private static float noise(int seed, int octave)
 		{
-			int id = octave & 3;
-			int n = (seed << 13) ^ seed;
+			var id = octave & 3;
+			var n = (seed << 13) ^ seed;
 
 			if (id == 0) return (float) (1f - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7FFFFFFF) * 0.000000000931322574615478515625f);
 			if (id == 1) return (float) (1f - ((n * (n * n * 12497 + 604727) + 1345679039) & 0x7FFFFFFF) * 0.000000000931322574615478515625f);
@@ -213,8 +213,8 @@ namespace IDx3DSharp
 		{
 			if (noiseBufferInitialized) return;
 			noiseBuffer = new float[4, 8192];
-			for (int octave = 0; octave < 4; octave++)
-				for (int i = 0; i < 8192; i++)
+			for (var octave = 0; octave < 4; octave++)
+				for (var i = 0; i < 8192; i++)
 					noiseBuffer[octave, i] = noise(i, octave);
 			noiseBufferInitialized = true;
 		}

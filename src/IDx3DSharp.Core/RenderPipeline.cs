@@ -129,14 +129,14 @@ namespace IDx3DSharp
 
 			// Project
 
-			Matrix m = Matrix.multiply(cam.getMatrix(), scene.matrix);
-			Matrix nm = Matrix.multiply(cam.getNormalMatrix(), scene.normalmatrix);
+			var m = Matrix.multiply(cam.getMatrix(), scene.matrix);
+			var nm = Matrix.multiply(cam.getNormalMatrix(), scene.normalmatrix);
 			Matrix vertexProjection, normalProjection;
 			SceneObject obj;
 			Triangle t;
 			Vertex v;
-			int w = screen.w;
-			int h = screen.h;
+			var w = screen.w;
+			var h = screen.h;
 			for (uint id = 0, length = scene.objects; id < length; id++)
 			{
 				obj = scene._object[id];
@@ -163,9 +163,9 @@ namespace IDx3DSharp
 				}
 			}
 
-			Triangle[] tri = getOpaqueQueue();
+			var tri = getOpaqueQueue();
 			if (tri != null)
-				for (int i = tri.Length - 1; i >= 0; i--)
+				for (var i = tri.Length - 1; i >= 0; i--)
 				{
 					rasterizer.loadMaterial(tri[i].parent.material);
 					rasterizer.Render(tri[i]);
@@ -173,7 +173,7 @@ namespace IDx3DSharp
 
 			tri = getTransparentQueue();
 			if (tri != null)
-				for (int i = 0; i < tri.Length; i++)
+				for (var i = 0; i < tri.Length; i++)
 				{
 					rasterizer.loadMaterial(tri[i].parent.material);
 					rasterizer.Render(tri[i]);
@@ -230,7 +230,7 @@ namespace IDx3DSharp
 		private Triangle[] getOpaqueQueue()
 		{
 			if (opaqueQueue.Count == 0) return null;
-			Triangle[] tri = new Triangle[opaqueQueue.Count];
+			var tri = new Triangle[opaqueQueue.Count];
 			opaqueQueue.CopyTo(tri);
 
 			return sortTriangles(tri, 0, tri.Length - 1);
@@ -239,7 +239,7 @@ namespace IDx3DSharp
 		private Triangle[] getTransparentQueue()
 		{
 			if (transparentQueue.Count == 0) return null;
-			Triangle[] tri = new Triangle[transparentQueue.Count];
+			var tri = new Triangle[transparentQueue.Count];
 			transparentQueue.CopyTo(tri);
 
 			return sortTriangles(tri, 0, tri.Length - 1);
@@ -247,9 +247,9 @@ namespace IDx3DSharp
 
 		private Triangle[] sortTriangles(Triangle[] tri, int L, int R)
 		{
-			float m = (tri[L].dist + tri[R].dist) / 2;
-			int i = L;
-			int j = R;
+			var m = (tri[L].dist + tri[R].dist) / 2;
+			var i = L;
+			var j = R;
 			Triangle temp;
 
 			do

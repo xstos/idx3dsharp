@@ -79,9 +79,9 @@ namespace IDx3DSharp
 		{
 			get
 			{
-				float cx = (p1.pos.X + p2.pos.X + p3.pos.X) / 3;
-				float cy = (p1.pos.Y + p2.pos.Y + p3.pos.Y) / 3;
-				float cz = (p1.pos.Z + p2.pos.Z + p3.pos.Z) / 3;
+				var cx = (p1.pos.X + p2.pos.X + p3.pos.X) / 3;
+				var cy = (p1.pos.Y + p2.pos.Y + p3.pos.Y) / 3;
+				var cz = (p1.pos.Z + p2.pos.Z + p3.pos.Z) / 3;
 				return new Vector(cx, cy, cz);
 			}
 		}
@@ -127,11 +127,11 @@ namespace IDx3DSharp
 
 		public Vertex getMedium()
 		{
-			float cx = (p1.pos.X + p2.pos.X + p3.pos.X) / 3;
-			float cy = (p1.pos.Y + p2.pos.Y + p3.pos.Y) / 3;
-			float cz = (p1.pos.Z + p2.pos.Z + p3.pos.Z) / 3;
-			float cu = (p1.Tu + p2.Tu + p3.Tu) / 3;
-			float cv = (p1.Tv + p2.Tv + p3.Tv) / 3;
+			var cx = (p1.pos.X + p2.pos.X + p3.pos.X) / 3;
+			var cy = (p1.pos.Y + p2.pos.Y + p3.pos.Y) / 3;
+			var cz = (p1.pos.Z + p2.pos.Z + p3.pos.Z) / 3;
+			var cu = (p1.Tu + p2.Tu + p3.Tu) / 3;
+			var cv = (p1.Tv + p2.Tv + p3.Tv) / 3;
 			return new Vertex(cx, cy, cz, cu, cv);
 		}
 
