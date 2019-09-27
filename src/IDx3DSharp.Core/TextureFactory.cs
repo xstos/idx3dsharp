@@ -44,7 +44,7 @@ namespace IDx3DSharp
 		public const float pi = 3.1415926535f;
 		public const float deg2rad = pi / 180;
 		private static float[,] noiseBuffer;
-		private static bool noiseBufferInitialized = false;
+		private static bool noiseBufferInitialized;
 		static int minx, maxx, miny, maxy;
 
 		// E X A M P L E   M A T E R I A L S

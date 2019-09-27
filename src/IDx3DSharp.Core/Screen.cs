@@ -56,15 +56,15 @@ namespace IDx3DSharp
 		public int w, h; // dimensions before antialiasing
 
 		private Image image;
-		public bool antialias = false;
+		public bool antialias;
 
 		private GCHandle handle;
 
 		// BENCHMARK STUFF
-		private long timestamp = 0;
-		private long time = 0;
+		private long timestamp;
+		private long time;
 		private int probes = 32;
-		public float FPS = 0;
+		public float FPS;
 
 
 		// C O N S T R U C T O R S

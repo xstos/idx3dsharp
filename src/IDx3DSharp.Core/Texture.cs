@@ -54,7 +54,7 @@ namespace IDx3DSharp
 		public int bitHeight;
 		public uint[] pixel;
 
-		public string path = null;
+		public string path;
 
 		// C O N S T R U C T O R S
 

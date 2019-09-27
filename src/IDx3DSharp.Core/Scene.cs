@@ -59,17 +59,17 @@ namespace IDx3DSharp
 
 		public SceneObject[] _object;
 		public Light[] _light;
-		public uint objects = 0;
-		public uint lights = 0;
+		public uint objects;
+		public uint lights;
 
 		private bool objectsNeedRebuild = true;
 		private bool lightsNeedRebuild = true;
 
-		protected bool preparedForRendering = false;
+		protected bool preparedForRendering;
 
 		public Vector normalizedOffset = new Vector(0f, 0f, 0f);
 		public float normalizedScale = 1f;
-		private static bool instancesRunning = false;
+		private static bool instancesRunning;
 
 		// D A T A   S T R U C T U R E S
 

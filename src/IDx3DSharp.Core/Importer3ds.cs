@@ -49,9 +49,9 @@ namespace IDx3DSharp
 		private int nextJunkOffset;
 
 		private Scene scene;
-		private string currentObjectName = null;
-		private SceneObject currentObject = null;
-		private bool endOfStream = false;
+		private string currentObjectName;
+		private SceneObject currentObject;
+		private bool endOfStream;
 
 
 		// P U B L I C   M E T H O D S

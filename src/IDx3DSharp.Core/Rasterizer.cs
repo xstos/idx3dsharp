@@ -43,29 +43,29 @@ namespace IDx3DSharp
 	/// </summary>
 	public sealed class Rasterizer
 	{
-		private bool materialLoaded = false;
-		private bool lightmapLoaded = false;
-		public bool ready = false;
+		private bool materialLoaded;
+		private bool lightmapLoaded;
+		public bool ready;
 
 		// Current material settings
-		private uint color = 0;
-		private uint currentColor = 0;
-		private uint transparency = 0;
-		private uint reflectivity = 0;
+		private uint color;
+		private uint currentColor;
+		private uint transparency;
+		private uint reflectivity;
 		private int refraction = 0;
-		private Texture texture = null;
-		private uint[] envmap = null;
-		private uint[] diffuse = null;
-		private uint[] specular = null;
+		private Texture texture;
+		private uint[] envmap;
+		private uint[] diffuse;
+		private uint[] specular;
 		private short[] refractionMap = null;
-		private int tw = 0;
-		private int th = 0;
-		private int tbitW = 0;
-		private int tbitH = 0;
+		private int tw;
+		private int th;
+		private int tbitW;
+		private int tbitH;
 
 		// Rasterizer hints
 
-		private int mode = 0;
+		private int mode;
 		private const int F = 0;   	// FLAT
 		private const int W = 1;	// WIREFRAME
 		private const int P = 2;  	// PHONG
@@ -104,7 +104,7 @@ namespace IDx3DSharp
 		int width, height;
 		bool useIdBuffer;
 		const int zFar = 0xFFFFFFF;
-		uint currentId = 0;
+		uint currentId;
 
 
 		// Constructor

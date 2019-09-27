@@ -50,7 +50,7 @@ namespace IDx3DSharp
 		// Camera settings
 		public Vector pos=new Vector(0f,0f,0f);
 		public Vector lookat=new Vector(0f,0f,0f);
-		public float _roll=0f;
+		public float _roll;
 		
 		public float fovfact;             // Field of View factor
 		public int screenwidth;

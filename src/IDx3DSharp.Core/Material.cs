@@ -43,18 +43,18 @@ namespace IDx3DSharp
 	public sealed class Material
 	// Material description object
 	{
-		public uint color = 0;
-		public uint transparency = 0;
+		public uint color;
+		public uint transparency;
 		public uint reflectivity = 255;
-		public Texture texture = null;
-		public Texture envmap = null;
-		public bool flat = false;
-		public bool wireframe = false;
+		public Texture texture;
+		public Texture envmap;
+		public bool flat;
+		public bool wireframe;
 		bool opaque = true;
-		string texturePath = null;
-		string envmapPath = null;
-		public TextureSettings textureSettings = null;
-		public TextureSettings envmapSettings = null;
+		string texturePath;
+		string envmapPath;
+		public TextureSettings textureSettings;
+		public TextureSettings envmapSettings;
 
 		// Constructor
 

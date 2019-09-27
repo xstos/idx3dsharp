@@ -60,10 +60,10 @@ public class SceneObject : CoreObject
 		public Vertex[] vertex;
 		public Triangle[] triangle;
 		
-		public int vertices=0;
-		public uint triangles=0;
+		public int vertices;
+		public uint triangles;
 		
-		public Material material=null; 
+		public Material material; 
 
 	// C O N S T R U C T O R S
 

@@ -46,12 +46,12 @@ namespace IDx3DSharp
 		Scene scene;
 		public Lightmap lightmap;
 
-		private bool resizingRequested = false;
-		private bool antialiasChangeRequested = false;
+		private bool resizingRequested;
+		private bool antialiasChangeRequested;
 		private int requestedWidth;
 		private int requestedHeight;
 		private bool requestedAntialias;
-		public bool useIdBuffer = false;
+		public bool useIdBuffer;
 
 		Rasterizer rasterizer;
 		List<Triangle> opaqueQueue = new List<Triangle>();

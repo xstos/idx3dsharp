@@ -57,17 +57,17 @@ namespace IDx3DSharp
 		public int Y;  //Projected y coordinate
 		public int Z;  //Projected z coordinate for z-Buffer
 
-		public float Tu = 0; // Texture x-coordinate (relative)
-		public float Tv = 0; // Texture y-coordinate (relative)
+		public float Tu; // Texture x-coordinate (relative)
+		public float Tv; // Texture y-coordinate (relative)
 
-		public int nx = 0; // Normal x-coordinate for envmapping
-		public int ny = 0; // Normal y-coordinate for envmapping
-		public int tx = 0; // Texture x-coordinate (absolute)
-		public int ty = 0; // Texture y-coordinate (absolute)
+		public int nx; // Normal x-coordinate for envmapping
+		public int ny; // Normal y-coordinate for envmapping
+		public int tx; // Texture x-coordinate (absolute)
+		public int ty; // Texture y-coordinate (absolute)
 
 
 		public bool visible = true;  //visibility tag for clipping
-		public int clipcode = 0;
+		public int clipcode;
 		public int id; // Vertex index
 
 		private float fact;

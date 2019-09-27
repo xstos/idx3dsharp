@@ -45,11 +45,11 @@ namespace IDx3DSharp
     {
 #region Properties
 
-        public float X = 0;      //Cartesian (default)
-        public float Y = 0;      //Cartesian (default)
-        public float Z = 0;      //Cartesian (default),Cylindric
-        public float R = 0;      //Cylindric
-        public float Theta = 0;  //Cylindric
+        public float X;      //Cartesian (default)
+        public float Y;      //Cartesian (default)
+        public float Z;      //Cartesian (default),Cylindric
+        public float R;      //Cylindric
+        public float Theta;  //Cylindric
 
 #endregion
         // C O N S T R U C T O R S

@@ -45,7 +45,7 @@ namespace IDx3DSharp
 		public int fogcolor = 0;
 		public int fogfact = 0;
 		public uint bgcolor = 0xFF000000;
-		public Texture background = null;
+		public Texture background;
 
 		// P U B L I C   M E T H O D S
 

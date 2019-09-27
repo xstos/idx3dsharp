@@ -43,10 +43,10 @@ public class Light : CoreObject
 
 		public Vector v;               //Light direction
 		public Vector v2;             //projected Light direction
-		public uint diffuse=0;
-		public uint specular=0;
-		public int highlightSheen=0;
-		public int highlightSpread=0;
+		public uint diffuse;
+		public uint specular;
+		public int highlightSheen;
+		public int highlightSpread;
 	
 		Matrix matrix2;
 

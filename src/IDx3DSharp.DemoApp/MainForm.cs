@@ -14,11 +14,11 @@ namespace IDx3DSharp.DemoApp
 	public partial class MainForm : Form
 	{
 		private readonly Scene _scene;
-		private readonly bool _initialized = false;
-		private bool _antialias = false;
+		private readonly bool _initialized;
+		private bool _antialias;
 
-		private int _oldx = 0;
-		private int _oldy = 0;
+		private int _oldx;
+		private int _oldy;
 		private bool _autorotation = true;
 
 		public MainForm(BaseDemo demo)

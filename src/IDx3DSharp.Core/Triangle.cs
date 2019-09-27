@@ -45,7 +45,7 @@ namespace IDx3DSharp
 
 		public SceneObject parent;  // the object which obtains this triangle
 		public bool visible = true;  //visibility tag for clipping
-		public bool outOfFrustrum = false;  //visibility tag for frustrum clipping
+		public bool outOfFrustrum;  //visibility tag for frustrum clipping
 
 		public Vertex p1;  // first  vertex
 		public Vertex p2;  // second vertex 
@@ -56,7 +56,7 @@ namespace IDx3DSharp
 
 		private int minx, maxx, miny, maxy; // for clipping
 		private Vector triangleCenter = new Vector();
-		public float dist = 0;
+		public float dist;
 
 		public uint id = 0;
 
