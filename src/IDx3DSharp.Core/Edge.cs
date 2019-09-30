@@ -39,15 +39,11 @@ namespace IDx3DSharp
     /// <summary>
     /// Defines a edge in 3D space.
     /// </summary>
-    public class Edge
+    public struct Edge
     {
         Vertex a, b;
 
         // C O N S T R U C T O R S
-
-        Edge()
-        {
-        }
 
         public Edge(Vertex v1, Vertex v2)
         {

@@ -155,18 +155,16 @@ namespace IDx3DSharp
 
 
 		// P R I V A T E   M E T H O D S
-
+        float frac = 1f / 1000f;
         void performBench()
 		{
 			probes += 1;
-			if (probes > 32)
-			{
-				time = Environment.TickCount;
-				FPS = 32f / ((float) (time - timestamp) / 1000);
-				timestamp = time;
-				probes = 0;
-			}
-		}
+            if (probes <= 32) return;
+            time = Environment.TickCount;
+            FPS = 32f / ((float) (time - timestamp) * frac);
+            timestamp = time;
+            probes = 0;
+        }
 
         void performAntialiasing()
 		{
