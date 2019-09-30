@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using IDx3DSharp.DemoApp.Demos;
+using RazorGDIControlWF;
 
 namespace IDx3DSharp.DemoApp
 {
@@ -21,19 +22,21 @@ namespace IDx3DSharp.DemoApp
         int _oldx;
         int _oldy;
         bool _autorotation = true;
-
+        IntPtr _handle;
 		public MainForm(BaseDemo demo)
 		{
 			InitializeComponent();
 
-			SetStyle(
-				ControlStyles.AllPaintingInWmPaint |
-				ControlStyles.UserPaint |
-				ControlStyles.DoubleBuffer, true);
-
+			//SetStyle(
+			//	ControlStyles.AllPaintingInWmPaint |
+			//	ControlStyles.UserPaint |
+			//	ControlStyles.DoubleBuffer, true);
+            
+            Controls.Add(ctl);
+            ctl.Dock = DockStyle.Fill;
 			Size = new Size(800, 600);
 			Text = "IDx3DSharp Demos";
-
+            Shown += (sender, args) => { _handle = Handle; };
 			// BUILD SCENE
 
 			_scene = new Scene(Width, Height);
@@ -41,15 +44,21 @@ namespace IDx3DSharp.DemoApp
             g = CreateGraphics();
 			_initialized = true;
 		}
-
+        RazorGDIControlWF.RazorPainterWFCtl ctl = new RazorPainterWFCtl();
         Graphics g;
+
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == 0x000F)
             {
                 UpdateScene();
-                g.DrawImageUnscaled(GetImage(), 0, 0);
-                SendNotifyMessage(this.Handle, 0x000F, IntPtr.Zero, IntPtr.Zero);
+                lock (ctl.RazorLock)
+                {
+                    ctl.RazorGFX.DrawImageUnscaled(GetImage(), 0, 0);
+                    ctl.RazorPaint();
+                }
+                //g.DrawImageUnscaled(GetImage(), 0, 0);
+                SendNotifyMessage(_handle, 0x000F, IntPtr.Zero, IntPtr.Zero);
             }
             else
                 base.WndProc(ref m);
