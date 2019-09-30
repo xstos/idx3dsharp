@@ -32,6 +32,7 @@ namespace IDx3DSharp.DemoApp
 			//	ControlStyles.UserPaint |
 			//	ControlStyles.DoubleBuffer, true);
             
+            this.KeyPreview = true;
             Controls.Add(ctl);
             ctl.Dock = DockStyle.Fill;
 			Size = new Size(800, 600);
@@ -41,11 +42,9 @@ namespace IDx3DSharp.DemoApp
 
 			_scene = new Scene(Width, Height);
 			demo.PopulateScene(_scene);
-            g = CreateGraphics();
 			_initialized = true;
 		}
-        RazorGDIControlWF.RazorPainterWFCtl ctl = new RazorPainterWFCtl();
-        Graphics g;
+        readonly RazorGDIControlWF.RazorPainterWFCtl ctl = new RazorPainterWFCtl();
 
         protected override void WndProc(ref Message m)
         {
