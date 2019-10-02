@@ -165,21 +165,27 @@ namespace IDx3DSharp
 
 			var tri = getOpaqueQueue();
 			if (tri != null)
-				for (var i = tri.Length - 1; i >= 0; i--)
-				{
-					rasterizer.loadMaterial(tri[i].parent.material);
-					rasterizer.Render(tri[i]);
-				}
+            {
+                var triLength = tri.Length;
+                for (var i = triLength - 1; i >= 0; i--)
+                {
+                    rasterizer.loadMaterial(tri[i].parent.material);
+                    rasterizer.Render(tri[i]);
+                }
+            }
 
-			tri = getTransparentQueue();
+            tri = getTransparentQueue();
 			if (tri != null)
-				for (var i = 0; i < tri.Length; i++)
-				{
-					rasterizer.loadMaterial(tri[i].parent.material);
-					rasterizer.Render(tri[i]);
-				}
+            {
+                var triLength = tri.Length;
+                for (var i = 0; i < triLength; i++)
+                {
+                    rasterizer.loadMaterial(tri[i].parent.material);
+                    rasterizer.Render(tri[i]);
+                }
+            }
 
-			screen.render();
+            screen.render();
 
 		}
 

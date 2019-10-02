@@ -491,21 +491,23 @@ namespace IDx3DSharp
 
         void renderLinePT()
 		{
+            var screenP = screen.p;
+            var texturePixel = texture.pixel;
 			for (x = xL; x < xR; x++)
 			{
 				pos = x + offset;
 				if (z < zBuffer[pos])
 				{
 					lutID = ((nx >> 16) & 255) + (((ny >> 16) & 255) << 8);
-					bkgrd = screen.p[pos];
-					c = texture.pixel[((tx >> 16) & tw) + (((ty >> 16) & th) << tbitW)];
+                    bkgrd = screenP[pos];
+                    c = texturePixel[((tx >> 16) & tw) + (((ty >> 16) & th) << tbitW)];
 					c = ColorUtility.multiply(c, diffuse[lutID]);
 					s = specular[lutID];
 					s = ColorUtility.scale(s, reflectivity);
 					c = ColorUtility.transparency(bkgrd, c, transparency);
 					c = ColorUtility.add(c, s);
 
-					screen.p[pos] = 0xFF000000 | c;
+					screenP[pos] = 0xFF000000 | c;
 					zBuffer[pos] = (uint) z;
 					if (useIdBuffer) idBuffer[pos] = currentId;
 				}
