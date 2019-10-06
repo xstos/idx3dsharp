@@ -42,8 +42,9 @@ namespace IDx3DSharp
 {
 public class SceneObject : CoreObject
 {
+    public static List<SceneObject> sceneObjects = new List<SceneObject>();
 	// F I E L D S
-	
+    public int sceneId;
 		public object userData=null;	// Can be freely used
 		public string user=null; 	// Can be freely used
 
@@ -69,7 +70,9 @@ public class SceneObject : CoreObject
 
 		public SceneObject()
 		{
-		}
+            sceneObjects.Add(this);
+            this.sceneId = sceneObjects.Count - 1;
+        }
 
 	// D A T A  S T R U C T U R E S
 	
@@ -85,7 +88,7 @@ public class SceneObject : CoreObject
 
 		public void addVertex(Vertex newVertex)
 		{
-			newVertex.parent=this;
+			newVertex.parentSceneId=sceneId;
 			vertexData.Add(newVertex);
 			dirty=true;
 		}

@@ -46,8 +46,8 @@ namespace IDx3DSharp
 	{
 		// F I E L D S
 
-		public SceneObject parent;
-
+		public int parentSceneId;
+        public SceneObject parent => SceneObject.sceneObjects[parentSceneId];
 		public Vector pos = new Vector(true);   //(x,y,z) Coordinate of vertex
 		public Vector pos2;  //Transformed vertex coordinate
 		public Vector n = new Vector(true);   //Normal Vector at vertex
