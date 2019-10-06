@@ -114,9 +114,16 @@ namespace IDx3DSharp
 
         void readJunkHeader(BinaryReader input)
 		{
-			currentJunkId = readShort(input);
-			nextJunkOffset = readInt(input);
-			endOfStream = currentJunkId < 0;
+            if (input.BaseStream.Position < input.BaseStream.Length)
+            {
+                currentJunkId = readShort(input);
+                nextJunkOffset = readInt(input);
+                endOfStream = currentJunkId < 0;
+            }
+            else
+            {
+                endOfStream = true;
+            }
 		}
 
         void readNextJunk(BinaryReader input)
