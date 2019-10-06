@@ -63,11 +63,11 @@ namespace IDx3DSharp.DemoApp
                 base.WndProc(ref m);
 
         }
-		protected override void OnPaint(PaintEventArgs e)
-		{
-			//e.Graphics.DrawImageUnscaled(GetImage(), 0, 0);
-			base.OnPaint(e);
-		}
+		//protected override void OnPaint(PaintEventArgs e)
+		//{
+		//	//e.Graphics.DrawImageUnscaled(GetImage(), 0, 0);
+		//	base.OnPaint(e);
+		//}
 
         float dxyFrac = 1f / 20f;
         float tickFrac = 1f / 1000f;
