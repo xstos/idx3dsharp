@@ -57,11 +57,11 @@ public class SceneObject : CoreObject
 		public Scene parent=null;
         bool dirty=true;  // Flag for dirty handling
 		
-		public Vertex[] vertex;
-		public Triangle[] triangle;
+		public Vertex[] vertices;
+		public Triangle[] triangles;
 		
-		public int vertices;
-		public uint triangles;
+		public int numVertices;
+		public uint numTriangles;
 		
 		public Material material; 
 
@@ -134,29 +134,29 @@ public class SceneObject : CoreObject
 			dirty=false;
 			
 			// Generate faster structure for vertices
-			vertices=vertexData.Count;
-			vertex=new Vertex[vertices];
-			vertexData.CopyTo(vertex);
+			numVertices=vertexData.Count;
+			vertices=new Vertex[numVertices];
+			vertexData.CopyTo(vertices);
 			
 			// Generate faster structure for triangles
-			triangles=(uint) triangleData.Count;
-			triangle=new Triangle[triangles];
-			triangleData.CopyTo(triangle);
-			for (uint i=0, length = triangles;i<length;i++)
+			numTriangles=(uint) triangleData.Count;
+			triangles=new Triangle[numTriangles];
+			triangleData.CopyTo(triangles);
+			for (uint i=0;i<numTriangles;i++)
 			{
-				triangle[i].id=i;
+				triangles[i].id=i;
 			}
-			
-			for (int i=0, length = vertices;i<length;i++)
-			{
-				vertex[i].id=i;
-				vertex[i].resetNeighbors();
-			}
+
+            for (int i = 0; i < numVertices; i++)
+            {
+                vertices[i].id=i;
+                vertices[i].resetNeighbors();
+            }
 			
 			Triangle tri;
-			for (uint i=0, length = triangles;i<length;i++)
+			for (uint i=0;i<numTriangles;i++)
 			{
-				tri=triangle[i];
+				tri=triangles[i];
 				tri.p1.registerNeighbor(tri);
 				tri.p2.registerNeighbor(tri);
 				tri.p3.registerNeighbor(tri);
@@ -186,58 +186,65 @@ public class SceneObject : CoreObject
 		public void regenerate()
 		// Regenerates the vertex normals
 		{
-			for (var i=0;i<triangles;i++) triangle[i].regenerateNormal();
-			for (var i=0;i<vertices;i++) vertex[i].regenerateNormal();
-		}
+			for (var i=0;i<numTriangles;i++)
+            {
+                triangles[i].regenerateNormal();
+            }
+
+            for (var i=0;i<numVertices;i++)
+            {
+                vertices[i].regenerateNormal();
+            }
+        }
 
         public override string ToString()
         {
             var buffer = new StringBuilder();
             buffer.Append("<object id=" + name + ">\r\n");
-            for (var i = 0; i < vertices; i++) buffer.Append(vertex[i]);
+            for (var i = 0; i < numVertices; i++) buffer.Append(vertices[i]);
             return buffer.ToString();
         }
 		
 		public void scaleTextureCoordinates(float fu, float fv)
 		{
 			rebuild();
-			for (var i=0;i<vertices;i++) vertex[i].scaleTextureCoordinates(fu,fv);
+			for (var i=0;i<numVertices;i++) vertices[i].scaleTextureCoordinates(fu,fv);
 		}
 		
 		public void tilt(float fact)
 		{
 			rebuild();
-			for (var i=0;i<vertices;i++)
-				vertex[i].pos=Vector.Add(vertex[i].pos,Vector.Random(fact));
+			for (var i=0;i<numVertices;i++)
+				vertices[i].pos=Vector.Add(vertices[i].pos,Vector.Random(fact));
 			regenerate();
 		}
 			
 		public Vector Min()
 		{
-			if (vertices==0) return new Vector(0f,0f,0f);
-			var minX=vertex[0].pos.X;
-			var minY=vertex[0].pos.Y;
-			var minZ=vertex[0].pos.Z;
-			for (var i=1; i<vertices; i++) 
+			if (numVertices==0) return new Vector(0f,0f,0f);
+			var minX=vertices[0].pos.X;
+			var minY=vertices[0].pos.Y;
+			var minZ=vertices[0].pos.Z;
+			for (var i=1; i<numVertices; i++) 
 			{
-				if(vertex[i].pos.X<minX) minX=vertex[i].pos.X;
-				if(vertex[i].pos.Y<minY) minY=vertex[i].pos.Y;
-				if(vertex[i].pos.Z<minZ) minZ=vertex[i].pos.Z;
+				if(vertices[i].pos.X<minX) minX=vertices[i].pos.X;
+				if(vertices[i].pos.Y<minY) minY=vertices[i].pos.Y;
+				if(vertices[i].pos.Z<minZ) minZ=vertices[i].pos.Z;
 			}
 			return new Vector(minX,minY,minZ);
 		}
 		
 		public Vector Max()
 		{
-			if (vertices==0) return new Vector(0f,0f,0f);
-			var maxX=vertex[0].pos.X;
-			var maxY=vertex[0].pos.Y;
-			var maxZ=vertex[0].pos.Z;
-			for (var i=1; i<vertices; i++) 
+			if (numVertices==0) return new Vector(0f,0f,0f);
+			var maxX=vertices[0].pos.X;
+			var maxY=vertices[0].pos.Y;
+			var maxZ=vertices[0].pos.Z;
+			for (var i=1; i<numVertices; i++) 
 			{
-				if(vertex[i].pos.X>maxX) maxX=vertex[i].pos.X;
-				if(vertex[i].pos.Y>maxY) maxY=vertex[i].pos.Y;
-				if(vertex[i].pos.Z>maxZ) maxZ=vertex[i].pos.Z;
+				if(vertices[i].pos.X>maxX) maxX=vertices[i].pos.X;
+				if(vertices[i].pos.Y>maxY) maxY=vertices[i].pos.Y;
+				if(vertices[i].pos.Z>maxZ) maxZ=vertices[i].pos.Z;
 			}
 			return new Vector(maxX,maxY,maxZ);
 		}
@@ -251,11 +258,11 @@ public class SceneObject : CoreObject
 		{
 			var center=getCenter();
 			
-			for (var i=0;i<vertices;i++)
+			for (var i=0;i<numVertices;i++)
 			{
-				vertex[i].pos.X-=center.X;	
-				vertex[i].pos.Y-=center.Y;	
-				vertex[i].pos.Z-=center.Z;	
+				vertices[i].pos.X-=center.X;	
+				vertices[i].pos.Y-=center.Y;	
+				vertices[i].pos.Z-=center.Z;	
 			}
 			shift(center);
 		}
@@ -281,8 +288,8 @@ public class SceneObject : CoreObject
 		// and resets the matrix to untransformed.
 		{
 			rebuild();
-			for (var i=vertices-1;i>=0;i--)
-				vertex[i].pos=vertex[i].pos.Transform(matrix);
+			for (var i=numVertices-1;i>=0;i--)
+				vertices[i].pos=vertices[i].pos.Transform(matrix);
 			regenerate();
 			matrix.reset();
 			normalmatrix.reset();
@@ -292,8 +299,8 @@ public class SceneObject : CoreObject
 		{
 			var obj=new SceneObject();
 			rebuild();
-			for(var i=0;i<vertices;i++) obj.addVertex(vertex[i].Clone());
-			for(var i=0;i<triangles;i++) obj.addTriangle(triangle[i].Clone());
+			for(var i=0;i<numVertices;i++) obj.addVertex(vertices[i].Clone());
+			for(var i=0;i<numTriangles;i++) obj.addTriangle(triangles[i].Clone());
 			obj.name=name+" [cloned]";
 			obj.material=material;
 			obj.matrix=matrix.Clone();
@@ -306,10 +313,10 @@ public class SceneObject : CoreObject
 		{
 			rebuild();
             var edgesToCollapse = new List<Edge>();
-			for (var i=0;i<vertices;i++)
-				for (var j=i+1;j<vertices;j++)
-					if (vertex[i].equals(vertex[j],0.0001f))
-						edgesToCollapse.Add(new Edge(vertex[i],vertex[j]));
+			for (var i=0;i<numVertices;i++)
+				for (var j=i+1;j<numVertices;j++)
+					if (vertices[i].equals(vertices[j],0.0001f))
+						edgesToCollapse.Add(new Edge(vertices[i],vertices[j]));
             foreach (var edge in edgesToCollapse)
 			    edgeCollapse(edge);
 		
@@ -319,8 +326,8 @@ public class SceneObject : CoreObject
 		public void removeDegeneratedTriangles()
 		{
 			rebuild();
-			for (var i=0;i<triangles;i++)
-				if (triangle[i].degenerated()) removeTriangleAt(i);
+			for (var i=0;i<numTriangles;i++)
+				if (triangles[i].degenerated()) removeTriangleAt(i);
 			
 			dirty=true;
 			rebuild();			
@@ -337,7 +344,7 @@ public class SceneObject : CoreObject
 			float uab,vab,ubc,vbc,uca,vca;
 			var sqrt3=(float)Math.Sqrt(3f);
 			
-			for (var i=0;i<triangles;i++)
+			for (var i=0;i<numTriangles;i++)
 			{
 				tri=Triangle(i);
 				a=tri.p1;
@@ -394,7 +401,7 @@ public class SceneObject : CoreObject
             if (!vertexData.Contains(v)) return;
 			rebuild();
 			Triangle tri;
-			for (var i=0; i<triangles; i++)
+			for (var i=0; i<numTriangles; i++)
 			{
 				tri=Triangle(i);
 				if (tri.p1==v) tri.p1=u;

@@ -226,7 +226,7 @@ namespace IDx3DSharp
 			if (renderPipeline.screen.antialias) pos *= 2;
 			var idCode = renderPipeline.idBuffer[pos];
 			if (idCode == uint.MaxValue) return null;
-			return _object[idCode >> 16].triangle[idCode & 0xFFFF];
+			return _object[idCode >> 16].triangles[idCode & 0xFFFF];
 		}
 
 		public SceneObject identifyObjectAt(int xpos, int ypos)
@@ -268,14 +268,14 @@ namespace IDx3DSharp
 		public int countVertices()
 		{
 			var counter = 0;
-			for (var i = 0; i < objects; i++) counter += _object[i].vertices;
+			for (var i = 0; i < objects; i++) counter += _object[i].numVertices;
 			return counter;
 		}
 
 		public int countTriangles()
 		{
 			uint counter = 0;
-			for (var i = 0; i < objects; i++) counter += _object[i].triangles;
+			for (var i = 0; i < objects; i++) counter += _object[i].numTriangles;
 			return (int) counter;
 		}
 

@@ -45,10 +45,10 @@ namespace IDx3DSharp
 			var max = obj.Max();
 			var du = 1 / (max.X - min.X);
 			var dv = 1 / (max.Y - min.Y);
-			for (var i = 0; i < obj.vertices; i++)
+			for (var i = 0; i < obj.numVertices; i++)
 			{
-				obj.vertex[i].Tu = (obj.vertex[i].pos.X - min.X) * du;
-				obj.vertex[i].Tv = 1 - (obj.vertex[i].pos.Y - min.Y) * dv;
+				obj.vertices[i].Tu = (obj.vertices[i].pos.X - min.X) * du;
+				obj.vertices[i].Tv = 1 - (obj.vertices[i].pos.Y - min.Y) * dv;
 			}
 		}
 
@@ -59,10 +59,10 @@ namespace IDx3DSharp
 			var max = obj.Max();
 			var du = 1 / (max.X - min.X);
 			var dv = 1 / (max.Z - min.Z);
-			for (var i = 0; i < obj.vertices; i++)
+			for (var i = 0; i < obj.numVertices; i++)
 			{
-				obj.vertex[i].Tu = (obj.vertex[i].pos.X - min.X) * du;
-				obj.vertex[i].Tv = (obj.vertex[i].pos.Z - min.Z) * dv;
+				obj.vertices[i].Tu = (obj.vertices[i].pos.X - min.X) * du;
+				obj.vertices[i].Tv = (obj.vertices[i].pos.Z - min.Z) * dv;
 			}
 		}
 
@@ -72,11 +72,11 @@ namespace IDx3DSharp
 			var min = obj.Min();
 			var max = obj.Max();
 			var dz = 1 / (max.Z - min.Z);
-			for (var i = 0; i < obj.vertices; i++)
+			for (var i = 0; i < obj.numVertices; i++)
 			{
-				obj.vertex[i].pos.BuildCylindric();
-				obj.vertex[i].Tu = obj.vertex[i].pos.Theta / (2 * 3.14159265f);
-				obj.vertex[i].Tv = (obj.vertex[i].pos.Z - min.Z) * dz;
+				obj.vertices[i].pos.BuildCylindric();
+				obj.vertices[i].Tu = obj.vertices[i].pos.Theta / (2 * 3.14159265f);
+				obj.vertices[i].Tv = (obj.vertices[i].pos.Z - min.Z) * dz;
 			}
 		}
 	}

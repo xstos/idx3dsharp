@@ -147,15 +147,15 @@ namespace IDx3DSharp
 					vertexProjection.transform(m);
 					normalProjection.transform(nm);
 
-					for (int i = 0, innerlength = obj.vertices; i < innerlength; i++)
+					for (int i = 0, innerlength = obj.numVertices; i < innerlength; i++)
 					{
-						v = obj.vertex[i];
+						v = obj.vertices[i];
 						v.Project(vertexProjection, normalProjection, cam);
 						v.clipFrustrum(w, h);
 					}
-					for (uint i = 0, innerlength = obj.triangles; i < innerlength; i++)
+					for (uint i = 0, innerlength = obj.numTriangles; i < innerlength; i++)
 					{
-						t = obj.triangle[i];
+						t = obj.triangles[i];
 						t.Project(normalProjection);
 						t.ClipFrustrum(w, h);
 						enqueueTriangle(t);
