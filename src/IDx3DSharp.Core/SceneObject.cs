@@ -304,29 +304,29 @@ public class SceneObject : CoreObject
 		//	return obj;
 		//}
 		
-		public void removeDuplicateVertices()
-		{
-			rebuild();
-            var edgesToCollapse = new List<Edge>();
-			for (var i=0;i<numVertices;i++)
-				for (var j=i+1;j<numVertices;j++)
-					if (vertices[i].equals(vertices[j],0.0001f))
-						edgesToCollapse.Add(new Edge(vertices[i],vertices[j]));
-            foreach (var edge in edgesToCollapse)
-			    edgeCollapse(edge);
+		//public void removeDuplicateVertices()
+		//{
+		//	rebuild();
+  //          var edgesToCollapse = new List<Edge>();
+		//	for (var i=0;i<numVertices;i++)
+		//		for (var j=i+1;j<numVertices;j++)
+		//			if (vertices[i].equals(vertices[j],0.0001f))
+		//				edgesToCollapse.Add(new Edge(vertices[i],vertices[j]));
+  //          foreach (var edge in edgesToCollapse)
+		//	    edgeCollapse(edge);
 		
-			removeDegeneratedTriangles();
-		}
+		//	removeDegeneratedTriangles();
+		//}
 		
-		public void removeDegeneratedTriangles()
-		{
-			rebuild();
-			for (var i=0;i<numTriangles;i++)
-				if (triangles[i].degenerated()) removeTriangleAt(i);
+		//public void removeDegeneratedTriangles()
+		//{
+		//	rebuild();
+		//	for (var i=0;i<numTriangles;i++)
+		//		if (triangles[i].degenerated()) removeTriangleAt(i);
 			
-			dirty=true;
-			rebuild();			
-		}
+		//	dirty=true;
+		//	rebuild();			
+		//}
 		
 		//public void meshSmooth()
 		//{				
@@ -387,23 +387,23 @@ public class SceneObject : CoreObject
 
 	// P R I V A T E   M E T H O D S
 
-    void edgeCollapse(Edge edge)
-		// Collapses the edge [u,v] by replacing v by u
-		{
-			var u=edge.start();
-			var v=edge.end();
-			if (!vertexData.Contains(u)) return;
-            if (!vertexData.Contains(v)) return;
-			rebuild();
-			Triangle tri;
-			for (var i=0; i<numTriangles; i++)
-			{
-				tri=Triangle(i);
-				if (tri.p1==v) tri.p1=u;
-				if (tri.p2==v) tri.p2=u;
-				if (tri.p3==v) tri.p3=u;
-			}
-			vertexData.Remove(v);
-		}
+  //  void edgeCollapse(Edge edge)
+		//// Collapses the edge [u,v] by replacing v by u
+		//{
+		//	var u=edge.start();
+		//	var v=edge.end();
+		//	if (!vertexData.Contains(u)) return;
+  //          if (!vertexData.Contains(v)) return;
+		//	rebuild();
+		//	Triangle tri;
+		//	for (var i=0; i<numTriangles; i++)
+		//	{
+		//		tri=Triangle(i);
+		//		if (tri.p1==v) tri.p1=u;
+		//		if (tri.p2==v) tri.p2=u;
+		//		if (tri.p3==v) tri.p3=u;
+		//	}
+		//	vertexData.Remove(v);
+		//}
 }
 }
