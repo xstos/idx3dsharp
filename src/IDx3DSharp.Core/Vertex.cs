@@ -42,13 +42,12 @@ namespace IDx3DSharp
 	/// <summary>
 	/// Defines a triangle vertex.
 	/// </summary>
-	public class Vertex : ICloneable
+	public class Vertex /*: ICloneable*/
 	{
 		// F I E L D S
 
 		public int parentSceneId;
-        public SceneObject parent => SceneObject.sceneObjects[parentSceneId];
-		public Vector pos = new Vector(true);   //(x,y,z) Coordinate of vertex
+        public Vector pos = new Vector(true);   //(x,y,z) Coordinate of vertex
 		public Vector pos2;  //Transformed vertex coordinate
 		public Vector n = new Vector(true);   //Normal Vector at vertex
 		public Vector n2;  //Transformed normal vector (camera space)
@@ -74,48 +73,49 @@ namespace IDx3DSharp
         List<Triangle> neighbor = new List<Triangle>(); //Neighbor triangles of vertex
 
 
-		#region Constructors
+        #region Constructors
 
-		public Vertex()
-		{
-			pos = new Vector(0f, 0f, 0f);
-		}
+        //public Vertex()
+        //{
+        //    pos = new Vector(0f, 0f, 0f);
+        //}
 
-		public Vertex(float xpos, float ypos, float zpos)
-		{
-			pos = new Vector(xpos, ypos, zpos);
-		}
-
-		public Vertex(float xpos, float ypos, float zpos, float u, float v)
+        public Vertex(float xpos, float ypos, float zpos)
 		{
 			pos = new Vector(xpos, ypos, zpos);
-			Tu = u;
-			Tv = v;
 		}
 
-		public Vertex(Vector ppos)
-		{
-			pos = ppos.Clone();
-		}
+        //public Vertex(float xpos, float ypos, float zpos, float u, float v)
+        //{
+        //	pos = new Vector(xpos, ypos, zpos);
+        //	Tu = u;
+        //	Tv = v;
+        //}
 
-		public Vertex(Vector ppos, float u, float v)
-		{
-			pos = ppos.Clone();
-			Tu = u;
-			Tv = v;
-		}
+        //public Vertex(Vector ppos)
+        //{
+        //	pos = ppos.Clone();
+        //}
 
-		#endregion
+        //public Vertex(Vector ppos, float u, float v)
+        //{
+        //    pos = ppos.Clone();
+        //    Tu = u;
+        //    Tv = v;
+        //}
 
-		// P U B L I C   M E T H O D S
+        #endregion
 
-		/// <summary>
-		/// Projects this vertex into camera space
-		/// </summary>
-		/// <param name="vertexProjection"></param>
-		/// <param name="normalProjection"></param>
-		/// <param name="camera"></param>
-		public void Project(Matrix vertexProjection, Matrix normalProjection, Camera camera)
+        // P U B L I C   M E T H O D S
+        public SceneObject getParent() => SceneObject.sceneObjects[parentSceneId];
+
+        /// <summary>
+        /// Projects this vertex into camera space
+        /// </summary>
+        /// <param name="vertexProjection"></param>
+        /// <param name="normalProjection"></param>
+        /// <param name="camera"></param>
+        public void Project(Matrix vertexProjection, Matrix normalProjection, Camera camera)
 		{
 			pos2 = pos.Transform(vertexProjection);
 			n2 = n.Transform(normalProjection);
@@ -126,9 +126,11 @@ namespace IDx3DSharp
 			Z = (int) (65536f * pos2.Z);
 			nx = (int) (n2.X * 127 + 127);
 			ny = (int) (n2.Y * 127 + 127);
-            if (parent.material?.texture == null) return;
-			tx = (int) (parent.material.texture.width * Tu);
-			ty = (int) (parent.material.texture.height * Tv);
+            var sceneObject = getParent();
+            var materialTexture = sceneObject.material?.texture;
+            if (materialTexture == null) return;
+			tx = (int) (materialTexture.width * Tu);
+			ty = (int) (materialTexture.height * Tv);
 		}
 
 		public void setUV(float u, float v)
@@ -186,20 +188,20 @@ namespace IDx3DSharp
 			Tv *= fy;
 		}
 
-		public Vertex Clone()
-		{
-			var newVertex = new Vertex();
-			newVertex.pos = pos.Clone();
-			newVertex.n = n.Clone();
-			newVertex.Tu = Tu;
-			newVertex.Tv = Tv;
-			return newVertex;
-		}
+		//public Vertex Clone()
+		//{
+		//	var newVertex = new Vertex();
+		//	newVertex.pos = pos.Clone();
+		//	newVertex.n = n.Clone();
+		//	newVertex.Tu = Tu;
+		//	newVertex.Tv = Tv;
+		//	return newVertex;
+		//}
 
-		object ICloneable.Clone()
-		{
-			return Clone();
-		}
+		//object ICloneable.Clone()
+		//{
+		//	return Clone();
+		//}
 
 		public override string ToString()
 		{

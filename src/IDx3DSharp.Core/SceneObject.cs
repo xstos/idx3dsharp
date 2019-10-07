@@ -71,7 +71,7 @@ public class SceneObject : CoreObject
 		public SceneObject()
 		{
             sceneObjects.Add(this);
-            this.sceneId = sceneObjects.Count - 1;
+            sceneId = sceneObjects.Count - 1;
         }
 
 	// D A T A  S T R U C T U R E S
@@ -95,7 +95,7 @@ public class SceneObject : CoreObject
 
 		public void addTriangle(Triangle newTriangle)
 		{
-			newTriangle.parent=this;
+			newTriangle.parentSceneId=sceneId;
 			triangleData.Add(newTriangle);
 			dirty=true;
 		}
@@ -174,12 +174,12 @@ public class SceneObject : CoreObject
 		}
 		
 		
-		public void addVertex(float x, float y, float z, float u, float v)
-		{
-			var vert=new Vertex(x,y,z);
-			vert.setUV(u,v);
-			addVertex(vert);
-		}
+		//public void addVertex(float x, float y, float z, float u, float v)
+		//{
+		//	var vert=new Vertex(x,y,z);
+		//	vert.setUV(u,v);
+		//	addVertex(vert);
+		//}
 
 		public void addTriangle(Vertex a, Vertex b, Vertex c)
 		{
@@ -298,19 +298,19 @@ public class SceneObject : CoreObject
 			normalmatrix.reset();
 		}
 		
-		public SceneObject Clone()
-		{
-			var obj=new SceneObject();
-			rebuild();
-			for(var i=0;i<numVertices;i++) obj.addVertex(vertices[i].Clone());
-			for(var i=0;i<numTriangles;i++) obj.addTriangle(triangles[i].Clone());
-			obj.name=name+" [cloned]";
-			obj.material=material;
-			obj.matrix=matrix.Clone();
-			obj.normalmatrix=normalmatrix.Clone();
-			obj.rebuild();
-			return obj;
-		}
+		//public SceneObject Clone()
+		//{
+		//	var obj=new SceneObject();
+		//	rebuild();
+		//	for(var i=0;i<numVertices;i++) obj.addVertex(vertices[i].Clone());
+		//	for(var i=0;i<numTriangles;i++) obj.addTriangle(triangles[i].Clone());
+		//	obj.name=name+" [cloned]";
+		//	obj.material=material;
+		//	obj.matrix=matrix.Clone();
+		//	obj.normalmatrix=normalmatrix.Clone();
+		//	obj.rebuild();
+		//	return obj;
+		//}
 		
 		public void removeDuplicateVertices()
 		{
@@ -336,61 +336,61 @@ public class SceneObject : CoreObject
 			rebuild();			
 		}
 		
-		public void meshSmooth()
-		{				
-			rebuild();
-			Triangle tri;
-			float u,v;
-			Vertex a,b,c,d,e,f,temp;
-			Vector ab,bc,ca,nab,nbc,nca,center;
-			float sab,sbc,sca,rab,rbc,rca;
-			float uab,vab,ubc,vbc,uca,vca;
-			var sqrt3=(float)Math.Sqrt(3f);
+		//public void meshSmooth()
+		//{				
+		//	rebuild();
+		//	Triangle tri;
+		//	float u,v;
+		//	Vertex a,b,c,d,e,f,temp;
+		//	Vector ab,bc,ca,nab,nbc,nca,center;
+		//	float sab,sbc,sca,rab,rbc,rca;
+		//	float uab,vab,ubc,vbc,uca,vca;
+		//	var sqrt3=(float)Math.Sqrt(3f);
 			
-			for (var i=0;i<numTriangles;i++)
-			{
-				tri=Triangle(i);
-				a=tri.p1;
-				b=tri.p2;
-				c=tri.p3;
-				ab=Vector.Scale(0.5f,Vector.Add(b.pos,a.pos));
-                bc = Vector.Scale(0.5f, Vector.Add(c.pos, b.pos));
-                ca = Vector.Scale(0.5f, Vector.Add(a.pos, c.pos));
-				rab=Vector.Subtract(ab,a.pos).Length();
-                rbc = Vector.Subtract(bc, b.pos).Length();
-                rca = Vector.Subtract(ca, c.pos).Length();
+		//	for (var i=0;i<numTriangles;i++)
+		//	{
+		//		tri=Triangle(i);
+		//		a=tri.p1;
+		//		b=tri.p2;
+		//		c=tri.p3;
+		//		ab=Vector.Scale(0.5f,Vector.Add(b.pos,a.pos));
+  //              bc = Vector.Scale(0.5f, Vector.Add(c.pos, b.pos));
+  //              ca = Vector.Scale(0.5f, Vector.Add(a.pos, c.pos));
+		//		rab=Vector.Subtract(ab,a.pos).Length();
+  //              rbc = Vector.Subtract(bc, b.pos).Length();
+  //              rca = Vector.Subtract(ca, c.pos).Length();
 				
-				nab=Vector.Scale(0.5f,Vector.Add(a.n,b.n));
-                nbc = Vector.Scale(0.5f, Vector.Add(b.n, c.n));
-                nca = Vector.Scale(0.5f, Vector.Add(c.n, a.n));
-				uab=0.5f*(a.Tu+b.Tu);
-				vab=0.5f*(a.Tv+b.Tv);
-				ubc=0.5f*(b.Tu+c.Tu);
-				vbc=0.5f*(b.Tv+c.Tv);
-				uca=0.5f*(c.Tu+a.Tu);
-				vca=0.5f*(c.Tv+a.Tv);
-				sab=1f-nab.Length();
-                sbc = 1f - nbc.Length();
-                sca = 1f - nca.Length();
-				nab.Normalize();
-                nbc.Normalize();
-                nca.Normalize();
+		//		nab=Vector.Scale(0.5f,Vector.Add(a.n,b.n));
+  //              nbc = Vector.Scale(0.5f, Vector.Add(b.n, c.n));
+  //              nca = Vector.Scale(0.5f, Vector.Add(c.n, a.n));
+		//		uab=0.5f*(a.Tu+b.Tu);
+		//		vab=0.5f*(a.Tv+b.Tv);
+		//		ubc=0.5f*(b.Tu+c.Tu);
+		//		vbc=0.5f*(b.Tv+c.Tv);
+		//		uca=0.5f*(c.Tu+a.Tu);
+		//		vca=0.5f*(c.Tv+a.Tv);
+		//		sab=1f-nab.Length();
+  //              sbc = 1f - nbc.Length();
+  //              sca = 1f - nca.Length();
+		//		nab.Normalize();
+  //              nbc.Normalize();
+  //              nca.Normalize();
 				
-				d=new Vertex(Vector.Subtract(ab,Vector.Scale(rab*sab,nab)),uab,vab);
-                e = new Vertex(Vector.Subtract(bc, Vector.Scale(rbc * sbc, nbc)), ubc, vbc);
-                f = new Vertex(Vector.Subtract(ca, Vector.Scale(rca * sca, nca)), uca, vca);
+		//		d=new Vertex(Vector.Subtract(ab,Vector.Scale(rab*sab,nab)),uab,vab);
+  //              e = new Vertex(Vector.Subtract(bc, Vector.Scale(rbc * sbc, nbc)), ubc, vbc);
+  //              f = new Vertex(Vector.Subtract(ca, Vector.Scale(rca * sca, nca)), uca, vca);
 				
-				addVertex(d);
-				addVertex(e);
-				addVertex(f);
-				tri.p2=d;
-				tri.p3=f;
-				addTriangle(b,e,d);
-				addTriangle(c,f,e);
-				addTriangle(d,e,f);
-			}
-			removeDuplicateVertices();			
-		}
+		//		addVertex(d);
+		//		addVertex(e);
+		//		addVertex(f);
+		//		tri.p2=d;
+		//		tri.p3=f;
+		//		addTriangle(b,e,d);
+		//		addTriangle(c,f,e);
+		//		addTriangle(d,e,f);
+		//	}
+		//	removeDuplicateVertices();			
+		//}
 		
 
 	// P R I V A T E   M E T H O D S

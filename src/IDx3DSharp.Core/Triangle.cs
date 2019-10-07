@@ -42,8 +42,7 @@ namespace IDx3DSharp
 	public class Triangle
 	{
 		#region Fields
-
-		public SceneObject parent;  // the object which obtains this triangle
+        public int parentSceneId;
 		public bool visible = true;  //visibility tag for clipping
 		public bool outOfFrustrum;  //visibility tag for frustrum clipping
 
@@ -89,7 +88,7 @@ namespace IDx3DSharp
 		#endregion
 
 		#region Methods
-
+        public SceneObject parent => SceneObject.sceneObjects[parentSceneId];
 		/// <summary>
 		/// Backface culling and frustrum clipping.
 		/// </summary>
@@ -125,15 +124,15 @@ namespace IDx3DSharp
 			return Vector.VectorProduct(p1.pos, p2.pos, p3.pos);
 		}
 
-		public Vertex getMedium()
-		{
-			var cx = (p1.pos.X + p2.pos.X + p3.pos.X) / 3;
-			var cy = (p1.pos.Y + p2.pos.Y + p3.pos.Y) / 3;
-			var cz = (p1.pos.Z + p2.pos.Z + p3.pos.Z) / 3;
-			var cu = (p1.Tu + p2.Tu + p3.Tu) / 3;
-			var cv = (p1.Tv + p2.Tv + p3.Tv) / 3;
-			return new Vertex(cx, cy, cz, cu, cv);
-		}
+		//public Vertex getMedium()
+		//{
+		//	var cx = (p1.pos.X + p2.pos.X + p3.pos.X) / 3;
+		//	var cy = (p1.pos.Y + p2.pos.Y + p3.pos.Y) / 3;
+		//	var cz = (p1.pos.Z + p2.pos.Z + p3.pos.Z) / 3;
+		//	var cu = (p1.Tu + p2.Tu + p3.Tu) / 3;
+		//	var cv = (p1.Tv + p2.Tv + p3.Tv) / 3;
+		//	return new Vertex(cx, cy, cz, cu, cv);
+		//}
 
 		public float getDist()
 		{
