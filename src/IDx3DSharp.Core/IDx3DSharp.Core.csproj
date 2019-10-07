@@ -81,6 +81,7 @@
     <Compile Include="RenderPipeline.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="SceneEnvironment.cs" />
+    <Compile Include="SceneGraph.cs" />
     <Compile Include="SceneObject.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="Texture.cs" />

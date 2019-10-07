@@ -39,12 +39,18 @@ using System.Collections.Generic;
 
 namespace IDx3DSharp
 {
+    public class VertexInfo
+    {
+        public SceneGraphId ParentVertexId;
+        public List<Triangle> neighbor = new List<Triangle>(); //Neighbor triangles of vertex
+    }
+
     /// <summary>
 	/// Defines a triangle vertex.
 	/// </summary>
 	public class Vertex /*: ICloneable*/
 	{
-        static List<Vertex> vertices = new List<Vertex>();
+        public SceneGraphId SceneGraphId;
 		// F I E L D S
 		public int parentSceneId;
         public Vector pos = new Vector(true);   //(x,y,z) Coordinate of vertex
@@ -70,7 +76,8 @@ namespace IDx3DSharp
 		public int id; // Vertex index
 
         float fact;
-        List<Triangle> neighbor = new List<Triangle>(); //Neighbor triangles of vertex
+        public VertexInfo Info => SceneGraph.Instance.getVertexInfo(SceneGraphId);
+        //List<Triangle> neighbor = new List<Triangle>(); //Neighbor triangles of vertex
 
 
         #region Constructors
@@ -83,7 +90,8 @@ namespace IDx3DSharp
         public Vertex(float xpos, float ypos, float zpos)
         {
 			pos = new Vector(xpos, ypos, zpos);
-		}
+            SceneGraphId = SceneGraph.Instance.AddVertex(this);
+        }
 
         //public Vertex(float xpos, float ypos, float zpos, float u, float v)
         //{
@@ -157,13 +165,17 @@ namespace IDx3DSharp
 		/// <param name="triangle"></param>
 		public void registerNeighbor(Triangle triangle)
 		{
-			if (!neighbor.Contains(triangle)) neighbor.Add(triangle);
-		}
+            if (Info.neighbor.Contains(triangle))
+            {
+                return;
+            }
+            Info.neighbor.Add(triangle);
+        }
 
 		public void resetNeighbors()
 		// resets the neighbors
 		{
-			neighbor.Clear();
+            Info.neighbor.Clear();
 		}
 
 		public void regenerateNormal()
@@ -172,7 +184,7 @@ namespace IDx3DSharp
 			float nx = 0;
 			float ny = 0;
 			float nz = 0;
-			foreach (var tri in neighbor)
+			foreach (var tri in Info.neighbor)
 			{
 				var wn = tri.getWeightedNormal();
 				nx += wn.X;

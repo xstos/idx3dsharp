@@ -44,8 +44,8 @@ namespace IDx3DSharp
 	/// </summary>
 	public class Triangle
     {
-        public static List<Triangle> triangles = new List<Triangle>();
-        public int TriangleOid;
+        
+        public SceneGraphId SceneGraphId;
 		#region Fields
         public int parentSceneId;
 		public bool visible = true;  //visibility tag for clipping
@@ -73,8 +73,7 @@ namespace IDx3DSharp
 			p1 = a;
 			p2 = b;
 			p3 = c;
-            triangles.Add(this);
-            TriangleOid = triangles.Count - 1;
+            SceneGraphId = SceneGraph.Instance.AddTriangle(this);
             //Console.WriteLine($"triangle {a} {b} {c}");
         }
 

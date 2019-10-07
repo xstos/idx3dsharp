@@ -1,18 +1,18 @@
 namespace IDx3DSharp
 {
-    public struct Oid
+    public enum PrimitiveType
     {
-        static int seed = 0;
-        public int Id;
+        Triangle,
+        Vertex
+    }
+    public struct SceneGraphId
+    {
+        public (PrimitiveType, int) Id;
 
-        public Oid(int id)
+        public SceneGraphId((PrimitiveType,int) id)
         {
             Id = id;
         }
-        public static Oid Next()
-        {
-            return new Oid(seed++);
-        }
-        public static implicit operator Oid(int id) => new Oid(id);
+        public static implicit operator SceneGraphId((PrimitiveType,int) id) => new SceneGraphId(id);
     }
 }
