@@ -232,7 +232,7 @@ namespace IDx3DSharp
 		public SceneObject identifyObjectAt(int xpos, int ypos)
 		{
 			var tri = identifyTriangleAt(xpos, ypos);
-            return tri?.parent;
+            return tri?.getParent();
 		}
 
 		// P U B L I C   M E T H O D S

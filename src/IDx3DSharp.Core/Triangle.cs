@@ -88,15 +88,17 @@ namespace IDx3DSharp
 		#endregion
 
 		#region Methods
-        public SceneObject parent => SceneObject.sceneObjects[parentSceneId];
-		/// <summary>
+
+        public SceneObject getParent() => SceneObject.sceneObjects[parentSceneId];
+
+        /// <summary>
 		/// Backface culling and frustrum clipping.
 		/// </summary>
 		/// <param name="w"></param>
 		/// <param name="h"></param>
 		public void ClipFrustrum(int w, int h)
 		{
-			if (parent.material == null) { visible = false; return; }
+			if (getParent().material == null) { visible = false; return; }
 			outOfFrustrum = (p1.clipcode & p2.clipcode & p3.clipcode) != 0;
 			if (outOfFrustrum) { visible = false; return; }
 			if (n2.Z > 0.5) { visible = true; return; }

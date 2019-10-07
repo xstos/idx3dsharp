@@ -169,7 +169,7 @@ namespace IDx3DSharp
 		public void Render(Triangle tri)
 		{
 			if (!ready) return;
-			if (tri.parent == null) return;
+			if (tri.getParent() == null) return;
 			if ((mode & W) != 0)
 			{
 				drawWireframe(tri, color);
@@ -197,7 +197,7 @@ namespace IDx3DSharp
 				currentColor = ColorUtility.add(c, s);
 			}
 
-			currentId = (tri.parent.id << 16) | tri.id;
+			currentId = (tri.getParent().id << 16) | tri.id;
 
 			x1 = p1.X << 8;
 			x2 = p2.X << 8;

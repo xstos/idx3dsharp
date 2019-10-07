@@ -169,7 +169,7 @@ namespace IDx3DSharp
                 var triLength = tri.Length;
                 for (var i = triLength - 1; i >= 0; i--)
                 {
-                    rasterizer.loadMaterial(tri[i].parent.material);
+                    rasterizer.loadMaterial(tri[i].getParent().material);
                     rasterizer.Render(tri[i]);
                 }
             }
@@ -180,7 +180,7 @@ namespace IDx3DSharp
                 var triLength = tri.Length;
                 for (var i = 0; i < triLength; i++)
                 {
-                    rasterizer.loadMaterial(tri[i].parent.material);
+                    rasterizer.loadMaterial(tri[i].getParent().material);
                     rasterizer.Render(tri[i]);
                 }
             }
@@ -224,11 +224,11 @@ namespace IDx3DSharp
 
         void enqueueTriangle(Triangle tri)
 		{
-			if (tri.parent.material == null) return;
+			if (tri.getParent().material == null) return;
 			if (tri.visible == false) return;
-			if ((tri.parent.material.transparency == 255) && (tri.parent.material.reflectivity == 0)) return;
+			if ((tri.getParent().material.transparency == 255) && (tri.getParent().material.reflectivity == 0)) return;
 
-			if (tri.parent.material.transparency > 0) transparentQueue.Add(tri);
+			if (tri.getParent().material.transparency > 0) transparentQueue.Add(tri);
 			else opaqueQueue.Add(tri);
 		}
 
