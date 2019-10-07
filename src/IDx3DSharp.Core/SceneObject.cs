@@ -84,41 +84,27 @@ public class SceneObject : CoreObject
 		public Triangle Triangle(int id)
 		{
 			return triangleData[id];
-		}		
-
-		public void addVertex(Vertex newVertex)
-		{
-			newVertex.parentSceneId=sceneId;
-			vertexData.Add(newVertex);
-			dirty=true;
 		}
 
-		public void addTriangle(Triangle newTriangle)
-		{
-			newTriangle.parentSceneId=sceneId;
-			triangleData.Add(newTriangle);
-			dirty=true;
-		}
+        //public void addTriangle(int v1, int v2, int v3)
+		//{
+		//	addTriangle(Vertex(v1),Vertex(v2),Vertex(v3));
+		//}
 		
-		public void addTriangle(int v1, int v2, int v3)
-		{
-			addTriangle(Vertex(v1),Vertex(v2),Vertex(v3));
-		}
+		//public void removeVertex(Vertex v)
+		//{
+		//	vertexData.Remove(v);
+		//}
 		
-		public void removeVertex(Vertex v)
-		{
-			vertexData.Remove(v);
-		}
+		//public void removeTriangle(Triangle t)
+		//{
+		//	triangleData.Remove(t);
+		//}
 		
-		public void removeTriangle(Triangle t)
-		{
-			triangleData.Remove(t);
-		}
-		
-		public void removeVertexAt(int pos)
-		{
-			vertexData.RemoveAt(pos);
-		}
+		//public void removeVertexAt(int pos)
+		//{
+		//	vertexData.RemoveAt(pos);
+		//}
 		
 		public void removeTriangleAt(int pos)
 		{
@@ -169,9 +155,12 @@ public class SceneObject : CoreObject
 		}
 
 		public void addVertex(float x, float y, float z)
-		{
-			addVertex(new Vertex(x,y,z));
-		}
+        {
+            var newVertex = new Vertex(x,y,z);
+            newVertex.parentSceneId=sceneId;
+            vertexData.Add(newVertex);
+            dirty=true;
+        }
 		
 		
 		//public void addVertex(float x, float y, float z, float u, float v)
@@ -182,9 +171,12 @@ public class SceneObject : CoreObject
 		//}
 
 		public void addTriangle(Vertex a, Vertex b, Vertex c)
-		{
-			addTriangle(new Triangle(a,b,c));
-		}
+        {
+            var newTriangle = new Triangle(a,b,c);
+            newTriangle.parentSceneId=sceneId;
+            triangleData.Add(newTriangle);
+            dirty=true;
+        }
 
 		public void regenerate()
 		// Regenerates the vertex normals
