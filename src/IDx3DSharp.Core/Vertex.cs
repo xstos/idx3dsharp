@@ -39,13 +39,13 @@ using System.Collections.Generic;
 
 namespace IDx3DSharp
 {
-	/// <summary>
+    /// <summary>
 	/// Defines a triangle vertex.
 	/// </summary>
 	public class Vertex /*: ICloneable*/
 	{
+        static List<Vertex> vertices = new List<Vertex>();
 		// F I E L D S
-
 		public int parentSceneId;
         public Vector pos = new Vector(true);   //(x,y,z) Coordinate of vertex
 		public Vector pos2;  //Transformed vertex coordinate
@@ -81,7 +81,7 @@ namespace IDx3DSharp
         //}
 
         public Vertex(float xpos, float ypos, float zpos)
-		{
+        {
 			pos = new Vector(xpos, ypos, zpos);
 		}
 

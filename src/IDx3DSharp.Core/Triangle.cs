@@ -34,13 +34,18 @@
 // | "On the eigth day, God started debugging"
 // | -----------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+
 namespace IDx3DSharp
 {
 	/// <summary>
 	/// Defines a 3D triangle.
 	/// </summary>
 	public class Triangle
-	{
+    {
+        public static List<Triangle> triangles = new List<Triangle>();
+        public int TriangleOid;
 		#region Fields
         public int parentSceneId;
 		public bool visible = true;  //visibility tag for clipping
@@ -68,7 +73,10 @@ namespace IDx3DSharp
 			p1 = a;
 			p2 = b;
 			p3 = c;
-		}
+            triangles.Add(this);
+            TriangleOid = triangles.Count - 1;
+            //Console.WriteLine($"triangle {a} {b} {c}");
+        }
 
 		#endregion
 
