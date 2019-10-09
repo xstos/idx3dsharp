@@ -201,9 +201,9 @@ namespace IDx3DSharp
 				v3 = readShort(input);
 				readShort(input);
 				currentObject.addTriangle(
-					currentObject.Vertex(v1),
-					currentObject.Vertex(v2),
-					currentObject.Vertex(v3));
+					currentObject.vertexData[v1],
+					currentObject.vertexData[v2],
+					currentObject.vertexData[v3]);
 			}
 		}
 
@@ -212,8 +212,8 @@ namespace IDx3DSharp
 			var vertices = readShort(input);
 			for (var i = 0; i < vertices; i++)
 			{
-				currentObject.Vertex(i).Tu = readFloat(input);
-				currentObject.Vertex(i).Tv = readFloat(input);
+				currentObject.vertexData[i].Tu = readFloat(input);
+				currentObject.vertexData[i].Tv = readFloat(input);
 			}
 		}
 	}

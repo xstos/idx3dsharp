@@ -75,13 +75,8 @@ public class SceneObject : CoreObject
         }
 
 	// D A T A  S T R U C T U R E S
-	
-		public Vertex Vertex(int id)
-		{
-			return vertexData[id];
-		}
-		
-		public Triangle Triangle(int id)
+
+    public Triangle Triangle(int id)
 		{
 			return triangleData[id];
 		}
