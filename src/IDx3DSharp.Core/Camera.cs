@@ -110,7 +110,7 @@ namespace IDx3DSharp
 		
 		public void setFov(float fov)
 		{
-			fovfact=(float)Math.Tan(MathUtility.DegreesToRadians(fov)/2);
+			fovfact=(float)Math.Tan(MathUtility.DegreesToRadians(fov)*0.5);
 		}
 		
 		public void roll(float angle)

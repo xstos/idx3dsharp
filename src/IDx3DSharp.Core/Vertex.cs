@@ -200,6 +200,7 @@ namespace IDx3DSharp
 			Tv *= fy;
 		}
 
+        public static implicit operator Vertex((float x, float y, float z) v) => new Vertex(v.x, v.y, v.z);
 		//public Vertex Clone()
 		//{
 		//	var newVertex = new Vertex();

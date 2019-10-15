@@ -21,7 +21,7 @@ namespace IDx3DSharp.DemoApp
 
         int _oldx;
         int _oldy;
-        bool _autorotation = true;
+        bool _autorotation = false;
         IntPtr _handle;
 		public MainForm(BaseDemo demo)
 		{

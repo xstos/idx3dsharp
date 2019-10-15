@@ -145,6 +145,7 @@ namespace IDx3DSharp
 			}
 			if (currentJunkId == 0x4110) // Vertex list
 			{
+                Console.WriteLine(">> Vertex list: "+ currentObjectName);
 				readVertexList(input);
 				return;
 			}
@@ -181,11 +182,13 @@ namespace IDx3DSharp
 		{
 			float x, y, z;
 			var vertices = readShort(input);
+            Console.WriteLine($"{nameof(readVertexList)} {currentObjectName}");
 			for (var i = 0; i < vertices; i++)
 			{
 				x = readFloat(input);
 				y = readFloat(input);
 				z = readFloat(input);
+                Console.WriteLine($"pts[{i}]=({x}f,{-y}f,{z}f);");
 				currentObject.addVertex(x, -y, z);
 			}
 		}
@@ -194,12 +197,14 @@ namespace IDx3DSharp
 		{
 			int v1, v2, v3;
 			var triangles = readShort(input);
+            Console.WriteLine($"{nameof(readPointList)} {currentObjectName}");
 			for (var i = 0; i < triangles; i++)
 			{
 				v1 = readShort(input);
 				v2 = readShort(input);
 				v3 = readShort(input);
 				readShort(input);
+                Console.WriteLine($"ptNums[{i}] = ({v1},{v2},{v3});");
 				currentObject.addTriangle(
 					currentObject.vertexData[v1],
 					currentObject.vertexData[v2],
