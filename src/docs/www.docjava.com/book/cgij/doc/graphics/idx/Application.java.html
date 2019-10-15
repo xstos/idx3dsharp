@@ -1,0 +1,373 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+
+<!-- Mirrored from www.docjava.com/book/cgij/doc/graphics/idx/Application.java.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 15 Oct 2019 16:21:22 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<HEAD>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.3Beta3">
+<TITLE>graphics.idx.Application (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">Application.java</font>
+</td>
+<td align="right" colspan="2" width="33%">&nbsp;</td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<A NAME="1"></A><FONT ID="Package">package</FONT> <A HREF="http://www.docjava.com/book/cgij/doc/graphics.idx.index.html" target="packageFrame">graphics.idx</A>;
+<A NAME="2"></A>
+<A NAME="3"></A><FONT ID="Import">import</FONT> java.awt.*;
+<A NAME="4"></A><FONT ID="Import">import</FONT> java.awt.event.*;
+<A NAME="5"></A>
+<A NAME="6"></A><FONT ID="Public">public</FONT> <FONT ID="Class">class</FONT> Application <FONT ID="Extends">extends</FONT> Frame
+<A NAME="7"></A>    <FONT ID="Implements">implements</FONT> Runnable, KeyListener, WindowListener,
+<A NAME="8"></A>    MouseListener, MouseMotionListener {
+<A NAME="9"></A>  <FONT ID="SingleLineComment">// Create new tread
+<A NAME="10"></A></FONT>  Thread idx_Thread = <FONT ID="Null">null</FONT>;
+<A NAME="11"></A>  <FONT ID="Boolean">boolean</FONT> initialized = <FONT ID="False">false</FONT>;
+<A NAME="12"></A>
+<A NAME="13"></A>  <A HREF="idx3d.java.html">idx3d</A> demo;
+<A NAME="14"></A>
+<A NAME="15"></A>  <FONT ID="Float">float</FONT> oldx,oldy;
+<A NAME="16"></A>
+<A NAME="17"></A>  <FONT ID="Float">float</FONT> xrot = <FONT ID="IntegerLiteral">64</FONT>;
+<A NAME="18"></A>  <FONT ID="Float">float</FONT> yrot = <FONT ID="IntegerLiteral">32</FONT>;
+<A NAME="19"></A>  <FONT ID="Float">float</FONT> zrot = <FONT ID="IntegerLiteral">17</FONT>;
+<A NAME="20"></A>  <FONT ID="Float">float</FONT> dx = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="21"></A>  <FONT ID="Float">float</FONT> dy = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="22"></A>  <FONT ID="Float">float</FONT> dz = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="23"></A>
+<A NAME="24"></A>  <FONT ID="Int">int</FONT> mode;
+<A NAME="25"></A>
+<A NAME="26"></A>  <FONT ID="Boolean">boolean</FONT> autorot = <FONT ID="True">true</FONT>;
+<A NAME="27"></A>
+<A NAME="28"></A>  <FONT ID="Public">public</FONT> <FONT ID="Static">static</FONT> <FONT ID="Void">void</FONT> main(String args[]) {
+<A NAME="29"></A>    image3D();
+<A NAME="30"></A>  }
+<A NAME="31"></A>
+<A NAME="32"></A>  <FONT ID="Public">public</FONT> <FONT ID="Static">static</FONT> <FONT ID="Void">void</FONT> image3D() {
+<A NAME="33"></A>    <A HREF="Application.java.html">Application</A> f = <FONT ID="New">new</FONT> <A HREF="Application.java.html">Application</A>();
+<A NAME="34"></A>    f.setSize(<FONT ID="IntegerLiteral">200</FONT>, <FONT ID="IntegerLiteral">200</FONT>);
+<A NAME="35"></A>    f.setVisible(<FONT ID="True">true</FONT>);
+<A NAME="36"></A>    f.initialize();
+<A NAME="37"></A>    f.start();
+<A NAME="38"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">1</FONT>; i &lt;= f.demo.objects; i++) {
+<A NAME="39"></A>      f.demo.object[i].mode = <FONT ID="IntegerLiteral">6</FONT>;
+<A NAME="40"></A>    }
+<A NAME="41"></A>
+<A NAME="42"></A>  }
+<A NAME="43"></A>
+<A NAME="44"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> addScan(<FONT ID="Float">float</FONT> radius[][]) {
+<A NAME="45"></A>    <FONT ID="Int">int</FONT> scancolor = demo.getIntColor(<FONT ID="IntegerLiteral">60</FONT>, <FONT ID="IntegerLiteral">255</FONT>, <FONT ID="IntegerLiteral">20</FONT>);
+<A NAME="46"></A>    demo.addObject(mode, scancolor);
+<A NAME="47"></A>    <FONT ID="Int">int</FONT> obj = demo.objects;
+<A NAME="48"></A>    <FONT ID="Float">float</FONT> twoPi = <FONT ID="FloatPointLiteral">2f</FONT> * (<FONT ID="Float">float</FONT>) Math.PI;
+<A NAME="49"></A>    <FONT ID="Float">float</FONT> x1, y1, z1;
+<A NAME="50"></A>    <FONT ID="Int">int</FONT> numberOfImages = radius[<FONT ID="IntegerLiteral">0</FONT>].length;
+<A NAME="51"></A>    <FONT ID="Int">int</FONT> h = radius.length;
+<A NAME="52"></A>    <FONT ID="Float">float</FONT> deltaTheta = (<FONT ID="Float">float</FONT>) (twoPi / (numberOfImages - <FONT ID="FloatPointLiteral">1f</FONT>));
+<A NAME="53"></A>    <FONT ID="Double">double</FONT> deltaY = <FONT ID="FloatPointLiteral">3d</FONT> / h;
+<A NAME="54"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; numberOfImages; i++)
+<A NAME="55"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> y = <FONT ID="IntegerLiteral">0</FONT>; y &lt; h; y++) {
+<A NAME="56"></A>        <FONT ID="If">if</FONT> (radius[y][i] &gt; <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="57"></A>          x1 = (<FONT ID="Float">float</FONT>) (radius[y][i] * Math.sin((<FONT ID="Float">float</FONT>) (i * deltaTheta)));
+<A NAME="58"></A>          y1 = -<FONT ID="FloatPointLiteral">1.5f</FONT> + (<FONT ID="Float">float</FONT>) (y * deltaY);
+<A NAME="59"></A>          z1 = (<FONT ID="Float">float</FONT>) (radius[y][i] * Math.cos((<FONT ID="Float">float</FONT>) (i * deltaTheta)));
+<A NAME="60"></A>        } <FONT ID="Else">else</FONT> {
+<A NAME="61"></A>          x1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="62"></A>          y1 = -<FONT ID="FloatPointLiteral">1.5f</FONT> + (<FONT ID="Float">float</FONT>) (y * deltaY);
+<A NAME="63"></A>          z1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="64"></A>        }
+<A NAME="65"></A>        demo.addNode(obj, x1, y1, z1);
+<A NAME="66"></A>      }
+<A NAME="67"></A>    demo.generateScanObject(obj, h, numberOfImages - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="68"></A>    demo.shiftObject(obj, (<FONT ID="Float">float</FONT>) -<FONT ID="FloatPointLiteral">1.2</FONT>, (<FONT ID="Float">float</FONT>) -<FONT ID="FloatPointLiteral">0.5</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="FloatPointLiteral">1.3</FONT>);
+<A NAME="69"></A>    demo.scaleObject(obj, (<FONT ID="Float">float</FONT>) <FONT ID="FloatPointLiteral">0.5</FONT>);
+<A NAME="70"></A>    demo.object[obj].texture = obj;
+<A NAME="71"></A>  }
+<A NAME="72"></A>
+<A NAME="73"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> initialize(Image i, <FONT ID="Float">float</FONT> r[][]) {
+<A NAME="74"></A>    addListeners();
+<A NAME="75"></A>    demo = <FONT ID="New">new</FONT> <A HREF="idx3d.java.html">idx3d</A>(getSize().width, getSize().height);
+<A NAME="76"></A>    <FONT ID="Int">int</FONT> mode = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="77"></A>    demo.addTexture(i);
+<A NAME="78"></A>    addScan(r);
+<A NAME="79"></A>    addLights();
+<A NAME="80"></A>    demo.reflectivity = <FONT ID="IntegerLiteral">200</FONT>;
+<A NAME="81"></A>    demo.setStatic();
+<A NAME="82"></A>    initialized = <FONT ID="True">true</FONT>;
+<A NAME="83"></A>  }
+<A NAME="84"></A>
+<A NAME="85"></A>  <FONT ID="Public">public</FONT> <FONT ID="Static">static</FONT> <FONT ID="Void">void</FONT> image3D(Image img, <FONT ID="Short">short</FONT> s[][]) {
+<A NAME="86"></A>    <A HREF="Application.java.html">Application</A> f = <FONT ID="New">new</FONT> <A HREF="Application.java.html">Application</A>();
+<A NAME="87"></A>    f.setSize(<FONT ID="IntegerLiteral">200</FONT>, <FONT ID="IntegerLiteral">200</FONT>);
+<A NAME="88"></A>    f.setVisible(<FONT ID="True">true</FONT>);
+<A NAME="89"></A>    f.initialize(img, s);
+<A NAME="90"></A>    f.start();
+<A NAME="91"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">1</FONT>; i &lt;= f.demo.objects; i++) {
+<A NAME="92"></A>      f.demo.object[i].mode = <FONT ID="IntegerLiteral">6</FONT>;
+<A NAME="93"></A>    }
+<A NAME="94"></A>
+<A NAME="95"></A>  }
+<A NAME="96"></A>
+<A NAME="97"></A>
+<A NAME="98"></A>  <FONT ID="Public">public</FONT> <FONT ID="Static">static</FONT> <FONT ID="Void">void</FONT> image3D(Image img, <FONT ID="Float">float</FONT> r[][]) {
+<A NAME="99"></A>    <A HREF="Application.java.html">Application</A> f = <FONT ID="New">new</FONT> <A HREF="Application.java.html">Application</A>();
+<A NAME="100"></A>    f.setSize(<FONT ID="IntegerLiteral">400</FONT>, <FONT ID="IntegerLiteral">400</FONT>);
+<A NAME="101"></A>    f.setVisible(<FONT ID="True">true</FONT>);
+<A NAME="102"></A>    f.initialize(img, r);
+<A NAME="103"></A>    f.start();
+<A NAME="104"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">1</FONT>; i &lt;= f.demo.objects; i++) {
+<A NAME="105"></A>      f.demo.object[i].mode = <FONT ID="IntegerLiteral">6</FONT>;
+<A NAME="106"></A>    }
+<A NAME="107"></A>  }
+<A NAME="108"></A>
+<A NAME="109"></A>  <FONT ID="Public">public</FONT> <FONT ID="Static">static</FONT> <A HREF="Application.java.html">Application</A> stepImage(Image img, <FONT ID="Short">short</FONT> s[][]) {
+<A NAME="110"></A>    <A HREF="Application.java.html">Application</A> f = <FONT ID="New">new</FONT> <A HREF="Application.java.html">Application</A>();
+<A NAME="111"></A>    f.setSize(<FONT ID="IntegerLiteral">200</FONT>, <FONT ID="IntegerLiteral">200</FONT>);
+<A NAME="112"></A>    f.setVisible(<FONT ID="True">true</FONT>);
+<A NAME="113"></A>    f.initialize(img, s);
+<A NAME="114"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">1</FONT>; i &lt;= f.demo.objects; i++) {
+<A NAME="115"></A>      f.demo.object[i].mode = <FONT ID="IntegerLiteral">6</FONT>;
+<A NAME="116"></A>    }
+<A NAME="117"></A>    <FONT ID="Return">return</FONT> f;
+<A NAME="118"></A>  }
+<A NAME="119"></A>
+<A NAME="120"></A>  <FONT ID="Private">private</FONT> <FONT ID="Static">static</FONT> <FONT ID="Void">void</FONT> waitForImage(Component component,
+<A NAME="121"></A>                                   Image image) {
+<A NAME="122"></A>    MediaTracker tracker = <FONT ID="New">new</FONT> MediaTracker(component);
+<A NAME="123"></A>    <FONT ID="Try">try</FONT> {
+<A NAME="124"></A>      tracker.addImage(image, <FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="125"></A>      tracker.waitForID(<FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="126"></A>      <FONT ID="If">if</FONT> (!tracker.checkID(<FONT ID="IntegerLiteral">0</FONT>))
+<A NAME="127"></A>        System.out.println(<FONT ID="StringLiteral">"Load failure!"</FONT>);
+<A NAME="128"></A>    } <FONT ID="Catch">catch</FONT> (InterruptedException e) {
+<A NAME="129"></A>    }
+<A NAME="130"></A>  }
+<A NAME="131"></A>
+<A NAME="132"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> windowClosing(WindowEvent e) {
+<A NAME="133"></A>    dispose();
+<A NAME="134"></A>  }
+<A NAME="135"></A>
+<A NAME="136"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> windowClosed(WindowEvent e) {
+<A NAME="137"></A>  };
+<A NAME="138"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> windowDeiconified(WindowEvent e) {
+<A NAME="139"></A>  };
+<A NAME="140"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> windowIconified(WindowEvent e) {
+<A NAME="141"></A>  };
+<A NAME="142"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> windowActivated(WindowEvent e) {
+<A NAME="143"></A>  };
+<A NAME="144"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> windowDeactivated(WindowEvent e) {
+<A NAME="145"></A>  };
+<A NAME="146"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> windowOpened(WindowEvent e) {
+<A NAME="147"></A>  };
+<A NAME="148"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> keyPressed(KeyEvent e) {
+<A NAME="149"></A>  };
+<A NAME="150"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> keyReleased(KeyEvent e) {
+<A NAME="151"></A>  };
+<A NAME="152"></A>
+<A NAME="153"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> addListeners() {
+<A NAME="154"></A>    addWindowListener(<FONT ID="This">this</FONT>);
+<A NAME="155"></A>    addMouseListener(<FONT ID="This">this</FONT>);
+<A NAME="156"></A>    addMouseMotionListener(<FONT ID="This">this</FONT>);
+<A NAME="157"></A>    addKeyListener(<FONT ID="This">this</FONT>);
+<A NAME="158"></A>  }
+<A NAME="159"></A>
+<A NAME="160"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> initialize() {
+<A NAME="161"></A>    addListeners();
+<A NAME="162"></A>    demo = <FONT ID="New">new</FONT> <A HREF="idx3d.java.html">idx3d</A>(getSize().width, getSize().height);
+<A NAME="163"></A>    <FONT ID="Int">int</FONT> mode = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="164"></A>    demo.addTexture(NumImage.getImage());
+<A NAME="165"></A>    addImageField();
+<A NAME="166"></A>    addLights();
+<A NAME="167"></A>    demo.reflectivity = <FONT ID="IntegerLiteral">200</FONT>;
+<A NAME="168"></A>    demo.setStatic();
+<A NAME="169"></A>    demo.rotateWorld((<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">90</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="170"></A>    initialized = <FONT ID="True">true</FONT>;
+<A NAME="171"></A>  }
+<A NAME="172"></A>
+<A NAME="173"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> initialize(Image i, <FONT ID="Short">short</FONT> s[][]) {
+<A NAME="174"></A>    addListeners();
+<A NAME="175"></A>    demo = <FONT ID="New">new</FONT> <A HREF="idx3d.java.html">idx3d</A>(getSize().width, getSize().height);
+<A NAME="176"></A>    <FONT ID="Int">int</FONT> mode = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="177"></A>    demo.addTexture(i);
+<A NAME="178"></A>    addImageField(s);
+<A NAME="179"></A>    addLights();
+<A NAME="180"></A>    demo.reflectivity = <FONT ID="IntegerLiteral">200</FONT>;
+<A NAME="181"></A>    demo.setStatic();
+<A NAME="182"></A>    demo.rotateWorld((<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">90</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="183"></A>    initialized = <FONT ID="True">true</FONT>;
+<A NAME="184"></A>  }
+<A NAME="185"></A>
+<A NAME="186"></A>  Image getFileImage(String fileName) {
+<A NAME="187"></A>    Image i = Toolkit.getDefaultToolkit().getImage(
+<A NAME="188"></A>        fileName);
+<A NAME="189"></A>    waitForImage(<FONT ID="This">this</FONT>, i);
+<A NAME="190"></A>    <FONT ID="Return">return</FONT> i;
+<A NAME="191"></A>  }
+<A NAME="192"></A>
+<A NAME="193"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> paint(Graphics gx) {
+<A NAME="194"></A>    gx.setColor(Color.black);
+<A NAME="195"></A>    gx.fillRect(<FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="This">this</FONT>.getSize().width, <FONT ID="This">this</FONT>.getSize().height);
+<A NAME="196"></A>    gx.setColor(<FONT ID="New">new</FONT> Color(<FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">255</FONT>, <FONT ID="IntegerLiteral">0</FONT>));
+<A NAME="197"></A>    gx.drawString(<FONT ID="StringLiteral">"idx3d II.beta DEMO APPLET"</FONT>, <FONT ID="IntegerLiteral">10</FONT>, <FONT ID="IntegerLiteral">20</FONT>);
+<A NAME="198"></A>    gx.drawLine(<FONT ID="IntegerLiteral">10</FONT>, <FONT ID="IntegerLiteral">26</FONT>, <FONT ID="IntegerLiteral">160</FONT>, <FONT ID="IntegerLiteral">26</FONT>);
+<A NAME="199"></A>    gx.drawString(<FONT ID="StringLiteral">"©1998 by Peter Walser"</FONT>, <FONT ID="IntegerLiteral">10</FONT>, <FONT ID="IntegerLiteral">42</FONT>);
+<A NAME="200"></A>    gx.drawString(<FONT ID="StringLiteral">"Visit my JavaPage:"</FONT>, <FONT ID="IntegerLiteral">10</FONT>, <FONT ID="IntegerLiteral">56</FONT>);
+<A NAME="201"></A>    gx.drawString(<FONT ID="StringLiteral">"www2.active.ch/~proxima/java"</FONT>, <FONT ID="IntegerLiteral">10</FONT>, <FONT ID="IntegerLiteral">72</FONT>);
+<A NAME="202"></A>    gx.drawString(<FONT ID="StringLiteral">"Please wait while initializing..."</FONT>, <FONT ID="IntegerLiteral">10</FONT>, <FONT ID="IntegerLiteral">92</FONT>);
+<A NAME="203"></A>
+<A NAME="204"></A>  }
+<A NAME="205"></A>
+<A NAME="206"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> start() {
+<A NAME="207"></A>    <FONT ID="If">if</FONT> (idx_Thread == <FONT ID="Null">null</FONT>) {
+<A NAME="208"></A>      idx_Thread = <FONT ID="New">new</FONT> Thread(<FONT ID="This">this</FONT>);
+<A NAME="209"></A>      idx_Thread.start();
+<A NAME="210"></A>    }
+<A NAME="211"></A>  }
+<A NAME="212"></A>
+<A NAME="213"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> stop() {
+<A NAME="214"></A>    <FONT ID="If">if</FONT> (idx_Thread != <FONT ID="Null">null</FONT>) {
+<A NAME="215"></A>      <FONT ID="SingleLineComment">// now deprecated!
+<A NAME="216"></A></FONT>      <FONT ID="SingleLineComment">// idx_Thread.stop();
+<A NAME="217"></A></FONT>      idx_Thread = <FONT ID="Null">null</FONT>;
+<A NAME="218"></A>    }
+<A NAME="219"></A>  }
+<A NAME="220"></A>
+<A NAME="221"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> run() {
+<A NAME="222"></A>    <FONT ID="While">while</FONT> (<FONT ID="True">true</FONT>) {
+<A NAME="223"></A>      repaint();
+<A NAME="224"></A>      <FONT ID="Try">try</FONT> {
+<A NAME="225"></A>        idx_Thread.sleep(<FONT ID="IntegerLiteral">20</FONT>);
+<A NAME="226"></A>      } <FONT ID="Catch">catch</FONT> (InterruptedException e) {
+<A NAME="227"></A>        System.out.println(<FONT ID="StringLiteral">"graphics.idx://interrupted"</FONT>);
+<A NAME="228"></A>      }
+<A NAME="229"></A>    }
+<A NAME="230"></A>  }
+<A NAME="231"></A>
+<A NAME="232"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> update(Graphics g) {
+<A NAME="233"></A>    <FONT ID="If">if</FONT> (initialized) {
+<A NAME="234"></A>      <FONT ID="If">if</FONT> (autorot) {
+<A NAME="235"></A>        demo.rotateWorld(<FONT ID="IntegerLiteral">3</FONT>, -<FONT ID="IntegerLiteral">5</FONT>, <FONT ID="IntegerLiteral">2</FONT>);
+<A NAME="236"></A>      }
+<A NAME="237"></A>      demo.rotateObject(<FONT ID="IntegerLiteral">1</FONT>, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">5</FONT>);
+<A NAME="238"></A>      g.drawImage(demo.renderScene(), <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="This">this</FONT>);
+<A NAME="239"></A>    } <FONT ID="Else">else</FONT> {
+<A NAME="240"></A>      paint(g);
+<A NAME="241"></A>      initialize();
+<A NAME="242"></A>    }
+<A NAME="243"></A>  }
+<A NAME="244"></A>
+<A NAME="245"></A>  <FONT ID="Void">void</FONT> addImageField() {
+<A NAME="246"></A>    <FONT ID="Int">int</FONT> fieldres = <FONT ID="IntegerLiteral">20</FONT>;
+<A NAME="247"></A>    <FONT ID="Int">int</FONT> fieldcolor = demo.getIntColor(<FONT ID="IntegerLiteral">255</FONT>, <FONT ID="IntegerLiteral">96</FONT>, <FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="248"></A>    <FONT ID="Float">float</FONT> map[][] = <FONT ID="New">new</FONT> <FONT ID="Float">float</FONT>[fieldres][fieldres];
+<A NAME="249"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">2</FONT>; i &lt; fieldres; i++) {
+<A NAME="250"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">2</FONT>; j &lt; fieldres; j++) {
+<A NAME="251"></A>        <FONT ID="Int">int</FONT> x = NumImage.gray.length * i / fieldres;
+<A NAME="252"></A>        <FONT ID="Int">int</FONT> y = NumImage.gray[<FONT ID="IntegerLiteral">0</FONT>].length * j / fieldres;
+<A NAME="253"></A>        map[i][j] = (<FONT ID="Float">float</FONT>) (NumImage.gray[x][y] / <FONT ID="FloatPointLiteral">255.0</FONT>);
+<A NAME="254"></A>      }
+<A NAME="255"></A>    }
+<A NAME="256"></A>    demo.generateField(map, fieldres, fieldres, mode, fieldcolor);
+<A NAME="257"></A>    demo.object[<FONT ID="IntegerLiteral">1</FONT>].texture = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="258"></A>    demo.rotateObject(<FONT ID="IntegerLiteral">1</FONT>, <FONT ID="IntegerLiteral">0</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">180</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">180</FONT>);
+<A NAME="259"></A>    demo.shiftObject(<FONT ID="IntegerLiteral">1</FONT>, <FONT ID="IntegerLiteral">0</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="FloatPointLiteral">0.5</FONT>, <FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="260"></A>  }
+<A NAME="261"></A>
+<A NAME="262"></A>  <FONT ID="Void">void</FONT> addImageField(<FONT ID="Short">short</FONT> s[][]) {
+<A NAME="263"></A>    <FONT ID="Int">int</FONT> fieldres = <FONT ID="IntegerLiteral">40</FONT>;
+<A NAME="264"></A>    <FONT ID="Int">int</FONT> fieldcolor = demo.getIntColor(<FONT ID="IntegerLiteral">255</FONT>, <FONT ID="IntegerLiteral">96</FONT>, <FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="265"></A>    <FONT ID="Float">float</FONT> map[][] = <FONT ID="New">new</FONT> <FONT ID="Float">float</FONT>[fieldres][fieldres];
+<A NAME="266"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">1</FONT>; i &lt; fieldres - <FONT ID="IntegerLiteral">1</FONT>; i++) {
+<A NAME="267"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">1</FONT>; j &lt; fieldres - <FONT ID="IntegerLiteral">1</FONT>; j++) {
+<A NAME="268"></A>        <FONT ID="Int">int</FONT> x = s.length * i / fieldres;
+<A NAME="269"></A>        <FONT ID="Int">int</FONT> y = s[<FONT ID="IntegerLiteral">0</FONT>].length * j / fieldres;
+<A NAME="270"></A>        map[i][j] = (<FONT ID="Float">float</FONT>) (s[x][y] / <FONT ID="FloatPointLiteral">255.0</FONT>);
+<A NAME="271"></A>      }
+<A NAME="272"></A>    }
+<A NAME="273"></A>    demo.generateField(map, fieldres, fieldres, mode, fieldcolor);
+<A NAME="274"></A>    demo.object[<FONT ID="IntegerLiteral">1</FONT>].texture = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="275"></A>    demo.rotateObject(<FONT ID="IntegerLiteral">1</FONT>, <FONT ID="IntegerLiteral">0</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">180</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">180</FONT>);
+<A NAME="276"></A>    demo.shiftObject(<FONT ID="IntegerLiteral">1</FONT>, <FONT ID="IntegerLiteral">0</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="FloatPointLiteral">0.5</FONT>, <FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="277"></A>  }
+<A NAME="278"></A>
+<A NAME="279"></A>  <FONT ID="Void">void</FONT> addField()
+<A NAME="280"></A>      <FONT ID="SingleLineComment">// Adds a 3d field to the scene
+<A NAME="281"></A></FONT>  {
+<A NAME="282"></A>    <FONT ID="Int">int</FONT> fieldres = <FONT ID="IntegerLiteral">10</FONT>;
+<A NAME="283"></A>    <FONT ID="Int">int</FONT> fieldcolor = demo.getIntColor(<FONT ID="IntegerLiteral">255</FONT>, <FONT ID="IntegerLiteral">96</FONT>, <FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="284"></A>    <FONT ID="Float">float</FONT> map[][] = <FONT ID="New">new</FONT> <FONT ID="Float">float</FONT>[fieldres][fieldres];
+<A NAME="285"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; fieldres; i++) {
+<A NAME="286"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">0</FONT>; j &lt; fieldres; j++) {
+<A NAME="287"></A>        <FONT ID="Float">float</FONT> x = (<FONT ID="Float">float</FONT>) i / (<FONT ID="Float">float</FONT>) fieldres * <FONT ID="IntegerLiteral">2</FONT> - <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="288"></A>        <FONT ID="Float">float</FONT> y = (<FONT ID="Float">float</FONT>) j / (<FONT ID="Float">float</FONT>) fieldres * <FONT ID="IntegerLiteral">2</FONT> - <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="289"></A>        <FONT ID="SingleLineComment">//map[i][j]=x*x*x*y-y*y*y*x;
+<A NAME="290"></A></FONT>        <FONT ID="SingleLineComment">//map[i][j]=(float)(Math.cos(x*y*8)/10-Math.tan(x*y/2)/2);
+<A NAME="291"></A></FONT>        map[i][j] = x * x + y * y - (<FONT ID="Float">float</FONT>) <FONT ID="FloatPointLiteral">0.5</FONT>;
+<A NAME="292"></A>        <FONT ID="SingleLineComment">//map[i][j]=(float)(Math.sin(x*y*8)/6-0.2);
+<A NAME="293"></A></FONT>      }
+<A NAME="294"></A>    }
+<A NAME="295"></A>    demo.generateField(map, fieldres, fieldres, mode, fieldcolor);
+<A NAME="296"></A>    demo.object[<FONT ID="IntegerLiteral">1</FONT>].texture = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="297"></A>    demo.rotateObject(<FONT ID="IntegerLiteral">1</FONT>, <FONT ID="IntegerLiteral">0</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">180</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">180</FONT>);
+<A NAME="298"></A>    demo.shiftObject(<FONT ID="IntegerLiteral">1</FONT>, <FONT ID="IntegerLiteral">0</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="FloatPointLiteral">0.5</FONT>, <FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="299"></A>  }
+<A NAME="300"></A>
+<A NAME="301"></A>
+<A NAME="302"></A>  <FONT ID="Void">void</FONT> addLights() {
+<A NAME="303"></A>    demo.ambient = <FONT ID="IntegerLiteral">48</FONT>;
+<A NAME="304"></A>    demo.setPhong(<FONT ID="IntegerLiteral">64</FONT>);
+<A NAME="305"></A>    demo.addLight(<FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>((<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">0</FONT>, (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">0</FONT>, (<FONT ID="Float">float</FONT>) -<FONT ID="IntegerLiteral">1</FONT>), <FONT ID="IntegerLiteral">1</FONT>, <FONT ID="IntegerLiteral">164</FONT>);
+<A NAME="306"></A>    demo.addLight(<FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>((<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">2</FONT>, (<FONT ID="Float">float</FONT>) -<FONT ID="IntegerLiteral">4</FONT>, (<FONT ID="Float">float</FONT>) -<FONT ID="IntegerLiteral">1</FONT>), <FONT ID="IntegerLiteral">1</FONT>, <FONT ID="IntegerLiteral">144</FONT>);
+<A NAME="307"></A>  }
+<A NAME="308"></A>
+<A NAME="309"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> keyTyped(KeyEvent e) {
+<A NAME="310"></A>    mode = (mode + <FONT ID="IntegerLiteral">1</FONT>) % <FONT ID="IntegerLiteral">8</FONT>;
+<A NAME="311"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">1</FONT>; i &lt;= demo.objects; i++)
+<A NAME="312"></A>      demo.object[i].mode = mode;
+<A NAME="313"></A>  }
+<A NAME="314"></A>
+<A NAME="315"></A>
+<A NAME="316"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> mousePressed(MouseEvent evt) {
+<A NAME="317"></A>    autorot = <FONT ID="False">false</FONT>;
+<A NAME="318"></A>    oldx = evt.getX();
+<A NAME="319"></A>    oldy = evt.getY();
+<A NAME="320"></A>  }
+<A NAME="321"></A>
+<A NAME="322"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> mouseReleased(MouseEvent evt) {
+<A NAME="323"></A>    autorot = <FONT ID="True">true</FONT>;
+<A NAME="324"></A>    oldx = evt.getX();
+<A NAME="325"></A>    oldy = evt.getY();
+<A NAME="326"></A>  }
+<A NAME="327"></A>
+<A NAME="328"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> mouseDragged(MouseEvent evt) {
+<A NAME="329"></A>    <FONT ID="Int">int</FONT> x = evt.getX();
+<A NAME="330"></A>    <FONT ID="Int">int</FONT> y = evt.getY();
+<A NAME="331"></A>
+<A NAME="332"></A>    demo.rotateWorld((oldy - y), (oldx - x), <FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="333"></A>    dx = (dx + oldx - x + <FONT ID="IntegerLiteral">360</FONT>) % <FONT ID="IntegerLiteral">360</FONT>;
+<A NAME="334"></A>    dy = (dy + oldy - y + <FONT ID="IntegerLiteral">360</FONT>) % <FONT ID="IntegerLiteral">360</FONT>;
+<A NAME="335"></A>    <FONT ID="SingleLineComment">//showStatus("dx="+dx+" dy="+dy);
+<A NAME="336"></A></FONT>    oldx = x;
+<A NAME="337"></A>    oldy = y;
+<A NAME="338"></A>  }
+<A NAME="339"></A>
+<A NAME="340"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> mouseMoved(MouseEvent evt) {
+<A NAME="341"></A>  };
+<A NAME="342"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> mouseClicked(MouseEvent evt) {
+<A NAME="343"></A>  };
+<A NAME="344"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> mouseEntered(MouseEvent evt) {
+<A NAME="345"></A>  };
+<A NAME="346"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> mouseExited(MouseEvent evt) {
+<A NAME="347"></A>  };
+<A NAME="348"></A>}
+<A NAME="349"></A></pre>
+</BODY>
+
+<!-- Mirrored from www.docjava.com/book/cgij/doc/graphics/idx/Application.java.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 15 Oct 2019 16:21:22 GMT -->
+</HTML>

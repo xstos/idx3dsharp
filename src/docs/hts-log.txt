@@ -1,0 +1,16 @@
+HTTrack3.49-2+htsswf+htsjava launched on Tue, 15 Oct 2019 12:19:31 at http://www.docjava.com/book/cgij/doc/graphics/ +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar
+(winhttrack -qwC2%Pns2u1%s%uN0%I0p7DaK0H0%kf2A25000%f#f -F "Mozilla/4.5 (compatible; HTTrack 3.0x; Windows 98)" -%F "<!-- Mirrored from %s%s by HTTrack Website Copier/3.x [XR&CO'2014], %s -->" -%l "en, *" http://www.docjava.com/book/cgij/doc/graphics/ -O1 "c:\temp\foo\gfx" +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+12:19:31	Warning: 	Note: due to www.docjava.com remote robots.txt rules, links beginning with these path will be forbidden: /cgi-bin/, /images/ (see in the options to disable this)
+12:19:59	Warning: 	Retry after error -4 (Connect Error) at link www.docjava.com/book/cgij/doc/graphics/charts/ (from www.docjava.com/book/cgij/doc/graphics/)
+12:21:24	Warning: 	Retry after error -4 (Connect Error) at link www.docjava.com/book/cgij/doc/graphics/radar/Radar.java.html (from www.docjava.com/book/cgij/doc/graphics/radar/)
+12:21:25	Warning: 	Retry after error -4 (Connect Error) at link www.docjava.com/book/cgij/doc/graphics/raytracer/RayFrame.java.html (from www.docjava.com/book/cgij/doc/graphics/raytracer/)
+12:21:27	Warning: 	HTML file (3246 bytes) retransferred due to lack of cache: www.docjava.com/book/cgij/doc/graphics/Clock.java.html
+
+HTTrack Website Copier/3.49-2 mirror complete in 1 minutes 56 seconds : 224 links scanned, 221 files written (1483069 bytes overall) [1532771 bytes received at 13213 bytes/sec]
+(No errors, 5 warnings, 0 messages)

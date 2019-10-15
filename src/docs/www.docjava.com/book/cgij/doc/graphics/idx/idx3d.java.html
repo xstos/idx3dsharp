@@ -1,0 +1,2369 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+
+<!-- Mirrored from www.docjava.com/book/cgij/doc/graphics/idx/idx3d.java.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 15 Oct 2019 16:21:23 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<HEAD>
+<LINK REL=STYLESHEET TYPE="text/css" HREF="../../stylesheet.css" TITLE="Style">
+<META NAME="GENERATOR" CONTENT="Java2HTML Version 1.3Beta3">
+<TITLE>graphics.idx.idx3d (Java2HTML)</TITLE>
+</HEAD>
+<BODY><TABLE id="Header" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td colspan="2" width="33%">&nbsp;</td>
+<td align="center" colspan="2" width="33%">
+<font size="4">idx3d.java</font>
+</td>
+<td align="right" colspan="2" width="33%">&nbsp;</td>
+</tr>
+</TABLE>
+<pre ID="Classes">
+<A NAME="1"></A><FONT ID="SingleLineComment">// | The idx3d engine (and this source code) is (c)1998 by Peter Walser
+<A NAME="2"></A></FONT><FONT ID="SingleLineComment">// | Feel free to use this 3d engine for non-commercial purpose,
+<A NAME="3"></A></FONT><FONT ID="SingleLineComment">// | and please set a link to my homepage.
+<A NAME="4"></A></FONT><FONT ID="SingleLineComment">// | If you have any questions concerning the source code the
+<A NAME="5"></A></FONT><FONT ID="SingleLineComment">// | methods and algorithms: send me e-mail.
+<A NAME="6"></A></FONT><FONT ID="SingleLineComment">// |
+<A NAME="7"></A></FONT><FONT ID="SingleLineComment">// | Peter Walser
+<A NAME="8"></A></FONT><FONT ID="SingleLineComment">// | proxima@active.ch
+<A NAME="9"></A></FONT><FONT ID="SingleLineComment">// | http://www.vis.inf.ethz.ch/~pwalser
+<A NAME="10"></A></FONT><FONT ID="SingleLineComment">// | -------------------------------------------------------------
+<A NAME="11"></A></FONT><FONT ID="Package">package</FONT> <A HREF="http://www.docjava.com/book/cgij/doc/graphics.idx.index.html" target="packageFrame">graphics.idx</A>;
+<A NAME="12"></A>
+<A NAME="13"></A><FONT ID="Import">import</FONT> java.applet.Applet;
+<A NAME="14"></A><FONT ID="Import">import</FONT> java.awt.*;
+<A NAME="15"></A><FONT ID="Import">import</FONT> java.awt.image.ColorModel;
+<A NAME="16"></A><FONT ID="Import">import</FONT> java.awt.image.MemoryImageSource;
+<A NAME="17"></A><FONT ID="Import">import</FONT> java.awt.image.PixelGrabber;
+<A NAME="18"></A><FONT ID="Import">import</FONT> java.util.Date;
+<A NAME="19"></A>
+<A NAME="20"></A><FONT ID="Class">class</FONT> idx3d <FONT ID="Extends">extends</FONT> Applet {
+<A NAME="21"></A>  <FONT ID="SingleLineComment">// Copyright information
+<A NAME="22"></A></FONT>  <FONT ID="Public">public</FONT> String info = <FONT ID="New">new</FONT> String(<FONT ID="StringLiteral">"idx3d Java 3d ENGINE"</FONT>);
+<A NAME="23"></A>  <FONT ID="Public">public</FONT> String copyright = <FONT ID="New">new</FONT> String(<FONT ID="StringLiteral">"©1998 by Peter Walser"</FONT>);
+<A NAME="24"></A>  <FONT ID="Public">public</FONT> String version = <FONT ID="New">new</FONT> String(<FONT ID="StringLiteral">"Version 2.0 BETA"</FONT>);
+<A NAME="25"></A>  <FONT ID="Public">public</FONT> String build = <FONT ID="New">new</FONT> String(<FONT ID="StringLiteral">"06.10.1998"</FONT>);
+<A NAME="26"></A>  <FONT ID="Public">public</FONT> String sysinfo;
+<A NAME="27"></A>
+<A NAME="28"></A>  <FONT ID="SingleLineComment">//Scene attributes
+<A NAME="29"></A></FONT>  <FONT ID="Int">int</FONT> w;
+<A NAME="30"></A>  <FONT ID="Int">int</FONT> h;
+<A NAME="31"></A>  <FONT ID="Float">float</FONT> centerx;
+<A NAME="32"></A>  <FONT ID="Float">float</FONT> centery;
+<A NAME="33"></A>
+<A NAME="34"></A>  <FONT ID="SingleLineComment">//Objects and Lights
+<A NAME="35"></A></FONT>  <FONT ID="Public">public</FONT> idx3d_object object[];
+<A NAME="36"></A>  <FONT ID="Public">public</FONT> idx3d_light light[];
+<A NAME="37"></A>  <FONT ID="Public">public</FONT> idx3d_texture texture[];
+<A NAME="38"></A>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> objects = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="39"></A>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> lights = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="40"></A>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> textures = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="41"></A>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> maxobjects = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="42"></A>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> maxlights = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="43"></A>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> maxtextures = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="44"></A>  <FONT ID="Private">private</FONT> idx3d_matrix worldmatrix = <FONT ID="New">new</FONT> idx3d_matrix();
+<A NAME="45"></A>
+<A NAME="46"></A>  <FONT ID="SingleLineComment">//Color management
+<A NAME="47"></A></FONT>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> bgcolor;
+<A NAME="48"></A>  <FONT ID="Int">int</FONT> alpha = <FONT ID="IntegerLiteral">0xff000000</FONT>;
+<A NAME="49"></A>  <FONT ID="Int">int</FONT> rbit = <FONT ID="IntegerLiteral">0x00ff0000</FONT>;
+<A NAME="50"></A>  <FONT ID="Int">int</FONT> gbit = <FONT ID="IntegerLiteral">0x0000ff00</FONT>;
+<A NAME="51"></A>  <FONT ID="Int">int</FONT> bbit = <FONT ID="IntegerLiteral">0x000000ff</FONT>;
+<A NAME="52"></A>  <FONT ID="Private">private</FONT> ColorModel idx_cm = ColorModel.getRGBdefault();
+<A NAME="53"></A>
+<A NAME="54"></A>  <FONT ID="SingleLineComment">//Trigonometry
+<A NAME="55"></A></FONT>  <FONT ID="Float">float</FONT> sinus[] = <FONT ID="New">new</FONT> <FONT ID="Float">float</FONT>[<FONT ID="IntegerLiteral">360</FONT>];
+<A NAME="56"></A>  <FONT ID="Float">float</FONT> cosinus[] = <FONT ID="New">new</FONT> <FONT ID="Float">float</FONT>[<FONT ID="IntegerLiteral">360</FONT>];
+<A NAME="57"></A>  <FONT ID="Final">final</FONT> <FONT ID="Float">float</FONT> pi = (<FONT ID="Float">float</FONT>) <FONT ID="FloatPointLiteral">3.14159265</FONT>;
+<A NAME="58"></A>  <FONT ID="Final">final</FONT> <FONT ID="Float">float</FONT> deg2rad = pi / <FONT ID="IntegerLiteral">180</FONT>;
+<A NAME="59"></A>
+<A NAME="60"></A>  <FONT ID="SingleLineComment">//Scene parameters
+<A NAME="61"></A></FONT>  <FONT ID="Public">public</FONT> <FONT ID="Float">float</FONT> perspective = (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">8</FONT>;
+<A NAME="62"></A>  <FONT ID="Public">public</FONT> <FONT ID="Float">float</FONT> zoomcorrection = (<FONT ID="Float">float</FONT>) <FONT ID="FloatPointLiteral">0.72</FONT>;
+<A NAME="63"></A>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> ambient = <FONT ID="IntegerLiteral">0</FONT>;  <FONT ID="SingleLineComment">//0..255
+<A NAME="64"></A></FONT>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> phong = <FONT ID="IntegerLiteral">80</FONT>; <FONT ID="SingleLineComment">//0..255
+<A NAME="65"></A></FONT>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> reflectivity = <FONT ID="IntegerLiteral">255</FONT>; <FONT ID="SingleLineComment">//0..255
+<A NAME="66"></A></FONT>  <FONT ID="Public">public</FONT> <FONT ID="Boolean">boolean</FONT> staticLight = <FONT ID="False">false</FONT>;
+<A NAME="67"></A>
+<A NAME="68"></A>  <FONT ID="SingleLineComment">//Render structures
+<A NAME="69"></A></FONT>  <FONT ID="Int">int</FONT> LightMap[][] = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[<FONT ID="IntegerLiteral">256</FONT>][<FONT ID="IntegerLiteral">256</FONT>];
+<A NAME="70"></A>  <FONT ID="Int">int</FONT> ColorMap[][] = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[<FONT ID="IntegerLiteral">256</FONT>][<FONT ID="IntegerLiteral">256</FONT>];
+<A NAME="71"></A>  <FONT ID="Int">int</FONT> EnvMap[][] = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[<FONT ID="IntegerLiteral">256</FONT>][<FONT ID="IntegerLiteral">256</FONT>];
+<A NAME="72"></A>  <FONT ID="Int">int</FONT> StaticLightMap[][] = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[<FONT ID="IntegerLiteral">256</FONT>][<FONT ID="IntegerLiteral">256</FONT>];
+<A NAME="73"></A>  <FONT ID="Int">int</FONT> StaticEnvMap[][] = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[<FONT ID="IntegerLiteral">256</FONT>][<FONT ID="IntegerLiteral">256</FONT>];
+<A NAME="74"></A>  <FONT ID="Int">int</FONT> zBuffer[][];
+<A NAME="75"></A>  <FONT ID="Int">int</FONT> LEdgeBuffer[];
+<A NAME="76"></A>  <FONT ID="Int">int</FONT> REdgeBuffer[];
+<A NAME="77"></A>  <FONT ID="Int">int</FONT> ZEdgeBufferL[];
+<A NAME="78"></A>  <FONT ID="Int">int</FONT> ZEdgeBufferR[];
+<A NAME="79"></A>  <FONT ID="Int">int</FONT> IEdgeBufferL[];
+<A NAME="80"></A>  <FONT ID="Int">int</FONT> IEdgeBufferR[];
+<A NAME="81"></A>  <FONT ID="Int">int</FONT> NXEdgeBufferL[];
+<A NAME="82"></A>  <FONT ID="Int">int</FONT> NYEdgeBufferL[];
+<A NAME="83"></A>  <FONT ID="Int">int</FONT> NXEdgeBufferR[];
+<A NAME="84"></A>  <FONT ID="Int">int</FONT> NYEdgeBufferR[];
+<A NAME="85"></A>  <FONT ID="Int">int</FONT> TXEdgeBufferL[];
+<A NAME="86"></A>  <FONT ID="Int">int</FONT> TYEdgeBufferL[];
+<A NAME="87"></A>  <FONT ID="Int">int</FONT> TXEdgeBufferR[];
+<A NAME="88"></A>  <FONT ID="Int">int</FONT> TYEdgeBufferR[];
+<A NAME="89"></A>  <FONT ID="Int">int</FONT> zInfinite = <FONT ID="IntegerLiteral">1000</FONT> &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="90"></A>  <FONT ID="Int">int</FONT> zNear = -<FONT ID="IntegerLiteral">1</FONT> &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="91"></A>
+<A NAME="92"></A>  <FONT ID="SingleLineComment">//Output
+<A NAME="93"></A></FONT>  Image DoubleBuffer = <FONT ID="Null">null</FONT>;
+<A NAME="94"></A>  <FONT ID="Int">int</FONT> TargetPixel[];
+<A NAME="95"></A>  <FONT ID="Int">int</FONT> Background[];
+<A NAME="96"></A>
+<A NAME="97"></A>  <FONT ID="SingleLineComment">// GENERAL METHODS
+<A NAME="98"></A></FONT>
+<A NAME="99"></A>  <FONT ID="Public">public</FONT> idx3d(<FONT ID="Int">int</FONT> width, <FONT ID="Int">int</FONT> height) {
+<A NAME="100"></A>    myResize(width, height);
+<A NAME="101"></A>  }
+<A NAME="102"></A>
+<A NAME="103"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> myResize(<FONT ID="Int">int</FONT> width, <FONT ID="Int">int</FONT> height) {
+<A NAME="104"></A>    w = width;
+<A NAME="105"></A>    h = height;
+<A NAME="106"></A>    centerx = (<FONT ID="Float">float</FONT>) w / <FONT ID="IntegerLiteral">2</FONT>;
+<A NAME="107"></A>    centery = (<FONT ID="Float">float</FONT>) h / <FONT ID="IntegerLiteral">2</FONT>;
+<A NAME="108"></A>    sysinfo = getSysInfo();
+<A NAME="109"></A>    TargetPixel = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[w * h];
+<A NAME="110"></A>    Background = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[w * h];
+<A NAME="111"></A>    LEdgeBuffer = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="112"></A>    REdgeBuffer = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="113"></A>    zBuffer = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[w][h];
+<A NAME="114"></A>    ZEdgeBufferL = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="115"></A>    ZEdgeBufferR = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="116"></A>    IEdgeBufferL = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="117"></A>    IEdgeBufferR = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="118"></A>    NXEdgeBufferL = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="119"></A>    NYEdgeBufferL = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="120"></A>    NXEdgeBufferR = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="121"></A>    NYEdgeBufferR = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="122"></A>    TXEdgeBufferL = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="123"></A>    TYEdgeBufferL = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="124"></A>    TXEdgeBufferR = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="125"></A>    TYEdgeBufferR = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[h];
+<A NAME="126"></A>
+<A NAME="127"></A>    bgcolor = getIntColor(<FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="128"></A>    clearBackground();
+<A NAME="129"></A>    init_LightMap();
+<A NAME="130"></A>    init_ColorMap();
+<A NAME="131"></A>    init_TrigTables();
+<A NAME="132"></A>  }
+<A NAME="133"></A>
+<A NAME="134"></A>  <FONT ID="Private">private</FONT> String getSysInfo() {
+<A NAME="135"></A>    <FONT ID="Return">return</FONT> (System.getProperty(<FONT ID="StringLiteral">"os.arch"</FONT>) + <FONT ID="StringLiteral">" on "</FONT> + System.getProperty(<FONT ID="StringLiteral">"os.name"</FONT>));
+<A NAME="136"></A>  }
+<A NAME="137"></A>
+<A NAME="138"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> init_LightMap() {
+<A NAME="139"></A>    <FONT ID="Float">float</FONT> NX;
+<A NAME="140"></A>    <FONT ID="Float">float</FONT> NY;
+<A NAME="141"></A>    <FONT ID="Float">float</FONT> NZ;
+<A NAME="142"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">0</FONT>; j &lt; <FONT ID="IntegerLiteral">256</FONT>; j++) {
+<A NAME="143"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; <FONT ID="IntegerLiteral">256</FONT>; i++) {
+<A NAME="144"></A>        NX = ((<FONT ID="Float">float</FONT>) i - <FONT ID="IntegerLiteral">127</FONT>) / <FONT ID="IntegerLiteral">127</FONT>;
+<A NAME="145"></A>        NY = ((<FONT ID="Float">float</FONT>) j - <FONT ID="IntegerLiteral">127</FONT>) / <FONT ID="IntegerLiteral">127</FONT>;
+<A NAME="146"></A>        NZ = (<FONT ID="Float">float</FONT>) (<FONT ID="IntegerLiteral">1</FONT> - Math.sqrt(NX * NX + NY * NY));
+<A NAME="147"></A>        LightMap[i][j] = crop((<FONT ID="Int">int</FONT>) (NZ * <FONT ID="IntegerLiteral">255</FONT>), <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">255</FONT>);
+<A NAME="148"></A>      }
+<A NAME="149"></A>    }
+<A NAME="150"></A>  }
+<A NAME="151"></A>
+<A NAME="152"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> setStatic() {
+<A NAME="153"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">0</FONT>; j &lt; <FONT ID="IntegerLiteral">256</FONT>; j++) {
+<A NAME="154"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; <FONT ID="IntegerLiteral">256</FONT>; i++) {
+<A NAME="155"></A>        StaticLightMap[i][j] = getIntensity(<FONT ID="IntegerLiteral">2</FONT> * i - <FONT ID="IntegerLiteral">255</FONT>, <FONT ID="IntegerLiteral">2</FONT> * j - <FONT ID="IntegerLiteral">255</FONT>);
+<A NAME="156"></A>        StaticEnvMap[i][j] = getEnvironment(<FONT ID="IntegerLiteral">2</FONT> * i - <FONT ID="IntegerLiteral">255</FONT>, <FONT ID="IntegerLiteral">2</FONT> * j - <FONT ID="IntegerLiteral">255</FONT>);
+<A NAME="157"></A>      }
+<A NAME="158"></A>    }
+<A NAME="159"></A>    staticLight = <FONT ID="True">true</FONT>;
+<A NAME="160"></A>  }
+<A NAME="161"></A>
+<A NAME="162"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> init_ColorMap() {
+<A NAME="163"></A>    <FONT ID="Int">int</FONT> H2 = <FONT ID="IntegerLiteral">255</FONT> - phong;
+<A NAME="164"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> x = <FONT ID="IntegerLiteral">0</FONT>; x &lt; <FONT ID="IntegerLiteral">256</FONT>; x++) {
+<A NAME="165"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> y = <FONT ID="IntegerLiteral">0</FONT>; y &lt; H2; y++) {
+<A NAME="166"></A>        ColorMap[y][x] = (x * y / H2);
+<A NAME="167"></A>      }
+<A NAME="168"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> y = H2; y &lt; <FONT ID="IntegerLiteral">256</FONT>; y++) {
+<A NAME="169"></A>        ColorMap[y][x] = (y + (<FONT ID="IntegerLiteral">255</FONT> - y) * (x - H2) / phong);
+<A NAME="170"></A>      }
+<A NAME="171"></A>    }
+<A NAME="172"></A>  }
+<A NAME="173"></A>
+<A NAME="174"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> init_TrigTables() {
+<A NAME="175"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; <FONT ID="IntegerLiteral">360</FONT>; i++) {
+<A NAME="176"></A>      sinus[i] = (<FONT ID="Float">float</FONT>) Math.sin(deg2rad * (<FONT ID="Float">float</FONT>) i);
+<A NAME="177"></A>      cosinus[i] = (<FONT ID="Float">float</FONT>) Math.cos(deg2rad * (<FONT ID="Float">float</FONT>) i);
+<A NAME="178"></A>    }
+<A NAME="179"></A>  }
+<A NAME="180"></A>
+<A NAME="181"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> setPhong(<FONT ID="Int">int</FONT> p) {
+<A NAME="182"></A>    phong = p;
+<A NAME="183"></A>    init_ColorMap();
+<A NAME="184"></A>  }
+<A NAME="185"></A>
+<A NAME="186"></A>  <FONT ID="Public">public</FONT> <FONT ID="Float">float</FONT> crop(<FONT ID="Float">float</FONT> a, <FONT ID="Float">float</FONT> b, <FONT ID="Float">float</FONT> c) {
+<A NAME="187"></A>    <FONT ID="If">if</FONT> (a &lt; b) <FONT ID="Return">return</FONT> (b);
+<A NAME="188"></A>    <FONT ID="If">if</FONT> (a &gt; c - <FONT ID="IntegerLiteral">1</FONT>) <FONT ID="Return">return</FONT> (c - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="189"></A>    <FONT ID="Return">return</FONT> a;
+<A NAME="190"></A>  }
+<A NAME="191"></A>
+<A NAME="192"></A>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> crop(<FONT ID="Int">int</FONT> a, <FONT ID="Int">int</FONT> b, <FONT ID="Int">int</FONT> c) {
+<A NAME="193"></A>    <FONT ID="If">if</FONT> (a &lt; b) <FONT ID="Return">return</FONT> (b);
+<A NAME="194"></A>    <FONT ID="If">if</FONT> (a &gt; c - <FONT ID="IntegerLiteral">1</FONT>) <FONT ID="Return">return</FONT> (c - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="195"></A>    <FONT ID="Return">return</FONT> a;
+<A NAME="196"></A>  }
+<A NAME="197"></A>
+<A NAME="198"></A>  <FONT ID="Public">public</FONT> <FONT ID="Boolean">boolean</FONT> inrange(<FONT ID="Int">int</FONT> a, <FONT ID="Int">int</FONT> b, <FONT ID="Int">int</FONT> c) {
+<A NAME="199"></A>    <FONT ID="Return">return</FONT> ((a &gt;= b) &amp;&amp; (a &lt; c));
+<A NAME="200"></A>  }
+<A NAME="201"></A>
+<A NAME="202"></A>  <FONT ID="Public">public</FONT> <FONT ID="Boolean">boolean</FONT> inrange(<FONT ID="Float">float</FONT> a, <FONT ID="Float">float</FONT> b, <FONT ID="Float">float</FONT> c) {
+<A NAME="203"></A>    <FONT ID="Return">return</FONT> ((a &gt;= b) &amp;&amp; (a &lt; c));
+<A NAME="204"></A>  }
+<A NAME="205"></A>
+<A NAME="206"></A>  <FONT ID="Public">public</FONT> <FONT ID="Float">float</FONT> rnd() {
+<A NAME="207"></A>    <FONT ID="Return">return</FONT> ((<FONT ID="Float">float</FONT>) Math.random() * <FONT ID="IntegerLiteral">2</FONT> - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="208"></A>  }
+<A NAME="209"></A>
+<A NAME="210"></A>  <FONT ID="Public">public</FONT> idx3d_node rndNode() {
+<A NAME="211"></A>    <A HREF="idx3d_vector.java.html">idx3d_vector</A> v = <FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>();
+<A NAME="212"></A>    v = rndVector();
+<A NAME="213"></A>    idx3d_node r = <FONT ID="New">new</FONT> idx3d_node(v.x, v.y, v.z);
+<A NAME="214"></A>    r.n = normalize(rndVector());
+<A NAME="215"></A>    <FONT ID="Return">return</FONT> r;
+<A NAME="216"></A>  }
+<A NAME="217"></A>
+<A NAME="218"></A>  <FONT ID="Public">public</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A> rndVector() {
+<A NAME="219"></A>    <A HREF="idx3d_vector.java.html">idx3d_vector</A> v = <FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>();
+<A NAME="220"></A>    v.x = rnd();
+<A NAME="221"></A>    v.y = rnd();
+<A NAME="222"></A>    v.z = rnd();
+<A NAME="223"></A>    <FONT ID="Return">return</FONT> v;
+<A NAME="224"></A>  }
+<A NAME="225"></A>
+<A NAME="226"></A>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> rndColor() {
+<A NAME="227"></A>    <FONT ID="Int">int</FONT> r = (<FONT ID="Int">int</FONT>) (Math.random() * <FONT ID="IntegerLiteral">255</FONT>);
+<A NAME="228"></A>    <FONT ID="Int">int</FONT> g = (<FONT ID="Int">int</FONT>) (Math.random() * <FONT ID="IntegerLiteral">255</FONT>);
+<A NAME="229"></A>    <FONT ID="Int">int</FONT> b = (<FONT ID="Int">int</FONT>) (Math.random() * <FONT ID="IntegerLiteral">255</FONT>);
+<A NAME="230"></A>    <FONT ID="Return">return</FONT> getIntColor(r, g, b);
+<A NAME="231"></A>  }
+<A NAME="232"></A>
+<A NAME="233"></A>  <FONT ID="SingleLineComment">// GEOMETRY FUNCTIONS
+<A NAME="234"></A></FONT>
+<A NAME="235"></A>  <FONT ID="Public">public</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A> vectordist(<A HREF="idx3d_vector.java.html">idx3d_vector</A> v1, <A HREF="idx3d_vector.java.html">idx3d_vector</A> v2) {
+<A NAME="236"></A>    <FONT ID="Return">return</FONT> <FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+<A NAME="237"></A>  }
+<A NAME="238"></A>
+<A NAME="239"></A>  <FONT ID="Public">public</FONT> <FONT ID="Float">float</FONT> vectorlength(<A HREF="idx3d_vector.java.html">idx3d_vector</A> v) {
+<A NAME="240"></A>    <FONT ID="Return">return</FONT> (<FONT ID="Float">float</FONT>) Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+<A NAME="241"></A>  }
+<A NAME="242"></A>
+<A NAME="243"></A>  <FONT ID="Public">public</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A> normalize(<A HREF="idx3d_vector.java.html">idx3d_vector</A> v) {
+<A NAME="244"></A>    <FONT ID="Float">float</FONT> length = vectorlength(v);
+<A NAME="245"></A>    <FONT ID="Return">return</FONT> <FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>(v.x / length, v.y / length, v.z / length);
+<A NAME="246"></A>  }
+<A NAME="247"></A>
+<A NAME="248"></A>  <FONT ID="Public">public</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A> getNormal(<A HREF="idx3d_vector.java.html">idx3d_vector</A> a, <A HREF="idx3d_vector.java.html">idx3d_vector</A> b, <A HREF="idx3d_vector.java.html">idx3d_vector</A> c) {
+<A NAME="249"></A>    <A HREF="idx3d_vector.java.html">idx3d_vector</A> n = <FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>();
+<A NAME="250"></A>    <FONT ID="Float">float</FONT> ax = b.x - a.x;
+<A NAME="251"></A>    <FONT ID="Float">float</FONT> ay = b.y - a.y;
+<A NAME="252"></A>    <FONT ID="Float">float</FONT> az = b.z - a.z;
+<A NAME="253"></A>    <FONT ID="Float">float</FONT> bx = c.x - a.x;
+<A NAME="254"></A>    <FONT ID="Float">float</FONT> by = c.y - a.y;
+<A NAME="255"></A>    <FONT ID="Float">float</FONT> bz = c.z - a.z;
+<A NAME="256"></A>    n.x = ay * bz - by * az;
+<A NAME="257"></A>    n.y = az * bx - bz * ax;
+<A NAME="258"></A>    n.z = ax * by - bx * ay;
+<A NAME="259"></A>    <FONT ID="Return">return</FONT> normalize(n);
+<A NAME="260"></A>  }
+<A NAME="261"></A>
+<A NAME="262"></A>  <FONT ID="Public">public</FONT> idx3d_matrix crossproduct(idx3d_matrix a, idx3d_matrix b) {
+<A NAME="263"></A>    idx3d_matrix c = <FONT ID="New">new</FONT> idx3d_matrix();
+<A NAME="264"></A>    c.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] = a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] + a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">1</FONT>] * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">0</FONT>] + a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">2</FONT>] * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">0</FONT>] + a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">3</FONT>] * b.matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">0</FONT>];
+<A NAME="265"></A>    c.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">1</FONT>] = a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">1</FONT>] + a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">1</FONT>] * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] + a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">2</FONT>] * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">1</FONT>] + a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">3</FONT>] * b.matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">1</FONT>];
+<A NAME="266"></A>    c.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">2</FONT>] = a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">2</FONT>] + a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">1</FONT>] * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">2</FONT>] + a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">2</FONT>] * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] + a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">3</FONT>] * b.matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">2</FONT>];
+<A NAME="267"></A>    c.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">3</FONT>] = a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">3</FONT>] + a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">1</FONT>] * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">3</FONT>] + a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">2</FONT>] * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">3</FONT>] + a.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">3</FONT>] * b.matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">3</FONT>];
+<A NAME="268"></A>    c.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">0</FONT>] = a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">0</FONT>] * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] + a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">0</FONT>] + a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">2</FONT>] * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">0</FONT>] + a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">3</FONT>] * b.matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">0</FONT>];
+<A NAME="269"></A>    c.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] = a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">0</FONT>] * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">1</FONT>] + a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] + a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">2</FONT>] * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">1</FONT>] + a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">3</FONT>] * b.matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">1</FONT>];
+<A NAME="270"></A>    c.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">2</FONT>] = a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">0</FONT>] * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">2</FONT>] + a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">2</FONT>] + a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">2</FONT>] * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] + a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">3</FONT>] * b.matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">2</FONT>];
+<A NAME="271"></A>    c.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">3</FONT>] = a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">0</FONT>] * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">3</FONT>] + a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">3</FONT>] + a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">2</FONT>] * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">3</FONT>] + a.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">3</FONT>] * b.matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">3</FONT>];
+<A NAME="272"></A>    c.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">0</FONT>] = a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">0</FONT>] * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] + a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">1</FONT>] * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">0</FONT>] + a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">0</FONT>] + a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">3</FONT>] * b.matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">0</FONT>];
+<A NAME="273"></A>    c.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">1</FONT>] = a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">0</FONT>] * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">1</FONT>] + a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">1</FONT>] * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] + a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">1</FONT>] + a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">3</FONT>] * b.matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">1</FONT>];
+<A NAME="274"></A>    c.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] = a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">0</FONT>] * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">2</FONT>] + a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">1</FONT>] * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">2</FONT>] + a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] + a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">3</FONT>] * b.matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">2</FONT>];
+<A NAME="275"></A>    c.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">3</FONT>] = a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">0</FONT>] * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">3</FONT>] + a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">1</FONT>] * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">3</FONT>] + a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">3</FONT>] + a.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">3</FONT>] * b.matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">3</FONT>];
+<A NAME="276"></A>    <FONT ID="Return">return</FONT> c;
+<A NAME="277"></A>  }
+<A NAME="278"></A>
+<A NAME="279"></A>  <FONT ID="Public">public</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A> matrixvectorproduct(idx3d_matrix b, <A HREF="idx3d_vector.java.html">idx3d_vector</A> a) {
+<A NAME="280"></A>    <A HREF="idx3d_vector.java.html">idx3d_vector</A> c = <FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>();
+<A NAME="281"></A>    c.x = a.x * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] + a.y * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">1</FONT>] + a.z * b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">2</FONT>] + b.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">3</FONT>];
+<A NAME="282"></A>    c.y = a.x * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">0</FONT>] + a.y * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] + a.z * b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">2</FONT>] + b.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">3</FONT>];
+<A NAME="283"></A>    c.z = a.x * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">0</FONT>] + a.y * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">1</FONT>] + a.z * b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] + b.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">3</FONT>];
+<A NAME="284"></A>    <FONT ID="Return">return</FONT> c;
+<A NAME="285"></A>  }
+<A NAME="286"></A>
+<A NAME="287"></A>  <FONT ID="SingleLineComment">// DATA MANAGEMENT
+<A NAME="288"></A></FONT>
+<A NAME="289"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> addObject(<FONT ID="Int">int</FONT> rendermode, <FONT ID="Int">int</FONT> color) {
+<A NAME="290"></A>    objects += <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="291"></A>
+<A NAME="292"></A>    <FONT ID="If">if</FONT> (objects &gt;= maxobjects) {
+<A NAME="293"></A>      <FONT ID="If">if</FONT> (object == <FONT ID="Null">null</FONT>) {
+<A NAME="294"></A>        maxobjects = <FONT ID="IntegerLiteral">2</FONT>;
+<A NAME="295"></A>        object = <FONT ID="New">new</FONT> idx3d_object[<FONT ID="IntegerLiteral">11</FONT>];
+<A NAME="296"></A>      } <FONT ID="Else">else</FONT> {
+<A NAME="297"></A>        maxobjects *= <FONT ID="IntegerLiteral">2</FONT>;
+<A NAME="298"></A>        idx3d_object temp[] = <FONT ID="New">new</FONT> idx3d_object[maxobjects + <FONT ID="IntegerLiteral">1</FONT>];
+<A NAME="299"></A>        System.arraycopy(object, <FONT ID="IntegerLiteral">1</FONT>, temp, <FONT ID="IntegerLiteral">1</FONT>, objects);
+<A NAME="300"></A>        object = temp;
+<A NAME="301"></A>      }
+<A NAME="302"></A>    }
+<A NAME="303"></A>    object[objects] = <FONT ID="New">new</FONT> idx3d_object(rendermode, color);
+<A NAME="304"></A>  }
+<A NAME="305"></A>
+<A NAME="306"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> addLight(<A HREF="idx3d_vector.java.html">idx3d_vector</A> v, <FONT ID="Int">int</FONT> mode, <FONT ID="Int">int</FONT> intensity) {
+<A NAME="307"></A>    lights += <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="308"></A>
+<A NAME="309"></A>    <FONT ID="If">if</FONT> (lights &gt;= maxlights) {
+<A NAME="310"></A>      <FONT ID="If">if</FONT> (light == <FONT ID="Null">null</FONT>) {
+<A NAME="311"></A>        maxlights = <FONT ID="IntegerLiteral">10</FONT>;
+<A NAME="312"></A>        light = <FONT ID="New">new</FONT> idx3d_light[<FONT ID="IntegerLiteral">11</FONT>];
+<A NAME="313"></A>      } <FONT ID="Else">else</FONT> {
+<A NAME="314"></A>        maxlights += <FONT ID="IntegerLiteral">10</FONT>;
+<A NAME="315"></A>        idx3d_light temp[] = <FONT ID="New">new</FONT> idx3d_light[maxlights + <FONT ID="IntegerLiteral">1</FONT>];
+<A NAME="316"></A>        System.arraycopy(light, <FONT ID="IntegerLiteral">1</FONT>, temp, <FONT ID="IntegerLiteral">1</FONT>, lights);
+<A NAME="317"></A>        light = temp;
+<A NAME="318"></A>      }
+<A NAME="319"></A>    }
+<A NAME="320"></A>    <FONT ID="If">if</FONT> (mode == <FONT ID="IntegerLiteral">1</FONT>) v = normalize(v);
+<A NAME="321"></A>    light[lights] = <FONT ID="New">new</FONT> idx3d_light(v, mode, intensity);
+<A NAME="322"></A>  }
+<A NAME="323"></A>
+<A NAME="324"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> addTexture(Image img) {
+<A NAME="325"></A>    textures += <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="326"></A>
+<A NAME="327"></A>    <FONT ID="If">if</FONT> (textures &gt;= maxtextures) {
+<A NAME="328"></A>      <FONT ID="If">if</FONT> (texture == <FONT ID="Null">null</FONT>) {
+<A NAME="329"></A>        maxtextures = <FONT ID="IntegerLiteral">20</FONT>;
+<A NAME="330"></A>        texture = <FONT ID="New">new</FONT> idx3d_texture[<FONT ID="IntegerLiteral">21</FONT>];
+<A NAME="331"></A>      } <FONT ID="Else">else</FONT> {
+<A NAME="332"></A>        maxtextures *= <FONT ID="IntegerLiteral">2</FONT>;
+<A NAME="333"></A>        idx3d_texture temp[] = <FONT ID="New">new</FONT> idx3d_texture[maxtextures + <FONT ID="IntegerLiteral">1</FONT>];
+<A NAME="334"></A>        System.arraycopy(texture, <FONT ID="IntegerLiteral">1</FONT>, temp, <FONT ID="IntegerLiteral">1</FONT>, textures);
+<A NAME="335"></A>        texture = temp;
+<A NAME="336"></A>      }
+<A NAME="337"></A>    }
+<A NAME="338"></A>    texture[textures] = <FONT ID="New">new</FONT> idx3d_texture();
+<A NAME="339"></A>    <FONT ID="While">while</FONT> (img.getWidth(<FONT ID="This">this</FONT>) &lt; <FONT ID="IntegerLiteral">0</FONT> || img.getHeight(<FONT ID="This">this</FONT>) &lt; <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="340"></A>    }
+<A NAME="341"></A>    <FONT ID="Int">int</FONT> width = img.getWidth(<FONT ID="This">this</FONT>);
+<A NAME="342"></A>    <FONT ID="Int">int</FONT> height = img.getHeight(<FONT ID="This">this</FONT>);
+<A NAME="343"></A>    texture[textures].w = width;
+<A NAME="344"></A>    texture[textures].h = height;
+<A NAME="345"></A>    texture[textures].pixel = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[width][height];
+<A NAME="346"></A>    <FONT ID="Int">int</FONT> temp2[] = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[width * height];
+<A NAME="347"></A>    PixelGrabber pg = <FONT ID="New">new</FONT> PixelGrabber(img, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">0</FONT>, width, height, temp2, <FONT ID="IntegerLiteral">0</FONT>, width);
+<A NAME="348"></A>    <FONT ID="Try">try</FONT> {
+<A NAME="349"></A>      pg.grabPixels();
+<A NAME="350"></A>    } <FONT ID="Catch">catch</FONT> (InterruptedException e) {
+<A NAME="351"></A>    }
+<A NAME="352"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">0</FONT>; j &lt; height; j++) {
+<A NAME="353"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; width; i++) {
+<A NAME="354"></A>        texture[textures].pixel[i][j] = temp2[i + j * width];
+<A NAME="355"></A>      }
+<A NAME="356"></A>    }
+<A NAME="357"></A>  }
+<A NAME="358"></A>
+<A NAME="359"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> addTriangle(<FONT ID="Int">int</FONT> objectNr, <FONT ID="Int">int</FONT> p1, <FONT ID="Int">int</FONT> p2, <FONT ID="Int">int</FONT> p3) {
+<A NAME="360"></A>    object[objectNr].triangles += <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="361"></A>
+<A NAME="362"></A>    <FONT ID="If">if</FONT> (object[objectNr].triangles &gt;= object[objectNr].maxtriangles) {
+<A NAME="363"></A>      <FONT ID="If">if</FONT> (object[objectNr].triangle == <FONT ID="Null">null</FONT>) {
+<A NAME="364"></A>        object[objectNr].maxtriangles = <FONT ID="IntegerLiteral">2</FONT>;
+<A NAME="365"></A>        object[objectNr].triangle = <FONT ID="New">new</FONT> idx3d_triangle[<FONT ID="IntegerLiteral">11</FONT>];
+<A NAME="366"></A>      } <FONT ID="Else">else</FONT> {
+<A NAME="367"></A>        object[objectNr].maxtriangles *= <FONT ID="IntegerLiteral">2</FONT>;
+<A NAME="368"></A>        idx3d_triangle temp[] = <FONT ID="New">new</FONT> idx3d_triangle[object[objectNr].maxtriangles + <FONT ID="IntegerLiteral">1</FONT>];
+<A NAME="369"></A>        System.arraycopy(object[objectNr].triangle, <FONT ID="IntegerLiteral">1</FONT>, temp, <FONT ID="IntegerLiteral">1</FONT>, object[objectNr].triangles);
+<A NAME="370"></A>        object[objectNr].triangle = temp;
+<A NAME="371"></A>      }
+<A NAME="372"></A>    }
+<A NAME="373"></A>    object[objectNr].triangle[object[objectNr].triangles] = <FONT ID="New">new</FONT> idx3d_triangle(p1, p2, p3);
+<A NAME="374"></A>    object[objectNr].triangle[object[objectNr].triangles].n = getNormal(object[objectNr].node[p1].v, object[objectNr].node[p3].v, object[objectNr].node[p2].v);
+<A NAME="375"></A>  }
+<A NAME="376"></A>
+<A NAME="377"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> addNode(<FONT ID="Int">int</FONT> objectNr, idx3d_node t) {
+<A NAME="378"></A>    object[objectNr].nodes += <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="379"></A>
+<A NAME="380"></A>    <FONT ID="If">if</FONT> (object[objectNr].nodes &gt;= object[objectNr].maxnodes) {
+<A NAME="381"></A>      <FONT ID="If">if</FONT> (object[objectNr].node == <FONT ID="Null">null</FONT>) {
+<A NAME="382"></A>        object[objectNr].maxnodes = <FONT ID="IntegerLiteral">2</FONT>;
+<A NAME="383"></A>        object[objectNr].node = <FONT ID="New">new</FONT> idx3d_node[<FONT ID="IntegerLiteral">11</FONT>];
+<A NAME="384"></A>      } <FONT ID="Else">else</FONT> {
+<A NAME="385"></A>        object[objectNr].maxnodes *= <FONT ID="IntegerLiteral">2</FONT>;
+<A NAME="386"></A>        idx3d_node temp[] = <FONT ID="New">new</FONT> idx3d_node[object[objectNr].maxnodes + <FONT ID="IntegerLiteral">1</FONT>];
+<A NAME="387"></A>        System.arraycopy(object[objectNr].node, <FONT ID="IntegerLiteral">1</FONT>, temp, <FONT ID="IntegerLiteral">1</FONT>, object[objectNr].nodes);
+<A NAME="388"></A>        object[objectNr].node = temp;
+<A NAME="389"></A>      }
+<A NAME="390"></A>    }
+<A NAME="391"></A>    t.n = normalize(t.n);
+<A NAME="392"></A>    object[objectNr].node[object[objectNr].nodes] = t;
+<A NAME="393"></A>  }
+<A NAME="394"></A>
+<A NAME="395"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> addNode(<FONT ID="Int">int</FONT> objectNr, <FONT ID="Float">float</FONT> x, <FONT ID="Float">float</FONT> y, <FONT ID="Float">float</FONT> z) {
+<A NAME="396"></A>    addNode(objectNr, <FONT ID="New">new</FONT> idx3d_node(x, y, z));
+<A NAME="397"></A>  }
+<A NAME="398"></A>
+<A NAME="399"></A>  <FONT ID="SingleLineComment">// OBJECT MANIPULATION
+<A NAME="400"></A></FONT>
+<A NAME="401"></A>  <FONT ID="Public">public</FONT> idx3d_matrix shiftMatrix(<FONT ID="Float">float</FONT> dx, <FONT ID="Float">float</FONT> dy, <FONT ID="Float">float</FONT> dz) {
+<A NAME="402"></A>    idx3d_matrix m = <FONT ID="New">new</FONT> idx3d_matrix();
+<A NAME="403"></A>    m.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">3</FONT>] = dx;
+<A NAME="404"></A>    m.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">3</FONT>] = dy;
+<A NAME="405"></A>    m.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">3</FONT>] = dz;
+<A NAME="406"></A>    <FONT ID="Return">return</FONT> m;
+<A NAME="407"></A>  }
+<A NAME="408"></A>
+<A NAME="409"></A>  <FONT ID="Public">public</FONT> idx3d_matrix scaleMatrix(<FONT ID="Float">float</FONT> dx, <FONT ID="Float">float</FONT> dy, <FONT ID="Float">float</FONT> dz) {
+<A NAME="410"></A>    idx3d_matrix m = <FONT ID="New">new</FONT> idx3d_matrix();
+<A NAME="411"></A>    m.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] = dx;
+<A NAME="412"></A>    m.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] = dy;
+<A NAME="413"></A>    m.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] = dz;
+<A NAME="414"></A>    <FONT ID="Return">return</FONT> m;
+<A NAME="415"></A>  }
+<A NAME="416"></A>
+<A NAME="417"></A>  <FONT ID="Public">public</FONT> idx3d_matrix rotateMatrix(<FONT ID="Float">float</FONT> dx, <FONT ID="Float">float</FONT> dy, <FONT ID="Float">float</FONT> dz) {
+<A NAME="418"></A>    <FONT ID="Float">float</FONT> SIN;
+<A NAME="419"></A>    <FONT ID="Float">float</FONT> COS;
+<A NAME="420"></A>    <FONT ID="Int">int</FONT> angle;
+<A NAME="421"></A>    idx3d_matrix out = <FONT ID="New">new</FONT> idx3d_matrix();
+<A NAME="422"></A>
+<A NAME="423"></A>    <FONT ID="If">if</FONT> (dx != <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="424"></A>      idx3d_matrix m = <FONT ID="New">new</FONT> idx3d_matrix();
+<A NAME="425"></A>      angle = ((<FONT ID="Int">int</FONT>) dx + <FONT ID="IntegerLiteral">1440</FONT>) % <FONT ID="IntegerLiteral">360</FONT>;
+<A NAME="426"></A>      SIN = sinus[angle];
+<A NAME="427"></A>      COS = cosinus[angle];
+<A NAME="428"></A>      m.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] = COS;
+<A NAME="429"></A>      m.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">2</FONT>] = SIN;
+<A NAME="430"></A>      m.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">1</FONT>] = -SIN;
+<A NAME="431"></A>      m.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] = COS;
+<A NAME="432"></A>      out = crossproduct(m, out);
+<A NAME="433"></A>    }
+<A NAME="434"></A>    <FONT ID="If">if</FONT> (dy != <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="435"></A>      idx3d_matrix m = <FONT ID="New">new</FONT> idx3d_matrix();
+<A NAME="436"></A>      angle = ((<FONT ID="Int">int</FONT>) dy + <FONT ID="IntegerLiteral">720</FONT>) % <FONT ID="IntegerLiteral">360</FONT>;
+<A NAME="437"></A>      SIN = sinus[angle];
+<A NAME="438"></A>      COS = cosinus[angle];
+<A NAME="439"></A>      m.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] = COS;
+<A NAME="440"></A>      m.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">2</FONT>] = SIN;
+<A NAME="441"></A>      m.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">0</FONT>] = -SIN;
+<A NAME="442"></A>      m.matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] = COS;
+<A NAME="443"></A>      out = crossproduct(m, out);
+<A NAME="444"></A>    }
+<A NAME="445"></A>    <FONT ID="If">if</FONT> (dz != <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="446"></A>      idx3d_matrix m = <FONT ID="New">new</FONT> idx3d_matrix();
+<A NAME="447"></A>      angle = ((<FONT ID="Int">int</FONT>) dz + <FONT ID="IntegerLiteral">720</FONT>) % <FONT ID="IntegerLiteral">360</FONT>;
+<A NAME="448"></A>      SIN = sinus[angle];
+<A NAME="449"></A>      COS = cosinus[angle];
+<A NAME="450"></A>      m.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] = COS;
+<A NAME="451"></A>      m.matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">1</FONT>] = SIN;
+<A NAME="452"></A>      m.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">0</FONT>] = -SIN;
+<A NAME="453"></A>      m.matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] = COS;
+<A NAME="454"></A>      out = crossproduct(m, out);
+<A NAME="455"></A>    }
+<A NAME="456"></A>    <FONT ID="Return">return</FONT> out;
+<A NAME="457"></A>  }
+<A NAME="458"></A>
+<A NAME="459"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> shiftObject(<FONT ID="Int">int</FONT> o, <FONT ID="Float">float</FONT> dx, <FONT ID="Float">float</FONT> dy, <FONT ID="Float">float</FONT> dz) {
+<A NAME="460"></A>    object[o].matrix = crossproduct(shiftMatrix(dx, dy, dz), object[o].matrix);
+<A NAME="461"></A>  }
+<A NAME="462"></A>
+<A NAME="463"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> scaleObject(<FONT ID="Int">int</FONT> o, <FONT ID="Float">float</FONT> dx, <FONT ID="Float">float</FONT> dy, <FONT ID="Float">float</FONT> dz) {
+<A NAME="464"></A>    object[o].matrix = crossproduct(scaleMatrix(dx, dy, dz), object[o].matrix);
+<A NAME="465"></A>  }
+<A NAME="466"></A>
+<A NAME="467"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> rotateObject(<FONT ID="Int">int</FONT> o, <FONT ID="Float">float</FONT> dx, <FONT ID="Float">float</FONT> dy, <FONT ID="Float">float</FONT> dz) {
+<A NAME="468"></A>    object[o].matrix = crossproduct(object[o].matrix, rotateMatrix(dx, dy, dz));
+<A NAME="469"></A>  }
+<A NAME="470"></A>
+<A NAME="471"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> rotateObjectWorld(<FONT ID="Int">int</FONT> o, <FONT ID="Float">float</FONT> dx, <FONT ID="Float">float</FONT> dy, <FONT ID="Float">float</FONT> dz) {
+<A NAME="472"></A>    object[o].matrix = crossproduct(rotateMatrix(dx, dy, dz), object[o].matrix);
+<A NAME="473"></A>  }
+<A NAME="474"></A>
+<A NAME="475"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> rotateObject(<FONT ID="Int">int</FONT> obj, <FONT ID="Float">float</FONT> px, <FONT ID="Float">float</FONT> py, <FONT ID="Float">float</FONT> pz, <FONT ID="Float">float</FONT> dx, <FONT ID="Float">float</FONT> dy, <FONT ID="Float">float</FONT> dz) {
+<A NAME="476"></A>    shiftObject(obj, -px, -py, -pz);
+<A NAME="477"></A>    rotateObject(obj, dx, dy, dz);
+<A NAME="478"></A>    shiftObject(obj, px, py, pz);
+<A NAME="479"></A>  }
+<A NAME="480"></A>
+<A NAME="481"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> shiftWorld(<FONT ID="Float">float</FONT> dx, <FONT ID="Float">float</FONT> dy, <FONT ID="Float">float</FONT> dz) {
+<A NAME="482"></A>    worldmatrix = crossproduct(shiftMatrix(dx, dy, dz), worldmatrix);
+<A NAME="483"></A>  }
+<A NAME="484"></A>
+<A NAME="485"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> scaleWorld(<FONT ID="Float">float</FONT> dx, <FONT ID="Float">float</FONT> dy, <FONT ID="Float">float</FONT> dz) {
+<A NAME="486"></A>    worldmatrix = crossproduct(scaleMatrix(dx, dy, dz), worldmatrix);
+<A NAME="487"></A>  }
+<A NAME="488"></A>
+<A NAME="489"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> rotateWorld(<FONT ID="Float">float</FONT> dx, <FONT ID="Float">float</FONT> dy, <FONT ID="Float">float</FONT> dz) {
+<A NAME="490"></A>    worldmatrix = crossproduct(rotateMatrix(dx, dy, dz), worldmatrix);
+<A NAME="491"></A>  }
+<A NAME="492"></A>
+<A NAME="493"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> scaleObject(<FONT ID="Int">int</FONT> obj, <FONT ID="Float">float</FONT> d) {
+<A NAME="494"></A>    scaleObject(obj, d, d, d);
+<A NAME="495"></A>  }
+<A NAME="496"></A>
+<A NAME="497"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> scaleWorld(<FONT ID="Float">float</FONT> d) {
+<A NAME="498"></A>    scaleWorld(d, d, d);
+<A NAME="499"></A>  }
+<A NAME="500"></A>
+<A NAME="501"></A>  <FONT ID="SingleLineComment">// RENDERING
+<A NAME="502"></A></FONT>
+<A NAME="503"></A>  <FONT ID="Public">public</FONT> Image renderScene() {
+<A NAME="504"></A>    clearDoubleBuffer();
+<A NAME="505"></A>    paintObjects();
+<A NAME="506"></A>    paintImage();
+<A NAME="507"></A>    <FONT ID="Return">return</FONT> DoubleBuffer;
+<A NAME="508"></A>  }
+<A NAME="509"></A>
+<A NAME="510"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> clearDoubleBuffer() {
+<A NAME="511"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">0</FONT>; j &lt; h; j++) {
+<A NAME="512"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; w; i++) {
+<A NAME="513"></A>        zBuffer[i][j] = zInfinite;
+<A NAME="514"></A>      }
+<A NAME="515"></A>    }
+<A NAME="516"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; w * h; i++) {
+<A NAME="517"></A>      TargetPixel[i] = Background[i];
+<A NAME="518"></A>    }
+<A NAME="519"></A>  }
+<A NAME="520"></A>
+<A NAME="521"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> clearBackground() {
+<A NAME="522"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; w * h; i++) {
+<A NAME="523"></A>      Background[i] = bgcolor;
+<A NAME="524"></A>    }
+<A NAME="525"></A>  }
+<A NAME="526"></A>
+<A NAME="527"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> paintObjects() {
+<A NAME="528"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">1</FONT>; i &lt;= objects; i++) {
+<A NAME="529"></A>      object[i].matrix2 = crossproduct(worldmatrix, object[i].matrix);
+<A NAME="530"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">1</FONT>; j &lt;= object[i].nodes; j++) {
+<A NAME="531"></A>        object[i].node[j] = projectNode(i, object[i].node[j]);
+<A NAME="532"></A>      }
+<A NAME="533"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">1</FONT>; j &lt;= object[i].triangles; j++) {
+<A NAME="534"></A>        <FONT ID="If">if</FONT> (object[i].mode == <FONT ID="IntegerLiteral">1</FONT>) drawWireframe(i, object[i].triangle[j]);
+<A NAME="535"></A>        <FONT ID="If">if</FONT> (object[i].mode == <FONT ID="IntegerLiteral">2</FONT>) drawFlatshaded(i, object[i].triangle[j]);
+<A NAME="536"></A>        <FONT ID="If">if</FONT> (object[i].mode == <FONT ID="IntegerLiteral">3</FONT>) drawGouraud(i, object[i].triangle[j]);
+<A NAME="537"></A>        <FONT ID="If">if</FONT> (object[i].mode == <FONT ID="IntegerLiteral">4</FONT>) drawPhong(i, object[i].triangle[j]);
+<A NAME="538"></A>        <FONT ID="If">if</FONT> (object[i].mode == <FONT ID="IntegerLiteral">5</FONT>) drawEnvmapped(i, object[i].triangle[j]);
+<A NAME="539"></A>        <FONT ID="If">if</FONT> (object[i].mode == <FONT ID="IntegerLiteral">6</FONT>) drawGouraudTexture(i, object[i].triangle[j]);
+<A NAME="540"></A>        <FONT ID="If">if</FONT> (object[i].mode == <FONT ID="IntegerLiteral">7</FONT>) drawPhongTexture(i, object[i].triangle[j]);
+<A NAME="541"></A>        <FONT ID="If">if</FONT> (object[i].mode == <FONT ID="IntegerLiteral">8</FONT>) drawEnvmappedTexture(i, object[i].triangle[j]);
+<A NAME="542"></A>      }
+<A NAME="543"></A>    }
+<A NAME="544"></A>  }
+<A NAME="545"></A>
+<A NAME="546"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> paintImage() {
+<A NAME="547"></A>    DoubleBuffer = createImage(<FONT ID="New">new</FONT> MemoryImageSource(w, h, idx_cm, TargetPixel, <FONT ID="IntegerLiteral">0</FONT>, w));
+<A NAME="548"></A>  }
+<A NAME="549"></A>
+<A NAME="550"></A>  <FONT ID="Private">private</FONT> idx3d_node projectNode(<FONT ID="Int">int</FONT> obj, idx3d_node q) {
+<A NAME="551"></A>    idx3d_node w = q;
+<A NAME="552"></A>    <A HREF="idx3d_vector.java.html">idx3d_vector</A> mvect = matrixvectorproduct(object[obj].matrix2, w.v);
+<A NAME="553"></A>    w.n2 = normalize(matrixvectorproduct(object[obj].matrix2, w.n));
+<A NAME="554"></A>
+<A NAME="555"></A>    <FONT ID="Float">float</FONT> zoom = perspective / (perspective + mvect.z) * zoomcorrection;
+<A NAME="556"></A>    w.xx = (<FONT ID="Int">int</FONT>) (mvect.x * zoom * centerx + centerx);
+<A NAME="557"></A>    w.yy = (<FONT ID="Int">int</FONT>) (mvect.y * zoom * centery + centery);
+<A NAME="558"></A>    w.zz = (<FONT ID="Int">int</FONT>) (mvect.z * <FONT ID="IntegerLiteral">65536</FONT>);
+<A NAME="559"></A>    <FONT ID="Return">return</FONT> w;
+<A NAME="560"></A>  }
+<A NAME="561"></A>
+<A NAME="562"></A>  <FONT ID="Private">private</FONT> <FONT ID="Int">int</FONT> getIntensity(<FONT ID="Int">int</FONT> nx, <FONT ID="Int">int</FONT> ny) {
+<A NAME="563"></A>    <FONT ID="If">if</FONT> (staticLight) <FONT ID="Return">return</FONT> StaticLightMap[nx / <FONT ID="IntegerLiteral">2</FONT> + <FONT ID="IntegerLiteral">127</FONT>][ny / <FONT ID="IntegerLiteral">2</FONT> + <FONT ID="IntegerLiteral">127</FONT>];
+<A NAME="564"></A>    <FONT ID="Int">int</FONT> nz = LightMap[nx / <FONT ID="IntegerLiteral">2</FONT> + <FONT ID="IntegerLiteral">127</FONT>][ny / <FONT ID="IntegerLiteral">2</FONT> + <FONT ID="IntegerLiteral">127</FONT>];
+<A NAME="565"></A>    <FONT ID="Int">int</FONT> intensity = ambient;
+<A NAME="566"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">1</FONT>; i &lt;= lights; i++) {
+<A NAME="567"></A>      <FONT ID="If">if</FONT> (light[i].mode == <FONT ID="IntegerLiteral">1</FONT>) {
+<A NAME="568"></A>        intensity += crop((light[i].intensity * (<FONT ID="Int">int</FONT>) Math.abs(nx * light[i].x + ny * light[i].y + nz * light[i].z) &gt;&gt; <FONT ID="IntegerLiteral">8</FONT>) &gt;&gt; <FONT ID="IntegerLiteral">8</FONT>, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">255</FONT>);
+<A NAME="569"></A>      }
+<A NAME="570"></A>      <FONT ID="If">if</FONT> (light[i].mode == <FONT ID="IntegerLiteral">2</FONT>) {
+<A NAME="571"></A>        <FONT ID="SingleLineComment">// POINT LIGHT ALGORITHM TO BE IMPLEMENTED HERE
+<A NAME="572"></A></FONT>      }
+<A NAME="573"></A>    }
+<A NAME="574"></A>    <FONT ID="Return">return</FONT> crop(intensity, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">255</FONT>);
+<A NAME="575"></A>  }
+<A NAME="576"></A>
+<A NAME="577"></A>  <FONT ID="Private">private</FONT> <FONT ID="Int">int</FONT> getIntensity(<A HREF="idx3d_vector.java.html">idx3d_vector</A> v) {
+<A NAME="578"></A>    <FONT ID="Return">return</FONT> getIntensity((<FONT ID="Int">int</FONT>) (v.x * <FONT ID="IntegerLiteral">255</FONT>), (<FONT ID="Int">int</FONT>) (v.y * <FONT ID="IntegerLiteral">255</FONT>));
+<A NAME="579"></A>  }
+<A NAME="580"></A>
+<A NAME="581"></A>  <FONT ID="Private">private</FONT> <FONT ID="Int">int</FONT> getEnvironment(<FONT ID="Int">int</FONT> nx, <FONT ID="Int">int</FONT> ny) {
+<A NAME="582"></A>    <FONT ID="If">if</FONT> (staticLight) <FONT ID="Return">return</FONT> StaticEnvMap[nx / <FONT ID="IntegerLiteral">2</FONT> + <FONT ID="IntegerLiteral">127</FONT>][ny / <FONT ID="IntegerLiteral">2</FONT> + <FONT ID="IntegerLiteral">127</FONT>];
+<A NAME="583"></A>    <FONT ID="Int">int</FONT> env = EnvMap[nx / <FONT ID="IntegerLiteral">2</FONT> + <FONT ID="IntegerLiteral">127</FONT>][ny / <FONT ID="IntegerLiteral">2</FONT> + <FONT ID="IntegerLiteral">127</FONT>];
+<A NAME="584"></A>    <FONT ID="Return">return</FONT> crop(ambient + getIntensity(nx, ny) * env * reflectivity / <FONT ID="IntegerLiteral">65536</FONT>, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">255</FONT>);
+<A NAME="585"></A>  }
+<A NAME="586"></A>
+<A NAME="587"></A>  <FONT ID="Public">public</FONT> <FONT ID="Int">int</FONT> getIntColor(<FONT ID="Int">int</FONT> r, <FONT ID="Int">int</FONT> g, <FONT ID="Int">int</FONT> b) {
+<A NAME="588"></A>    <FONT ID="Return">return</FONT> alpha | (r &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>) | (g &lt;&lt; <FONT ID="IntegerLiteral">8</FONT>) | b;
+<A NAME="589"></A>  }
+<A NAME="590"></A>
+<A NAME="591"></A>  <FONT ID="Private">private</FONT> <FONT ID="Int">int</FONT> getColor(<FONT ID="Int">int</FONT> c, <FONT ID="Int">int</FONT> intensity) {
+<A NAME="592"></A>    <FONT ID="Int">int</FONT> r = ColorMap[intensity][(rbit &amp; c) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>];
+<A NAME="593"></A>    <FONT ID="Int">int</FONT> g = ColorMap[intensity][(gbit &amp; c) &gt;&gt; <FONT ID="IntegerLiteral">8</FONT>];
+<A NAME="594"></A>    <FONT ID="Int">int</FONT> b = ColorMap[intensity][(bbit &amp; c)];
+<A NAME="595"></A>    <FONT ID="Return">return</FONT> getIntColor(r, g, b);
+<A NAME="596"></A>  }
+<A NAME="597"></A>
+<A NAME="598"></A>  <FONT ID="Private">private</FONT> <FONT ID="Int">int</FONT> getGray(<FONT ID="Int">int</FONT> c) {
+<A NAME="599"></A>    <FONT ID="Return">return</FONT> (((rbit &amp; c) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>) + ((gbit &amp; c) &gt;&gt; <FONT ID="IntegerLiteral">8</FONT>) + (bbit &amp; c)) / <FONT ID="IntegerLiteral">3</FONT>;
+<A NAME="600"></A>    <FONT ID="SingleLineComment">//return (bbit&amp;c);
+<A NAME="601"></A></FONT>  }
+<A NAME="602"></A>
+<A NAME="603"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> setBackground(Image TempImage) {
+<A NAME="604"></A>    PixelGrabber pg = <FONT ID="New">new</FONT> PixelGrabber(TempImage, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">0</FONT>, w, h, Background, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="605"></A>    <FONT ID="Try">try</FONT> {
+<A NAME="606"></A>      pg.grabPixels();
+<A NAME="607"></A>    } <FONT ID="Catch">catch</FONT> (InterruptedException e) {
+<A NAME="608"></A>    }
+<A NAME="609"></A>  }
+<A NAME="610"></A>
+<A NAME="611"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> setEnvironment(Image TempImage) {
+<A NAME="612"></A>    <FONT ID="Int">int</FONT> temp[] = <FONT ID="New">new</FONT> <FONT ID="Int">int</FONT>[<FONT ID="IntegerLiteral">256</FONT> * <FONT ID="IntegerLiteral">256</FONT>];
+<A NAME="613"></A>    PixelGrabber pg = <FONT ID="New">new</FONT> PixelGrabber(TempImage, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">256</FONT>, <FONT ID="IntegerLiteral">256</FONT>, temp, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">256</FONT>);
+<A NAME="614"></A>    <FONT ID="Try">try</FONT> {
+<A NAME="615"></A>      pg.grabPixels();
+<A NAME="616"></A>    } <FONT ID="Catch">catch</FONT> (InterruptedException e) {
+<A NAME="617"></A>    }
+<A NAME="618"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; <FONT ID="IntegerLiteral">256</FONT>; i++) {
+<A NAME="619"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">0</FONT>; j &lt; <FONT ID="IntegerLiteral">256</FONT>; j++) {
+<A NAME="620"></A>        EnvMap[i][j] = getGray(temp[i + j * <FONT ID="IntegerLiteral">256</FONT>]);
+<A NAME="621"></A>      }
+<A NAME="622"></A>    }
+<A NAME="623"></A>  }
+<A NAME="624"></A>
+<A NAME="625"></A>  <FONT ID="SingleLineComment">// RENDERMODES
+<A NAME="626"></A></FONT>
+<A NAME="627"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawLine(idx3d_node q1, idx3d_node q2, <FONT ID="Int">int</FONT> color) {
+<A NAME="628"></A>    idx3d_node temp;
+<A NAME="629"></A>    <FONT ID="Int">int</FONT> dx = (<FONT ID="Int">int</FONT>) Math.abs(q1.xx - q2.xx);
+<A NAME="630"></A>    <FONT ID="Int">int</FONT> dy = (<FONT ID="Int">int</FONT>) Math.abs(q1.yy - q2.yy);
+<A NAME="631"></A>    <FONT ID="Int">int</FONT> dz = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="632"></A>    <FONT ID="Int">int</FONT> x,y,z;
+<A NAME="633"></A>    <FONT ID="Int">int</FONT> x2,y2;
+<A NAME="634"></A>
+<A NAME="635"></A>    <FONT ID="If">if</FONT> (dx &gt; dy) {
+<A NAME="636"></A>      <FONT ID="If">if</FONT> (q1.xx &gt; q2.xx) {
+<A NAME="637"></A>        temp = q1;
+<A NAME="638"></A>        q1 = q2;
+<A NAME="639"></A>        q2 = temp;
+<A NAME="640"></A>      }
+<A NAME="641"></A>      <FONT ID="If">if</FONT> (dx &gt; <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="642"></A>        dz = (q2.zz - q1.zz) / dx;
+<A NAME="643"></A>        dy = ((q2.yy - q1.yy) &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>) / dx;
+<A NAME="644"></A>      }
+<A NAME="645"></A>      z = q1.zz;
+<A NAME="646"></A>      y = q1.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="647"></A>      <FONT ID="For">for</FONT> (x = q1.xx; x &lt;= q2.xx; x++) {
+<A NAME="648"></A>        y2 = y &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="649"></A>        <FONT ID="If">if</FONT> (inrange(x, <FONT ID="IntegerLiteral">0</FONT>, w) &amp;&amp; inrange(y2, <FONT ID="IntegerLiteral">0</FONT>, h)) {
+<A NAME="650"></A>          <FONT ID="If">if</FONT> (z &lt; zBuffer[x][y2]) {
+<A NAME="651"></A>            TargetPixel[x + y2 * w] = color;
+<A NAME="652"></A>            zBuffer[x][y2] = z;
+<A NAME="653"></A>          }
+<A NAME="654"></A>        }
+<A NAME="655"></A>        z += dz;
+<A NAME="656"></A>        y += dy;
+<A NAME="657"></A>      }
+<A NAME="658"></A>    } <FONT ID="Else">else</FONT> {
+<A NAME="659"></A>      <FONT ID="If">if</FONT> (q1.yy &gt; q2.yy) {
+<A NAME="660"></A>        temp = q1;
+<A NAME="661"></A>        q1 = q2;
+<A NAME="662"></A>        q2 = temp;
+<A NAME="663"></A>      }
+<A NAME="664"></A>      <FONT ID="If">if</FONT> (dy &gt; <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="665"></A>        dz = (q2.zz - q1.zz) / dy;
+<A NAME="666"></A>        dx = ((q2.xx - q1.xx) &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>) / dy;
+<A NAME="667"></A>      }
+<A NAME="668"></A>      z = q1.zz;
+<A NAME="669"></A>      x = q1.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="670"></A>      <FONT ID="For">for</FONT> (y = q1.yy; y &lt;= q2.yy; y++) {
+<A NAME="671"></A>        x2 = x &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="672"></A>        <FONT ID="If">if</FONT> (inrange(x2, <FONT ID="IntegerLiteral">0</FONT>, w) &amp;&amp; inrange(y, <FONT ID="IntegerLiteral">0</FONT>, h)) {
+<A NAME="673"></A>          <FONT ID="If">if</FONT> (z &lt; zBuffer[x2][y]) {
+<A NAME="674"></A>            TargetPixel[x2 + y * w] = color;
+<A NAME="675"></A>            zBuffer[x2][y] = z;
+<A NAME="676"></A>          }
+<A NAME="677"></A>        }
+<A NAME="678"></A>        z += dz;
+<A NAME="679"></A>        x += dx;
+<A NAME="680"></A>      }
+<A NAME="681"></A>    }
+<A NAME="682"></A>  }
+<A NAME="683"></A>
+<A NAME="684"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawWireframe(<FONT ID="Int">int</FONT> obj, idx3d_triangle t) {
+<A NAME="685"></A>    <FONT ID="Int">int</FONT> temp;
+<A NAME="686"></A>    idx3d_node temp1;
+<A NAME="687"></A>    <FONT ID="Int">int</FONT> c = object[obj].color;
+<A NAME="688"></A>
+<A NAME="689"></A>    idx3d_node p1 = object[obj].node[t.p1];
+<A NAME="690"></A>    idx3d_node p2 = object[obj].node[t.p2];
+<A NAME="691"></A>    idx3d_node p3 = object[obj].node[t.p3];
+<A NAME="692"></A>
+<A NAME="693"></A>    drawLine(p1, p2, c);
+<A NAME="694"></A>    drawLine(p2, p3, c);
+<A NAME="695"></A>    drawLine(p1, p3, c);
+<A NAME="696"></A>  }
+<A NAME="697"></A>
+<A NAME="698"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawFlatshaded(<FONT ID="Int">int</FONT> obj, idx3d_triangle t) {
+<A NAME="699"></A>    <A HREF="idx3d_vector.java.html">idx3d_vector</A> n = normalize(matrixvectorproduct(object[obj].matrix, t.n));
+<A NAME="700"></A>
+<A NAME="701"></A>    <FONT ID="Int">int</FONT> temp;
+<A NAME="702"></A>    idx3d_node temp1;
+<A NAME="703"></A>
+<A NAME="704"></A>    idx3d_node p1 = object[obj].node[t.p1];
+<A NAME="705"></A>    idx3d_node p2 = object[obj].node[t.p2];
+<A NAME="706"></A>    idx3d_node p3 = object[obj].node[t.p3];
+<A NAME="707"></A>
+<A NAME="708"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="709"></A>      temp1 = p1;
+<A NAME="710"></A>      p1 = p2;
+<A NAME="711"></A>      p2 = temp1;
+<A NAME="712"></A>    }
+<A NAME="713"></A>    <FONT ID="If">if</FONT> (p2.yy &gt; p3.yy) {
+<A NAME="714"></A>      temp1 = p2;
+<A NAME="715"></A>      p2 = p3;
+<A NAME="716"></A>      p3 = temp1;
+<A NAME="717"></A>    }
+<A NAME="718"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="719"></A>      temp1 = p1;
+<A NAME="720"></A>      p1 = p2;
+<A NAME="721"></A>      p2 = temp1;
+<A NAME="722"></A>    }
+<A NAME="723"></A>
+<A NAME="724"></A>    <FONT ID="Int">int</FONT> x1 = p1.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="725"></A>    <FONT ID="Int">int</FONT> x2 = p2.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="726"></A>    <FONT ID="Int">int</FONT> x3 = p3.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="727"></A>    <FONT ID="Int">int</FONT> y1 = p1.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="728"></A>    <FONT ID="Int">int</FONT> y2 = p2.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="729"></A>    <FONT ID="Int">int</FONT> y3 = p3.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="730"></A>
+<A NAME="731"></A>    <FONT ID="Int">int</FONT> dx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="732"></A>    <FONT ID="Int">int</FONT> dx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="733"></A>    <FONT ID="Int">int</FONT> dx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="734"></A>    <FONT ID="Int">int</FONT> dz1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="735"></A>    <FONT ID="Int">int</FONT> dz2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="736"></A>    <FONT ID="Int">int</FONT> dz3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="737"></A>    <FONT ID="Int">int</FONT> dy;
+<A NAME="738"></A>    <FONT ID="If">if</FONT> (y2 != y1) {
+<A NAME="739"></A>      dy = (y2 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="740"></A>      dx1 = (x2 - x1) / dy;
+<A NAME="741"></A>      dz1 = (p2.zz - p1.zz) / dy;
+<A NAME="742"></A>    }
+<A NAME="743"></A>    <FONT ID="If">if</FONT> (y3 != y2) {
+<A NAME="744"></A>      dy = (y3 - y2) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="745"></A>      dx2 = (x3 - x2) / dy;
+<A NAME="746"></A>      dz2 = (p3.zz - p2.zz) / dy;
+<A NAME="747"></A>    }
+<A NAME="748"></A>    <FONT ID="If">if</FONT> (y3 != y1) {
+<A NAME="749"></A>      dy = (y3 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="750"></A>      dx3 = (x3 - x1) / dy;
+<A NAME="751"></A>      dz3 = (p3.zz - p1.zz) / dy;
+<A NAME="752"></A>    }
+<A NAME="753"></A>
+<A NAME="754"></A>    <FONT ID="Int">int</FONT> xL = x1;
+<A NAME="755"></A>    <FONT ID="Int">int</FONT> xR = x1;
+<A NAME="756"></A>    <FONT ID="Int">int</FONT> zL = p1.zz;
+<A NAME="757"></A>    <FONT ID="Int">int</FONT> zR = p1.zz;
+<A NAME="758"></A>
+<A NAME="759"></A>    y1 = y1 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="760"></A>    y2 = y2 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="761"></A>    y3 = y3 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="762"></A>
+<A NAME="763"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y1; k &lt; y2; k++) {
+<A NAME="764"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="765"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="766"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="767"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="768"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="769"></A>      }
+<A NAME="770"></A>      xL += dx1;
+<A NAME="771"></A>      xR += dx3;
+<A NAME="772"></A>      zL += dz1;
+<A NAME="773"></A>      zR += dz3;
+<A NAME="774"></A>    }
+<A NAME="775"></A>    xL = x2;
+<A NAME="776"></A>    zL = p2.zz;
+<A NAME="777"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y2; k &lt;= y3; k++) {
+<A NAME="778"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="779"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="780"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="781"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="782"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="783"></A>      }
+<A NAME="784"></A>      xL += dx2;
+<A NAME="785"></A>      xR += dx3;
+<A NAME="786"></A>      zL += dz2;
+<A NAME="787"></A>      zR += dz3;
+<A NAME="788"></A>    }
+<A NAME="789"></A>
+<A NAME="790"></A>    y1 = crop(y1, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="791"></A>    y3 = crop(y3, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="792"></A>
+<A NAME="793"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = y1; j &lt;= y3; j++) drawFlatshadedLine(j, getColor(object[obj].color, getIntensity(n)));
+<A NAME="794"></A>  }
+<A NAME="795"></A>
+<A NAME="796"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawGouraud(<FONT ID="Int">int</FONT> obj, idx3d_triangle t) {
+<A NAME="797"></A>    <FONT ID="Int">int</FONT> temp;
+<A NAME="798"></A>    idx3d_node temp1;
+<A NAME="799"></A>
+<A NAME="800"></A>    idx3d_node p1 = object[obj].node[t.p1];
+<A NAME="801"></A>    idx3d_node p2 = object[obj].node[t.p2];
+<A NAME="802"></A>    idx3d_node p3 = object[obj].node[t.p3];
+<A NAME="803"></A>
+<A NAME="804"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="805"></A>      temp1 = p1;
+<A NAME="806"></A>      p1 = p2;
+<A NAME="807"></A>      p2 = temp1;
+<A NAME="808"></A>    }
+<A NAME="809"></A>    <FONT ID="If">if</FONT> (p2.yy &gt; p3.yy) {
+<A NAME="810"></A>      temp1 = p2;
+<A NAME="811"></A>      p2 = p3;
+<A NAME="812"></A>      p3 = temp1;
+<A NAME="813"></A>    }
+<A NAME="814"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="815"></A>      temp1 = p1;
+<A NAME="816"></A>      p1 = p2;
+<A NAME="817"></A>      p2 = temp1;
+<A NAME="818"></A>    }
+<A NAME="819"></A>
+<A NAME="820"></A>    <FONT ID="Int">int</FONT> i1 = getIntensity(p1.n2) &lt;&lt; <FONT ID="IntegerLiteral">8</FONT>;
+<A NAME="821"></A>    <FONT ID="Int">int</FONT> i2 = getIntensity(p2.n2) &lt;&lt; <FONT ID="IntegerLiteral">8</FONT>;
+<A NAME="822"></A>    <FONT ID="Int">int</FONT> i3 = getIntensity(p3.n2) &lt;&lt; <FONT ID="IntegerLiteral">8</FONT>;
+<A NAME="823"></A>
+<A NAME="824"></A>    <FONT ID="Int">int</FONT> x1 = p1.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="825"></A>    <FONT ID="Int">int</FONT> x2 = p2.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="826"></A>    <FONT ID="Int">int</FONT> x3 = p3.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="827"></A>    <FONT ID="Int">int</FONT> y1 = p1.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="828"></A>    <FONT ID="Int">int</FONT> y2 = p2.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="829"></A>    <FONT ID="Int">int</FONT> y3 = p3.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="830"></A>
+<A NAME="831"></A>    <FONT ID="Int">int</FONT> dx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="832"></A>    <FONT ID="Int">int</FONT> dx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="833"></A>    <FONT ID="Int">int</FONT> dx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="834"></A>    <FONT ID="Int">int</FONT> dz1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="835"></A>    <FONT ID="Int">int</FONT> dz2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="836"></A>    <FONT ID="Int">int</FONT> dz3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="837"></A>    <FONT ID="Int">int</FONT> di1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="838"></A>    <FONT ID="Int">int</FONT> di2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="839"></A>    <FONT ID="Int">int</FONT> di3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="840"></A>    <FONT ID="Int">int</FONT> dy;
+<A NAME="841"></A>    <FONT ID="If">if</FONT> (y2 != y1) {
+<A NAME="842"></A>      dy = (y2 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="843"></A>      dx1 = (x2 - x1) / dy;
+<A NAME="844"></A>      dz1 = (p2.zz - p1.zz) / dy;
+<A NAME="845"></A>      di1 = (i2 - i1) / dy;
+<A NAME="846"></A>    }
+<A NAME="847"></A>    <FONT ID="If">if</FONT> (y3 != y2) {
+<A NAME="848"></A>      dy = (y3 - y2) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="849"></A>      dx2 = (x3 - x2) / dy;
+<A NAME="850"></A>      dz2 = (p3.zz - p2.zz) / dy;
+<A NAME="851"></A>      di2 = (i3 - i2) / dy;
+<A NAME="852"></A>    }
+<A NAME="853"></A>    <FONT ID="If">if</FONT> (y3 != y1) {
+<A NAME="854"></A>      dy = (y3 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="855"></A>      dx3 = (x3 - x1) / dy;
+<A NAME="856"></A>      dz3 = (p3.zz - p1.zz) / dy;
+<A NAME="857"></A>      di3 = (i3 - i1) / dy;
+<A NAME="858"></A>    }
+<A NAME="859"></A>
+<A NAME="860"></A>    <FONT ID="Int">int</FONT> xL = x1;
+<A NAME="861"></A>    <FONT ID="Int">int</FONT> xR = x1;
+<A NAME="862"></A>    <FONT ID="Int">int</FONT> zL = p1.zz;
+<A NAME="863"></A>    <FONT ID="Int">int</FONT> zR = p1.zz;
+<A NAME="864"></A>    <FONT ID="Int">int</FONT> iL = i1;
+<A NAME="865"></A>    <FONT ID="Int">int</FONT> iR = i1;
+<A NAME="866"></A>
+<A NAME="867"></A>    y1 = y1 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="868"></A>    y2 = y2 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="869"></A>    y3 = y3 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="870"></A>
+<A NAME="871"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y1; k &lt; y2; k++) {
+<A NAME="872"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="873"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="874"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="875"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="876"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="877"></A>        IEdgeBufferL[k] = iL;
+<A NAME="878"></A>        IEdgeBufferR[k] = iR;
+<A NAME="879"></A>      }
+<A NAME="880"></A>      xL += dx1;
+<A NAME="881"></A>      xR += dx3;
+<A NAME="882"></A>      zL += dz1;
+<A NAME="883"></A>      zR += dz3;
+<A NAME="884"></A>      iL += di1;
+<A NAME="885"></A>      iR += di3;
+<A NAME="886"></A>    }
+<A NAME="887"></A>    xL = x2;
+<A NAME="888"></A>    zL = p2.zz;
+<A NAME="889"></A>    iL = i2;
+<A NAME="890"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y2; k &lt;= y3; k++) {
+<A NAME="891"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="892"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="893"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="894"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="895"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="896"></A>        IEdgeBufferL[k] = iL;
+<A NAME="897"></A>        IEdgeBufferR[k] = iR;
+<A NAME="898"></A>      }
+<A NAME="899"></A>      xL += dx2;
+<A NAME="900"></A>      xR += dx3;
+<A NAME="901"></A>      zL += dz2;
+<A NAME="902"></A>      zR += dz3;
+<A NAME="903"></A>      iL += di2;
+<A NAME="904"></A>      iR += di3;
+<A NAME="905"></A>    }
+<A NAME="906"></A>
+<A NAME="907"></A>    y1 = crop(y1, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="908"></A>    y3 = crop(y3, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="909"></A>
+<A NAME="910"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = y1; j &lt;= y3; j++) drawGouraudLine(j, object[obj].color);
+<A NAME="911"></A>  }
+<A NAME="912"></A>
+<A NAME="913"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawPhong(<FONT ID="Int">int</FONT> obj, idx3d_triangle t) {
+<A NAME="914"></A>    <FONT ID="Int">int</FONT> temp;
+<A NAME="915"></A>    idx3d_node temp1;
+<A NAME="916"></A>
+<A NAME="917"></A>    idx3d_node p1 = object[obj].node[t.p1];
+<A NAME="918"></A>    idx3d_node p2 = object[obj].node[t.p2];
+<A NAME="919"></A>    idx3d_node p3 = object[obj].node[t.p3];
+<A NAME="920"></A>
+<A NAME="921"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="922"></A>      temp1 = p1;
+<A NAME="923"></A>      p1 = p2;
+<A NAME="924"></A>      p2 = temp1;
+<A NAME="925"></A>    }
+<A NAME="926"></A>    <FONT ID="If">if</FONT> (p2.yy &gt; p3.yy) {
+<A NAME="927"></A>      temp1 = p2;
+<A NAME="928"></A>      p2 = p3;
+<A NAME="929"></A>      p3 = temp1;
+<A NAME="930"></A>    }
+<A NAME="931"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="932"></A>      temp1 = p1;
+<A NAME="933"></A>      p1 = p2;
+<A NAME="934"></A>      p2 = temp1;
+<A NAME="935"></A>    }
+<A NAME="936"></A>
+<A NAME="937"></A>    <FONT ID="Int">int</FONT> x1 = p1.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="938"></A>    <FONT ID="Int">int</FONT> x2 = p2.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="939"></A>    <FONT ID="Int">int</FONT> x3 = p3.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="940"></A>    <FONT ID="Int">int</FONT> y1 = p1.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="941"></A>    <FONT ID="Int">int</FONT> y2 = p2.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="942"></A>    <FONT ID="Int">int</FONT> y3 = p3.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="943"></A>
+<A NAME="944"></A>    <FONT ID="Int">int</FONT> nx1 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p1.n2.x);
+<A NAME="945"></A>    <FONT ID="Int">int</FONT> nx2 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p2.n2.x);
+<A NAME="946"></A>    <FONT ID="Int">int</FONT> nx3 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p3.n2.x);
+<A NAME="947"></A>    <FONT ID="Int">int</FONT> ny1 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p1.n2.y);
+<A NAME="948"></A>    <FONT ID="Int">int</FONT> ny2 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p2.n2.y);
+<A NAME="949"></A>    <FONT ID="Int">int</FONT> ny3 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p3.n2.y);
+<A NAME="950"></A>
+<A NAME="951"></A>    <FONT ID="Int">int</FONT> dx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="952"></A>    <FONT ID="Int">int</FONT> dx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="953"></A>    <FONT ID="Int">int</FONT> dx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="954"></A>    <FONT ID="Int">int</FONT> dz1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="955"></A>    <FONT ID="Int">int</FONT> dz2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="956"></A>    <FONT ID="Int">int</FONT> dz3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="957"></A>    <FONT ID="Int">int</FONT> dnx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="958"></A>    <FONT ID="Int">int</FONT> dnx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="959"></A>    <FONT ID="Int">int</FONT> dnx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="960"></A>    <FONT ID="Int">int</FONT> dny1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="961"></A>    <FONT ID="Int">int</FONT> dny2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="962"></A>    <FONT ID="Int">int</FONT> dny3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="963"></A>    <FONT ID="Int">int</FONT> dy;
+<A NAME="964"></A>    <FONT ID="If">if</FONT> (y2 != y1) {
+<A NAME="965"></A>      dy = (y2 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="966"></A>      dx1 = (x2 - x1) / dy;
+<A NAME="967"></A>      dz1 = (p2.zz - p1.zz) / dy;
+<A NAME="968"></A>      dnx1 = (nx2 - nx1) / dy;
+<A NAME="969"></A>      dny1 = (ny2 - ny1) / dy;
+<A NAME="970"></A>    }
+<A NAME="971"></A>    <FONT ID="If">if</FONT> (y3 != y2) {
+<A NAME="972"></A>      dy = (y3 - y2) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="973"></A>      dx2 = (x3 - x2) / dy;
+<A NAME="974"></A>      dz2 = (p3.zz - p2.zz) / dy;
+<A NAME="975"></A>      dnx2 = (nx3 - nx2) / dy;
+<A NAME="976"></A>      dny2 = (ny3 - ny2) / dy;
+<A NAME="977"></A>    }
+<A NAME="978"></A>    <FONT ID="If">if</FONT> (y3 != y1) {
+<A NAME="979"></A>      dy = (y3 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="980"></A>      dx3 = (x3 - x1) / dy;
+<A NAME="981"></A>      dz3 = (p3.zz - p1.zz) / dy;
+<A NAME="982"></A>      dnx3 = (nx3 - nx1) / dy;
+<A NAME="983"></A>      dny3 = (ny3 - ny1) / dy;
+<A NAME="984"></A>    }
+<A NAME="985"></A>
+<A NAME="986"></A>    <FONT ID="Int">int</FONT> xL = x1;
+<A NAME="987"></A>    <FONT ID="Int">int</FONT> xR = x1;
+<A NAME="988"></A>    <FONT ID="Int">int</FONT> zL = p1.zz;
+<A NAME="989"></A>    <FONT ID="Int">int</FONT> zR = p1.zz;
+<A NAME="990"></A>    <FONT ID="Int">int</FONT> nxL = nx1;
+<A NAME="991"></A>    <FONT ID="Int">int</FONT> nxR = nx1;
+<A NAME="992"></A>    <FONT ID="Int">int</FONT> nyL = ny1;
+<A NAME="993"></A>    <FONT ID="Int">int</FONT> nyR = ny1;
+<A NAME="994"></A>
+<A NAME="995"></A>    y1 = y1 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="996"></A>    y2 = y2 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="997"></A>    y3 = y3 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="998"></A>
+<A NAME="999"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y1; k &lt; y2; k++) {
+<A NAME="1000"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="1001"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1002"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1003"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="1004"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="1005"></A>        NXEdgeBufferL[k] = nxL;
+<A NAME="1006"></A>        NXEdgeBufferR[k] = nxR;
+<A NAME="1007"></A>        NYEdgeBufferL[k] = nyL;
+<A NAME="1008"></A>        NYEdgeBufferR[k] = nyR;
+<A NAME="1009"></A>      }
+<A NAME="1010"></A>      xL += dx1;
+<A NAME="1011"></A>      xR += dx3;
+<A NAME="1012"></A>      zL += dz1;
+<A NAME="1013"></A>      zR += dz3;
+<A NAME="1014"></A>      nxL += dnx1;
+<A NAME="1015"></A>      nxR += dnx3;
+<A NAME="1016"></A>      nyL += dny1;
+<A NAME="1017"></A>      nyR += dny3;
+<A NAME="1018"></A>    }
+<A NAME="1019"></A>    xL = x2;
+<A NAME="1020"></A>    zL = p2.zz;
+<A NAME="1021"></A>    nxL = nx2;
+<A NAME="1022"></A>    nyL = ny2;
+<A NAME="1023"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y2; k &lt;= y3; k++) {
+<A NAME="1024"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="1025"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1026"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1027"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="1028"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="1029"></A>        NXEdgeBufferL[k] = nxL;
+<A NAME="1030"></A>        NXEdgeBufferR[k] = nxR;
+<A NAME="1031"></A>        NYEdgeBufferL[k] = nyL;
+<A NAME="1032"></A>        NYEdgeBufferR[k] = nyR;
+<A NAME="1033"></A>      }
+<A NAME="1034"></A>      xL += dx2;
+<A NAME="1035"></A>      xR += dx3;
+<A NAME="1036"></A>      zL += dz2;
+<A NAME="1037"></A>      zR += dz3;
+<A NAME="1038"></A>      nxL += dnx2;
+<A NAME="1039"></A>      nxR += dnx3;
+<A NAME="1040"></A>      nyL += dny2;
+<A NAME="1041"></A>      nyR += dny3;
+<A NAME="1042"></A>    }
+<A NAME="1043"></A>
+<A NAME="1044"></A>    y1 = crop(y1, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="1045"></A>    y3 = crop(y3, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="1046"></A>
+<A NAME="1047"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = y1; j &lt;= y3; j++) drawPhongLine(j, object[obj].color);
+<A NAME="1048"></A>  }
+<A NAME="1049"></A>
+<A NAME="1050"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawEnvmapped(<FONT ID="Int">int</FONT> obj, idx3d_triangle t) {
+<A NAME="1051"></A>    <FONT ID="Int">int</FONT> temp;
+<A NAME="1052"></A>    idx3d_node temp1;
+<A NAME="1053"></A>
+<A NAME="1054"></A>    idx3d_node p1 = object[obj].node[t.p1];
+<A NAME="1055"></A>    idx3d_node p2 = object[obj].node[t.p2];
+<A NAME="1056"></A>    idx3d_node p3 = object[obj].node[t.p3];
+<A NAME="1057"></A>
+<A NAME="1058"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="1059"></A>      temp1 = p1;
+<A NAME="1060"></A>      p1 = p2;
+<A NAME="1061"></A>      p2 = temp1;
+<A NAME="1062"></A>    }
+<A NAME="1063"></A>    <FONT ID="If">if</FONT> (p2.yy &gt; p3.yy) {
+<A NAME="1064"></A>      temp1 = p2;
+<A NAME="1065"></A>      p2 = p3;
+<A NAME="1066"></A>      p3 = temp1;
+<A NAME="1067"></A>    }
+<A NAME="1068"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="1069"></A>      temp1 = p1;
+<A NAME="1070"></A>      p1 = p2;
+<A NAME="1071"></A>      p2 = temp1;
+<A NAME="1072"></A>    }
+<A NAME="1073"></A>
+<A NAME="1074"></A>    <FONT ID="Int">int</FONT> x1 = p1.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1075"></A>    <FONT ID="Int">int</FONT> x2 = p2.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1076"></A>    <FONT ID="Int">int</FONT> x3 = p3.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1077"></A>    <FONT ID="Int">int</FONT> y1 = p1.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1078"></A>    <FONT ID="Int">int</FONT> y2 = p2.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1079"></A>    <FONT ID="Int">int</FONT> y3 = p3.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1080"></A>
+<A NAME="1081"></A>    <FONT ID="Int">int</FONT> nx1 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p1.n2.x);
+<A NAME="1082"></A>    <FONT ID="Int">int</FONT> nx2 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p2.n2.x);
+<A NAME="1083"></A>    <FONT ID="Int">int</FONT> nx3 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p3.n2.x);
+<A NAME="1084"></A>    <FONT ID="Int">int</FONT> ny1 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p1.n2.y);
+<A NAME="1085"></A>    <FONT ID="Int">int</FONT> ny2 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p2.n2.y);
+<A NAME="1086"></A>    <FONT ID="Int">int</FONT> ny3 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p3.n2.y);
+<A NAME="1087"></A>
+<A NAME="1088"></A>    <FONT ID="Int">int</FONT> dx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1089"></A>    <FONT ID="Int">int</FONT> dx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1090"></A>    <FONT ID="Int">int</FONT> dx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1091"></A>    <FONT ID="Int">int</FONT> dz1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1092"></A>    <FONT ID="Int">int</FONT> dz2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1093"></A>    <FONT ID="Int">int</FONT> dz3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1094"></A>    <FONT ID="Int">int</FONT> dnx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1095"></A>    <FONT ID="Int">int</FONT> dnx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1096"></A>    <FONT ID="Int">int</FONT> dnx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1097"></A>    <FONT ID="Int">int</FONT> dny1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1098"></A>    <FONT ID="Int">int</FONT> dny2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1099"></A>    <FONT ID="Int">int</FONT> dny3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1100"></A>    <FONT ID="Int">int</FONT> dy;
+<A NAME="1101"></A>    <FONT ID="If">if</FONT> (y2 != y1) {
+<A NAME="1102"></A>      dy = (y2 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1103"></A>      dx1 = (x2 - x1) / dy;
+<A NAME="1104"></A>      dz1 = (p2.zz - p1.zz) / dy;
+<A NAME="1105"></A>      dnx1 = (nx2 - nx1) / dy;
+<A NAME="1106"></A>      dny1 = (ny2 - ny1) / dy;
+<A NAME="1107"></A>    }
+<A NAME="1108"></A>    <FONT ID="If">if</FONT> (y3 != y2) {
+<A NAME="1109"></A>      dy = (y3 - y2) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1110"></A>      dx2 = (x3 - x2) / dy;
+<A NAME="1111"></A>      dz2 = (p3.zz - p2.zz) / dy;
+<A NAME="1112"></A>      dnx2 = (nx3 - nx2) / dy;
+<A NAME="1113"></A>      dny2 = (ny3 - ny2) / dy;
+<A NAME="1114"></A>    }
+<A NAME="1115"></A>    <FONT ID="If">if</FONT> (y3 != y1) {
+<A NAME="1116"></A>      dy = (y3 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1117"></A>      dx3 = (x3 - x1) / dy;
+<A NAME="1118"></A>      dz3 = (p3.zz - p1.zz) / dy;
+<A NAME="1119"></A>      dnx3 = (nx3 - nx1) / dy;
+<A NAME="1120"></A>      dny3 = (ny3 - ny1) / dy;
+<A NAME="1121"></A>    }
+<A NAME="1122"></A>
+<A NAME="1123"></A>    <FONT ID="Int">int</FONT> xL = x1;
+<A NAME="1124"></A>    <FONT ID="Int">int</FONT> xR = x1;
+<A NAME="1125"></A>    <FONT ID="Int">int</FONT> zL = p1.zz;
+<A NAME="1126"></A>    <FONT ID="Int">int</FONT> zR = p1.zz;
+<A NAME="1127"></A>    <FONT ID="Int">int</FONT> nxL = nx1;
+<A NAME="1128"></A>    <FONT ID="Int">int</FONT> nxR = nx1;
+<A NAME="1129"></A>    <FONT ID="Int">int</FONT> nyL = ny1;
+<A NAME="1130"></A>    <FONT ID="Int">int</FONT> nyR = ny1;
+<A NAME="1131"></A>
+<A NAME="1132"></A>    y1 = y1 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1133"></A>    y2 = y2 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1134"></A>    y3 = y3 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1135"></A>
+<A NAME="1136"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y1; k &lt; y2; k++) {
+<A NAME="1137"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="1138"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1139"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1140"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="1141"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="1142"></A>        NXEdgeBufferL[k] = nxL;
+<A NAME="1143"></A>        NXEdgeBufferR[k] = nxR;
+<A NAME="1144"></A>        NYEdgeBufferL[k] = nyL;
+<A NAME="1145"></A>        NYEdgeBufferR[k] = nyR;
+<A NAME="1146"></A>      }
+<A NAME="1147"></A>      xL += dx1;
+<A NAME="1148"></A>      xR += dx3;
+<A NAME="1149"></A>      zL += dz1;
+<A NAME="1150"></A>      zR += dz3;
+<A NAME="1151"></A>      nxL += dnx1;
+<A NAME="1152"></A>      nxR += dnx3;
+<A NAME="1153"></A>      nyL += dny1;
+<A NAME="1154"></A>      nyR += dny3;
+<A NAME="1155"></A>    }
+<A NAME="1156"></A>    xL = x2;
+<A NAME="1157"></A>    zL = p2.zz;
+<A NAME="1158"></A>    nxL = nx2;
+<A NAME="1159"></A>    nyL = ny2;
+<A NAME="1160"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y2; k &lt;= y3; k++) {
+<A NAME="1161"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="1162"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1163"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1164"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="1165"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="1166"></A>        NXEdgeBufferL[k] = nxL;
+<A NAME="1167"></A>        NXEdgeBufferR[k] = nxR;
+<A NAME="1168"></A>        NYEdgeBufferL[k] = nyL;
+<A NAME="1169"></A>        NYEdgeBufferR[k] = nyR;
+<A NAME="1170"></A>      }
+<A NAME="1171"></A>      xL += dx2;
+<A NAME="1172"></A>      xR += dx3;
+<A NAME="1173"></A>      zL += dz2;
+<A NAME="1174"></A>      zR += dz3;
+<A NAME="1175"></A>      nxL += dnx2;
+<A NAME="1176"></A>      nxR += dnx3;
+<A NAME="1177"></A>      nyL += dny2;
+<A NAME="1178"></A>      nyR += dny3;
+<A NAME="1179"></A>    }
+<A NAME="1180"></A>
+<A NAME="1181"></A>    y1 = crop(y1, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="1182"></A>    y3 = crop(y3, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="1183"></A>
+<A NAME="1184"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = y1; j &lt;= y3; j++) drawEnvmappedLine(j, object[obj].color);
+<A NAME="1185"></A>  }
+<A NAME="1186"></A>
+<A NAME="1187"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawGouraudTexture(<FONT ID="Int">int</FONT> obj, idx3d_triangle t) {
+<A NAME="1188"></A>    <FONT ID="Int">int</FONT> temp;
+<A NAME="1189"></A>    idx3d_node temp1;
+<A NAME="1190"></A>
+<A NAME="1191"></A>    idx3d_node p1 = object[obj].node[t.p1];
+<A NAME="1192"></A>    idx3d_node p2 = object[obj].node[t.p2];
+<A NAME="1193"></A>    idx3d_node p3 = object[obj].node[t.p3];
+<A NAME="1194"></A>
+<A NAME="1195"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="1196"></A>      temp1 = p1;
+<A NAME="1197"></A>      p1 = p2;
+<A NAME="1198"></A>      p2 = temp1;
+<A NAME="1199"></A>    }
+<A NAME="1200"></A>    <FONT ID="If">if</FONT> (p2.yy &gt; p3.yy) {
+<A NAME="1201"></A>      temp1 = p2;
+<A NAME="1202"></A>      p2 = p3;
+<A NAME="1203"></A>      p3 = temp1;
+<A NAME="1204"></A>    }
+<A NAME="1205"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="1206"></A>      temp1 = p1;
+<A NAME="1207"></A>      p1 = p2;
+<A NAME="1208"></A>      p2 = temp1;
+<A NAME="1209"></A>    }
+<A NAME="1210"></A>
+<A NAME="1211"></A>    <FONT ID="Int">int</FONT> i1 = getIntensity(p1.n2) &lt;&lt; <FONT ID="IntegerLiteral">8</FONT>;
+<A NAME="1212"></A>    <FONT ID="Int">int</FONT> i2 = getIntensity(p2.n2) &lt;&lt; <FONT ID="IntegerLiteral">8</FONT>;
+<A NAME="1213"></A>    <FONT ID="Int">int</FONT> i3 = getIntensity(p3.n2) &lt;&lt; <FONT ID="IntegerLiteral">8</FONT>;
+<A NAME="1214"></A>
+<A NAME="1215"></A>    <FONT ID="Int">int</FONT> x1 = p1.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1216"></A>    <FONT ID="Int">int</FONT> x2 = p2.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1217"></A>    <FONT ID="Int">int</FONT> x3 = p3.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1218"></A>    <FONT ID="Int">int</FONT> y1 = p1.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1219"></A>    <FONT ID="Int">int</FONT> y2 = p2.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1220"></A>    <FONT ID="Int">int</FONT> y3 = p3.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1221"></A>    <FONT ID="Float">float</FONT> tw = (<FONT ID="Float">float</FONT>) texture[object[obj].texture].w * <FONT ID="IntegerLiteral">65536</FONT>;
+<A NAME="1222"></A>    <FONT ID="Float">float</FONT> th = (<FONT ID="Float">float</FONT>) texture[object[obj].texture].h * <FONT ID="IntegerLiteral">65536</FONT>;
+<A NAME="1223"></A>    <FONT ID="Int">int</FONT> tx1 = (<FONT ID="Int">int</FONT>) (tw * p1.tx);
+<A NAME="1224"></A>    <FONT ID="Int">int</FONT> tx2 = (<FONT ID="Int">int</FONT>) (tw * p2.tx);
+<A NAME="1225"></A>    <FONT ID="Int">int</FONT> tx3 = (<FONT ID="Int">int</FONT>) (tw * p3.tx);
+<A NAME="1226"></A>    <FONT ID="Int">int</FONT> ty1 = (<FONT ID="Int">int</FONT>) (th * p1.ty);
+<A NAME="1227"></A>    <FONT ID="Int">int</FONT> ty2 = (<FONT ID="Int">int</FONT>) (th * p2.ty);
+<A NAME="1228"></A>    <FONT ID="Int">int</FONT> ty3 = (<FONT ID="Int">int</FONT>) (th * p3.ty);
+<A NAME="1229"></A>
+<A NAME="1230"></A>    <FONT ID="Int">int</FONT> dx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1231"></A>    <FONT ID="Int">int</FONT> dx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1232"></A>    <FONT ID="Int">int</FONT> dx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1233"></A>    <FONT ID="Int">int</FONT> dz1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1234"></A>    <FONT ID="Int">int</FONT> dz2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1235"></A>    <FONT ID="Int">int</FONT> dz3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1236"></A>    <FONT ID="Int">int</FONT> di1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1237"></A>    <FONT ID="Int">int</FONT> di2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1238"></A>    <FONT ID="Int">int</FONT> di3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1239"></A>    <FONT ID="Int">int</FONT> dtx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1240"></A>    <FONT ID="Int">int</FONT> dtx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1241"></A>    <FONT ID="Int">int</FONT> dtx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1242"></A>    <FONT ID="Int">int</FONT> dty1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1243"></A>    <FONT ID="Int">int</FONT> dty2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1244"></A>    <FONT ID="Int">int</FONT> dty3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1245"></A>    <FONT ID="Int">int</FONT> dy;
+<A NAME="1246"></A>    <FONT ID="If">if</FONT> (y2 != y1) {
+<A NAME="1247"></A>      dy = (y2 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1248"></A>      dx1 = (x2 - x1) / dy;
+<A NAME="1249"></A>      dz1 = (p2.zz - p1.zz) / dy;
+<A NAME="1250"></A>      di1 = (i2 - i1) / dy;
+<A NAME="1251"></A>      dtx1 = (tx2 - tx1) / dy;
+<A NAME="1252"></A>      dty1 = (ty2 - ty1) / dy;
+<A NAME="1253"></A>    }
+<A NAME="1254"></A>    <FONT ID="If">if</FONT> (y3 != y2) {
+<A NAME="1255"></A>      dy = (y3 - y2) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1256"></A>      dx2 = (x3 - x2) / dy;
+<A NAME="1257"></A>      dz2 = (p3.zz - p2.zz) / dy;
+<A NAME="1258"></A>      di2 = (i3 - i2) / dy;
+<A NAME="1259"></A>      dtx2 = (tx3 - tx2) / dy;
+<A NAME="1260"></A>      dty2 = (ty3 - ty2) / dy;
+<A NAME="1261"></A>    }
+<A NAME="1262"></A>    <FONT ID="If">if</FONT> (y3 != y1) {
+<A NAME="1263"></A>      dy = (y3 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1264"></A>      dx3 = (x3 - x1) / dy;
+<A NAME="1265"></A>      dz3 = (p3.zz - p1.zz) / dy;
+<A NAME="1266"></A>      di3 = (i3 - i1) / dy;
+<A NAME="1267"></A>      dtx3 = (tx3 - tx1) / dy;
+<A NAME="1268"></A>      dty3 = (ty3 - ty1) / dy;
+<A NAME="1269"></A>    }
+<A NAME="1270"></A>
+<A NAME="1271"></A>    <FONT ID="Int">int</FONT> xL = x1;
+<A NAME="1272"></A>    <FONT ID="Int">int</FONT> xR = x1;
+<A NAME="1273"></A>    <FONT ID="Int">int</FONT> zL = p1.zz;
+<A NAME="1274"></A>    <FONT ID="Int">int</FONT> zR = p1.zz;
+<A NAME="1275"></A>    <FONT ID="Int">int</FONT> iL = i1;
+<A NAME="1276"></A>    <FONT ID="Int">int</FONT> iR = i1;
+<A NAME="1277"></A>    <FONT ID="Int">int</FONT> txL = tx1;
+<A NAME="1278"></A>    <FONT ID="Int">int</FONT> txR = tx1;
+<A NAME="1279"></A>    <FONT ID="Int">int</FONT> tyL = ty1;
+<A NAME="1280"></A>    <FONT ID="Int">int</FONT> tyR = ty1;
+<A NAME="1281"></A>
+<A NAME="1282"></A>    y1 = y1 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1283"></A>    y2 = y2 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1284"></A>    y3 = y3 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1285"></A>
+<A NAME="1286"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y1; k &lt; y2; k++) {
+<A NAME="1287"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="1288"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1289"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1290"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="1291"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="1292"></A>        IEdgeBufferL[k] = iL;
+<A NAME="1293"></A>        IEdgeBufferR[k] = iR;
+<A NAME="1294"></A>        TXEdgeBufferL[k] = txL;
+<A NAME="1295"></A>        TXEdgeBufferR[k] = txR;
+<A NAME="1296"></A>        TYEdgeBufferL[k] = tyL;
+<A NAME="1297"></A>        TYEdgeBufferR[k] = tyR;
+<A NAME="1298"></A>      }
+<A NAME="1299"></A>      xL += dx1;
+<A NAME="1300"></A>      xR += dx3;
+<A NAME="1301"></A>      zL += dz1;
+<A NAME="1302"></A>      zR += dz3;
+<A NAME="1303"></A>      iL += di1;
+<A NAME="1304"></A>      iR += di3;
+<A NAME="1305"></A>      txL += dtx1;
+<A NAME="1306"></A>      txR += dtx3;
+<A NAME="1307"></A>      tyL += dty1;
+<A NAME="1308"></A>      tyR += dty3;
+<A NAME="1309"></A>    }
+<A NAME="1310"></A>    xL = x2;
+<A NAME="1311"></A>    zL = p2.zz;
+<A NAME="1312"></A>    iL = i2;
+<A NAME="1313"></A>    txL = tx2;
+<A NAME="1314"></A>    tyL = ty2;
+<A NAME="1315"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y2; k &lt;= y3; k++) {
+<A NAME="1316"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="1317"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1318"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1319"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="1320"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="1321"></A>        IEdgeBufferL[k] = iL;
+<A NAME="1322"></A>        IEdgeBufferR[k] = iR;
+<A NAME="1323"></A>        TXEdgeBufferL[k] = txL;
+<A NAME="1324"></A>        TXEdgeBufferR[k] = txR;
+<A NAME="1325"></A>        TYEdgeBufferL[k] = tyL;
+<A NAME="1326"></A>        TYEdgeBufferR[k] = tyR;
+<A NAME="1327"></A>      }
+<A NAME="1328"></A>      xL += dx2;
+<A NAME="1329"></A>      xR += dx3;
+<A NAME="1330"></A>      zL += dz2;
+<A NAME="1331"></A>      zR += dz3;
+<A NAME="1332"></A>      iL += di2;
+<A NAME="1333"></A>      iR += di3;
+<A NAME="1334"></A>      txL += dtx2;
+<A NAME="1335"></A>      txR += dtx3;
+<A NAME="1336"></A>      tyL += dty2;
+<A NAME="1337"></A>      tyR += dty3;
+<A NAME="1338"></A>    }
+<A NAME="1339"></A>
+<A NAME="1340"></A>    y1 = crop(y1, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="1341"></A>    y3 = crop(y3, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="1342"></A>
+<A NAME="1343"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = y1; j &lt;= y3; j++) drawGouraudTextureLine(j, object[obj].texture);
+<A NAME="1344"></A>  }
+<A NAME="1345"></A>
+<A NAME="1346"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawPhongTexture(<FONT ID="Int">int</FONT> obj, idx3d_triangle t) {
+<A NAME="1347"></A>    <FONT ID="Int">int</FONT> temp;
+<A NAME="1348"></A>    idx3d_node temp1;
+<A NAME="1349"></A>
+<A NAME="1350"></A>    idx3d_node p1 = object[obj].node[t.p1];
+<A NAME="1351"></A>    idx3d_node p2 = object[obj].node[t.p2];
+<A NAME="1352"></A>    idx3d_node p3 = object[obj].node[t.p3];
+<A NAME="1353"></A>
+<A NAME="1354"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="1355"></A>      temp1 = p1;
+<A NAME="1356"></A>      p1 = p2;
+<A NAME="1357"></A>      p2 = temp1;
+<A NAME="1358"></A>    }
+<A NAME="1359"></A>    <FONT ID="If">if</FONT> (p2.yy &gt; p3.yy) {
+<A NAME="1360"></A>      temp1 = p2;
+<A NAME="1361"></A>      p2 = p3;
+<A NAME="1362"></A>      p3 = temp1;
+<A NAME="1363"></A>    }
+<A NAME="1364"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="1365"></A>      temp1 = p1;
+<A NAME="1366"></A>      p1 = p2;
+<A NAME="1367"></A>      p2 = temp1;
+<A NAME="1368"></A>    }
+<A NAME="1369"></A>
+<A NAME="1370"></A>    <FONT ID="Int">int</FONT> x1 = p1.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1371"></A>    <FONT ID="Int">int</FONT> x2 = p2.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1372"></A>    <FONT ID="Int">int</FONT> x3 = p3.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1373"></A>    <FONT ID="Int">int</FONT> y1 = p1.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1374"></A>    <FONT ID="Int">int</FONT> y2 = p2.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1375"></A>    <FONT ID="Int">int</FONT> y3 = p3.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1376"></A>
+<A NAME="1377"></A>    <FONT ID="Int">int</FONT> nx1 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p1.n2.x);
+<A NAME="1378"></A>    <FONT ID="Int">int</FONT> nx2 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p2.n2.x);
+<A NAME="1379"></A>    <FONT ID="Int">int</FONT> nx3 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p3.n2.x);
+<A NAME="1380"></A>    <FONT ID="Int">int</FONT> ny1 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p1.n2.y);
+<A NAME="1381"></A>    <FONT ID="Int">int</FONT> ny2 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p2.n2.y);
+<A NAME="1382"></A>    <FONT ID="Int">int</FONT> ny3 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p3.n2.y);
+<A NAME="1383"></A>
+<A NAME="1384"></A>    <FONT ID="Float">float</FONT> tw = (<FONT ID="Float">float</FONT>) texture[object[obj].texture].w * <FONT ID="IntegerLiteral">65536</FONT>;
+<A NAME="1385"></A>    <FONT ID="Float">float</FONT> th = (<FONT ID="Float">float</FONT>) texture[object[obj].texture].h * <FONT ID="IntegerLiteral">65536</FONT>;
+<A NAME="1386"></A>    <FONT ID="Int">int</FONT> tx1 = (<FONT ID="Int">int</FONT>) (tw * p1.tx);
+<A NAME="1387"></A>    <FONT ID="Int">int</FONT> tx2 = (<FONT ID="Int">int</FONT>) (tw * p2.tx);
+<A NAME="1388"></A>    <FONT ID="Int">int</FONT> tx3 = (<FONT ID="Int">int</FONT>) (tw * p3.tx);
+<A NAME="1389"></A>    <FONT ID="Int">int</FONT> ty1 = (<FONT ID="Int">int</FONT>) (th * p1.ty);
+<A NAME="1390"></A>    <FONT ID="Int">int</FONT> ty2 = (<FONT ID="Int">int</FONT>) (th * p2.ty);
+<A NAME="1391"></A>    <FONT ID="Int">int</FONT> ty3 = (<FONT ID="Int">int</FONT>) (th * p3.ty);
+<A NAME="1392"></A>
+<A NAME="1393"></A>    <FONT ID="Int">int</FONT> dx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1394"></A>    <FONT ID="Int">int</FONT> dx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1395"></A>    <FONT ID="Int">int</FONT> dx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1396"></A>    <FONT ID="Int">int</FONT> dz1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1397"></A>    <FONT ID="Int">int</FONT> dz2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1398"></A>    <FONT ID="Int">int</FONT> dz3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1399"></A>    <FONT ID="Int">int</FONT> dnx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1400"></A>    <FONT ID="Int">int</FONT> dnx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1401"></A>    <FONT ID="Int">int</FONT> dnx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1402"></A>    <FONT ID="Int">int</FONT> dny1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1403"></A>    <FONT ID="Int">int</FONT> dny2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1404"></A>    <FONT ID="Int">int</FONT> dny3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1405"></A>    <FONT ID="Int">int</FONT> dtx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1406"></A>    <FONT ID="Int">int</FONT> dtx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1407"></A>    <FONT ID="Int">int</FONT> dtx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1408"></A>    <FONT ID="Int">int</FONT> dty1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1409"></A>    <FONT ID="Int">int</FONT> dty2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1410"></A>    <FONT ID="Int">int</FONT> dty3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1411"></A>    <FONT ID="Int">int</FONT> dy;
+<A NAME="1412"></A>    <FONT ID="If">if</FONT> (y2 != y1) {
+<A NAME="1413"></A>      dy = (y2 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1414"></A>      dx1 = (x2 - x1) / dy;
+<A NAME="1415"></A>      dz1 = (p2.zz - p1.zz) / dy;
+<A NAME="1416"></A>      dnx1 = (nx2 - nx1) / dy;
+<A NAME="1417"></A>      dny1 = (ny2 - ny1) / dy;
+<A NAME="1418"></A>      dtx1 = (tx2 - tx1) / dy;
+<A NAME="1419"></A>      dty1 = (ty2 - ty1) / dy;
+<A NAME="1420"></A>    }
+<A NAME="1421"></A>    <FONT ID="If">if</FONT> (y3 != y2) {
+<A NAME="1422"></A>      dy = (y3 - y2) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1423"></A>      dx2 = (x3 - x2) / dy;
+<A NAME="1424"></A>      dz2 = (p3.zz - p2.zz) / dy;
+<A NAME="1425"></A>      dnx2 = (nx3 - nx2) / dy;
+<A NAME="1426"></A>      dny2 = (ny3 - ny2) / dy;
+<A NAME="1427"></A>      dtx2 = (tx3 - tx2) / dy;
+<A NAME="1428"></A>      dty2 = (ty3 - ty2) / dy;
+<A NAME="1429"></A>    }
+<A NAME="1430"></A>    <FONT ID="If">if</FONT> (y3 != y1) {
+<A NAME="1431"></A>      dy = (y3 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1432"></A>      dx3 = (x3 - x1) / dy;
+<A NAME="1433"></A>      dz3 = (p3.zz - p1.zz) / dy;
+<A NAME="1434"></A>      dnx3 = (nx3 - nx1) / dy;
+<A NAME="1435"></A>      dny3 = (ny3 - ny1) / dy;
+<A NAME="1436"></A>      dtx3 = (tx3 - tx1) / dy;
+<A NAME="1437"></A>      dty3 = (ty3 - ty1) / dy;
+<A NAME="1438"></A>    }
+<A NAME="1439"></A>
+<A NAME="1440"></A>    <FONT ID="Int">int</FONT> xL = x1;
+<A NAME="1441"></A>    <FONT ID="Int">int</FONT> xR = x1;
+<A NAME="1442"></A>    <FONT ID="Int">int</FONT> zL = p1.zz;
+<A NAME="1443"></A>    <FONT ID="Int">int</FONT> zR = p1.zz;
+<A NAME="1444"></A>    <FONT ID="Int">int</FONT> nxL = nx1;
+<A NAME="1445"></A>    <FONT ID="Int">int</FONT> nxR = nx1;
+<A NAME="1446"></A>    <FONT ID="Int">int</FONT> nyL = ny1;
+<A NAME="1447"></A>    <FONT ID="Int">int</FONT> nyR = ny1;
+<A NAME="1448"></A>    <FONT ID="Int">int</FONT> txL = tx1;
+<A NAME="1449"></A>    <FONT ID="Int">int</FONT> txR = tx1;
+<A NAME="1450"></A>    <FONT ID="Int">int</FONT> tyL = ty1;
+<A NAME="1451"></A>    <FONT ID="Int">int</FONT> tyR = ty1;
+<A NAME="1452"></A>
+<A NAME="1453"></A>    y1 = y1 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1454"></A>    y2 = y2 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1455"></A>    y3 = y3 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1456"></A>
+<A NAME="1457"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y1; k &lt; y2; k++) {
+<A NAME="1458"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="1459"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1460"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1461"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="1462"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="1463"></A>        NXEdgeBufferL[k] = nxL;
+<A NAME="1464"></A>        NXEdgeBufferR[k] = nxR;
+<A NAME="1465"></A>        NYEdgeBufferL[k] = nyL;
+<A NAME="1466"></A>        NYEdgeBufferR[k] = nyR;
+<A NAME="1467"></A>        TXEdgeBufferL[k] = txL;
+<A NAME="1468"></A>        TXEdgeBufferR[k] = txR;
+<A NAME="1469"></A>        TYEdgeBufferL[k] = tyL;
+<A NAME="1470"></A>        TYEdgeBufferR[k] = tyR;
+<A NAME="1471"></A>      }
+<A NAME="1472"></A>      xL += dx1;
+<A NAME="1473"></A>      xR += dx3;
+<A NAME="1474"></A>      zL += dz1;
+<A NAME="1475"></A>      zR += dz3;
+<A NAME="1476"></A>      nxL += dnx1;
+<A NAME="1477"></A>      nxR += dnx3;
+<A NAME="1478"></A>      nyL += dny1;
+<A NAME="1479"></A>      nyR += dny3;
+<A NAME="1480"></A>      txL += dtx1;
+<A NAME="1481"></A>      txR += dtx3;
+<A NAME="1482"></A>      tyL += dty1;
+<A NAME="1483"></A>      tyR += dty3;
+<A NAME="1484"></A>    }
+<A NAME="1485"></A>    xL = x2;
+<A NAME="1486"></A>    zL = p2.zz;
+<A NAME="1487"></A>    nxL = nx2;
+<A NAME="1488"></A>    nyL = ny2;
+<A NAME="1489"></A>    txL = tx2;
+<A NAME="1490"></A>    tyL = ty2;
+<A NAME="1491"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y2; k &lt;= y3; k++) {
+<A NAME="1492"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="1493"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1494"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1495"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="1496"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="1497"></A>        NXEdgeBufferL[k] = nxL;
+<A NAME="1498"></A>        NXEdgeBufferR[k] = nxR;
+<A NAME="1499"></A>        NYEdgeBufferL[k] = nyL;
+<A NAME="1500"></A>        NYEdgeBufferR[k] = nyR;
+<A NAME="1501"></A>        TXEdgeBufferL[k] = txL;
+<A NAME="1502"></A>        TXEdgeBufferR[k] = txR;
+<A NAME="1503"></A>        TYEdgeBufferL[k] = tyL;
+<A NAME="1504"></A>        TYEdgeBufferR[k] = tyR;
+<A NAME="1505"></A>      }
+<A NAME="1506"></A>      xL += dx2;
+<A NAME="1507"></A>      xR += dx3;
+<A NAME="1508"></A>      zL += dz2;
+<A NAME="1509"></A>      zR += dz3;
+<A NAME="1510"></A>      nxL += dnx2;
+<A NAME="1511"></A>      nxR += dnx3;
+<A NAME="1512"></A>      nyL += dny2;
+<A NAME="1513"></A>      nyR += dny3;
+<A NAME="1514"></A>      txL += dtx2;
+<A NAME="1515"></A>      txR += dtx3;
+<A NAME="1516"></A>      tyL += dty2;
+<A NAME="1517"></A>      tyR += dty3;
+<A NAME="1518"></A>    }
+<A NAME="1519"></A>
+<A NAME="1520"></A>    y1 = crop(y1, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="1521"></A>    y3 = crop(y3, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="1522"></A>
+<A NAME="1523"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = y1; j &lt;= y3; j++) drawPhongTextureLine(j, object[obj].texture);
+<A NAME="1524"></A>  }
+<A NAME="1525"></A>
+<A NAME="1526"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawEnvmappedTexture(<FONT ID="Int">int</FONT> obj, idx3d_triangle t) {
+<A NAME="1527"></A>    <FONT ID="Int">int</FONT> temp;
+<A NAME="1528"></A>    idx3d_node temp1;
+<A NAME="1529"></A>
+<A NAME="1530"></A>    idx3d_node p1 = object[obj].node[t.p1];
+<A NAME="1531"></A>    idx3d_node p2 = object[obj].node[t.p2];
+<A NAME="1532"></A>    idx3d_node p3 = object[obj].node[t.p3];
+<A NAME="1533"></A>
+<A NAME="1534"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="1535"></A>      temp1 = p1;
+<A NAME="1536"></A>      p1 = p2;
+<A NAME="1537"></A>      p2 = temp1;
+<A NAME="1538"></A>    }
+<A NAME="1539"></A>    <FONT ID="If">if</FONT> (p2.yy &gt; p3.yy) {
+<A NAME="1540"></A>      temp1 = p2;
+<A NAME="1541"></A>      p2 = p3;
+<A NAME="1542"></A>      p3 = temp1;
+<A NAME="1543"></A>    }
+<A NAME="1544"></A>    <FONT ID="If">if</FONT> (p1.yy &gt; p2.yy) {
+<A NAME="1545"></A>      temp1 = p1;
+<A NAME="1546"></A>      p1 = p2;
+<A NAME="1547"></A>      p2 = temp1;
+<A NAME="1548"></A>    }
+<A NAME="1549"></A>
+<A NAME="1550"></A>    <FONT ID="Int">int</FONT> x1 = p1.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1551"></A>    <FONT ID="Int">int</FONT> x2 = p2.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1552"></A>    <FONT ID="Int">int</FONT> x3 = p3.xx &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1553"></A>    <FONT ID="Int">int</FONT> y1 = p1.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1554"></A>    <FONT ID="Int">int</FONT> y2 = p2.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1555"></A>    <FONT ID="Int">int</FONT> y3 = p3.yy &lt;&lt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1556"></A>
+<A NAME="1557"></A>    <FONT ID="Int">int</FONT> nx1 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p1.n2.x);
+<A NAME="1558"></A>    <FONT ID="Int">int</FONT> nx2 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p2.n2.x);
+<A NAME="1559"></A>    <FONT ID="Int">int</FONT> nx3 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p3.n2.x);
+<A NAME="1560"></A>    <FONT ID="Int">int</FONT> ny1 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p1.n2.y);
+<A NAME="1561"></A>    <FONT ID="Int">int</FONT> ny2 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p2.n2.y);
+<A NAME="1562"></A>    <FONT ID="Int">int</FONT> ny3 = (<FONT ID="Int">int</FONT>) (<FONT ID="IntegerLiteral">65536</FONT> * p3.n2.y);
+<A NAME="1563"></A>
+<A NAME="1564"></A>    <FONT ID="Float">float</FONT> tw = (<FONT ID="Float">float</FONT>) texture[object[obj].texture].w * <FONT ID="IntegerLiteral">65536</FONT>;
+<A NAME="1565"></A>    <FONT ID="Float">float</FONT> th = (<FONT ID="Float">float</FONT>) texture[object[obj].texture].h * <FONT ID="IntegerLiteral">65536</FONT>;
+<A NAME="1566"></A>    <FONT ID="Int">int</FONT> tx1 = (<FONT ID="Int">int</FONT>) (tw * p1.tx);
+<A NAME="1567"></A>    <FONT ID="Int">int</FONT> tx2 = (<FONT ID="Int">int</FONT>) (tw * p2.tx);
+<A NAME="1568"></A>    <FONT ID="Int">int</FONT> tx3 = (<FONT ID="Int">int</FONT>) (tw * p3.tx);
+<A NAME="1569"></A>    <FONT ID="Int">int</FONT> ty1 = (<FONT ID="Int">int</FONT>) (th * p1.ty);
+<A NAME="1570"></A>    <FONT ID="Int">int</FONT> ty2 = (<FONT ID="Int">int</FONT>) (th * p2.ty);
+<A NAME="1571"></A>    <FONT ID="Int">int</FONT> ty3 = (<FONT ID="Int">int</FONT>) (th * p3.ty);
+<A NAME="1572"></A>
+<A NAME="1573"></A>    <FONT ID="Int">int</FONT> dx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1574"></A>    <FONT ID="Int">int</FONT> dx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1575"></A>    <FONT ID="Int">int</FONT> dx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1576"></A>    <FONT ID="Int">int</FONT> dz1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1577"></A>    <FONT ID="Int">int</FONT> dz2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1578"></A>    <FONT ID="Int">int</FONT> dz3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1579"></A>    <FONT ID="Int">int</FONT> dnx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1580"></A>    <FONT ID="Int">int</FONT> dnx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1581"></A>    <FONT ID="Int">int</FONT> dnx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1582"></A>    <FONT ID="Int">int</FONT> dny1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1583"></A>    <FONT ID="Int">int</FONT> dny2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1584"></A>    <FONT ID="Int">int</FONT> dny3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1585"></A>    <FONT ID="Int">int</FONT> dtx1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1586"></A>    <FONT ID="Int">int</FONT> dtx2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1587"></A>    <FONT ID="Int">int</FONT> dtx3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1588"></A>    <FONT ID="Int">int</FONT> dty1 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1589"></A>    <FONT ID="Int">int</FONT> dty2 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1590"></A>    <FONT ID="Int">int</FONT> dty3 = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="1591"></A>    <FONT ID="Int">int</FONT> dy;
+<A NAME="1592"></A>    <FONT ID="If">if</FONT> (y2 != y1) {
+<A NAME="1593"></A>      dy = (y2 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1594"></A>      dx1 = (x2 - x1) / dy;
+<A NAME="1595"></A>      dz1 = (p2.zz - p1.zz) / dy;
+<A NAME="1596"></A>      dnx1 = (nx2 - nx1) / dy;
+<A NAME="1597"></A>      dny1 = (ny2 - ny1) / dy;
+<A NAME="1598"></A>      dtx1 = (tx2 - tx1) / dy;
+<A NAME="1599"></A>      dty1 = (ty2 - ty1) / dy;
+<A NAME="1600"></A>    }
+<A NAME="1601"></A>    <FONT ID="If">if</FONT> (y3 != y2) {
+<A NAME="1602"></A>      dy = (y3 - y2) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1603"></A>      dx2 = (x3 - x2) / dy;
+<A NAME="1604"></A>      dz2 = (p3.zz - p2.zz) / dy;
+<A NAME="1605"></A>      dnx2 = (nx3 - nx2) / dy;
+<A NAME="1606"></A>      dny2 = (ny3 - ny2) / dy;
+<A NAME="1607"></A>      dtx2 = (tx3 - tx2) / dy;
+<A NAME="1608"></A>      dty2 = (ty3 - ty2) / dy;
+<A NAME="1609"></A>    }
+<A NAME="1610"></A>    <FONT ID="If">if</FONT> (y3 != y1) {
+<A NAME="1611"></A>      dy = (y3 - y1) &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1612"></A>      dx3 = (x3 - x1) / dy;
+<A NAME="1613"></A>      dz3 = (p3.zz - p1.zz) / dy;
+<A NAME="1614"></A>      dnx3 = (nx3 - nx1) / dy;
+<A NAME="1615"></A>      dny3 = (ny3 - ny1) / dy;
+<A NAME="1616"></A>      dtx3 = (tx3 - tx1) / dy;
+<A NAME="1617"></A>      dty3 = (ty3 - ty1) / dy;
+<A NAME="1618"></A>    }
+<A NAME="1619"></A>
+<A NAME="1620"></A>    <FONT ID="Int">int</FONT> xL = x1;
+<A NAME="1621"></A>    <FONT ID="Int">int</FONT> xR = x1;
+<A NAME="1622"></A>    <FONT ID="Int">int</FONT> zL = p1.zz;
+<A NAME="1623"></A>    <FONT ID="Int">int</FONT> zR = p1.zz;
+<A NAME="1624"></A>    <FONT ID="Int">int</FONT> nxL = nx1;
+<A NAME="1625"></A>    <FONT ID="Int">int</FONT> nxR = nx1;
+<A NAME="1626"></A>    <FONT ID="Int">int</FONT> nyL = ny1;
+<A NAME="1627"></A>    <FONT ID="Int">int</FONT> nyR = ny1;
+<A NAME="1628"></A>    <FONT ID="Int">int</FONT> txL = tx1;
+<A NAME="1629"></A>    <FONT ID="Int">int</FONT> txR = tx1;
+<A NAME="1630"></A>    <FONT ID="Int">int</FONT> tyL = ty1;
+<A NAME="1631"></A>    <FONT ID="Int">int</FONT> tyR = ty1;
+<A NAME="1632"></A>
+<A NAME="1633"></A>    y1 = y1 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1634"></A>    y2 = y2 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1635"></A>    y3 = y3 &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1636"></A>
+<A NAME="1637"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y1; k &lt; y2; k++) {
+<A NAME="1638"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="1639"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1640"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1641"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="1642"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="1643"></A>        NXEdgeBufferL[k] = nxL;
+<A NAME="1644"></A>        NXEdgeBufferR[k] = nxR;
+<A NAME="1645"></A>        NYEdgeBufferL[k] = nyL;
+<A NAME="1646"></A>        NYEdgeBufferR[k] = nyR;
+<A NAME="1647"></A>        TXEdgeBufferL[k] = txL;
+<A NAME="1648"></A>        TXEdgeBufferR[k] = txR;
+<A NAME="1649"></A>        TYEdgeBufferL[k] = tyL;
+<A NAME="1650"></A>        TYEdgeBufferR[k] = tyR;
+<A NAME="1651"></A>      }
+<A NAME="1652"></A>      xL += dx1;
+<A NAME="1653"></A>      xR += dx3;
+<A NAME="1654"></A>      zL += dz1;
+<A NAME="1655"></A>      zR += dz3;
+<A NAME="1656"></A>      nxL += dnx1;
+<A NAME="1657"></A>      nxR += dnx3;
+<A NAME="1658"></A>      nyL += dny1;
+<A NAME="1659"></A>      nyR += dny3;
+<A NAME="1660"></A>      txL += dtx1;
+<A NAME="1661"></A>      txR += dtx3;
+<A NAME="1662"></A>      tyL += dty1;
+<A NAME="1663"></A>      tyR += dty3;
+<A NAME="1664"></A>    }
+<A NAME="1665"></A>    xL = x2;
+<A NAME="1666"></A>    zL = p2.zz;
+<A NAME="1667"></A>    nxL = nx2;
+<A NAME="1668"></A>    nyL = ny2;
+<A NAME="1669"></A>    txL = tx2;
+<A NAME="1670"></A>    tyL = ty2;
+<A NAME="1671"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> k = y2; k &lt;= y3; k++) {
+<A NAME="1672"></A>      <FONT ID="If">if</FONT> ((k &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (k &lt; h)) {
+<A NAME="1673"></A>        LEdgeBuffer[k] = xL &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1674"></A>        REdgeBuffer[k] = xR &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>;
+<A NAME="1675"></A>        ZEdgeBufferL[k] = zL;
+<A NAME="1676"></A>        ZEdgeBufferR[k] = zR;
+<A NAME="1677"></A>        NXEdgeBufferL[k] = nxL;
+<A NAME="1678"></A>        NXEdgeBufferR[k] = nxR;
+<A NAME="1679"></A>        NYEdgeBufferL[k] = nyL;
+<A NAME="1680"></A>        NYEdgeBufferR[k] = nyR;
+<A NAME="1681"></A>        TXEdgeBufferL[k] = txL;
+<A NAME="1682"></A>        TXEdgeBufferR[k] = txR;
+<A NAME="1683"></A>        TYEdgeBufferL[k] = tyL;
+<A NAME="1684"></A>        TYEdgeBufferR[k] = tyR;
+<A NAME="1685"></A>      }
+<A NAME="1686"></A>      xL += dx2;
+<A NAME="1687"></A>      xR += dx3;
+<A NAME="1688"></A>      zL += dz2;
+<A NAME="1689"></A>      zR += dz3;
+<A NAME="1690"></A>      nxL += dnx2;
+<A NAME="1691"></A>      nxR += dnx3;
+<A NAME="1692"></A>      nyL += dny2;
+<A NAME="1693"></A>      nyR += dny3;
+<A NAME="1694"></A>      txL += dtx2;
+<A NAME="1695"></A>      txR += dtx3;
+<A NAME="1696"></A>      tyL += dty2;
+<A NAME="1697"></A>      tyR += dty3;
+<A NAME="1698"></A>    }
+<A NAME="1699"></A>
+<A NAME="1700"></A>    y1 = crop(y1, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="1701"></A>    y3 = crop(y3, <FONT ID="IntegerLiteral">0</FONT>, h);
+<A NAME="1702"></A>
+<A NAME="1703"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = y1; j &lt;= y3; j++) drawEnvmappedTextureLine(j, object[obj].texture);
+<A NAME="1704"></A>  }
+<A NAME="1705"></A>
+<A NAME="1706"></A>
+<A NAME="1707"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawFlatshadedLine(<FONT ID="Int">int</FONT> y, <FONT ID="Int">int</FONT> color) {
+<A NAME="1708"></A>    <FONT ID="If">if</FONT> ((y &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (y &lt; h)) {
+<A NAME="1709"></A>      <FONT ID="Int">int</FONT> xL = LEdgeBuffer[y];
+<A NAME="1710"></A>      <FONT ID="Int">int</FONT> xR = REdgeBuffer[y];
+<A NAME="1711"></A>      <FONT ID="Int">int</FONT> zL = ZEdgeBufferL[y];
+<A NAME="1712"></A>      <FONT ID="Int">int</FONT> zR = ZEdgeBufferR[y];
+<A NAME="1713"></A>      <FONT ID="If">if</FONT> ((xL != xR)) {
+<A NAME="1714"></A>        <FONT ID="If">if</FONT> (xL &gt; xR) {
+<A NAME="1715"></A>          <FONT ID="Int">int</FONT> temp;
+<A NAME="1716"></A>          temp = xL;
+<A NAME="1717"></A>          xL = xR;
+<A NAME="1718"></A>          xR = temp;
+<A NAME="1719"></A>          temp = zL;
+<A NAME="1720"></A>          zL = zR;
+<A NAME="1721"></A>          zR = temp;
+<A NAME="1722"></A>        }
+<A NAME="1723"></A>        <FONT ID="Int">int</FONT> dz = (zR - zL) / (xR - xL);
+<A NAME="1724"></A>        <FONT ID="Int">int</FONT> z = zL;
+<A NAME="1725"></A>
+<A NAME="1726"></A>        xL = crop(xL, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="1727"></A>        xR = crop(xR, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="1728"></A>
+<A NAME="1729"></A>        <FONT ID="Int">int</FONT> offset = y * w;
+<A NAME="1730"></A>
+<A NAME="1731"></A>        <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> x = xL; x &lt; xR; x++) {
+<A NAME="1732"></A>          <FONT ID="If">if</FONT> (z &lt; zBuffer[x][y]) {
+<A NAME="1733"></A>            TargetPixel[x + offset] = color;
+<A NAME="1734"></A>            zBuffer[x][y] = z;
+<A NAME="1735"></A>          }
+<A NAME="1736"></A>          z += dz;
+<A NAME="1737"></A>        }
+<A NAME="1738"></A>      }
+<A NAME="1739"></A>    }
+<A NAME="1740"></A>  }
+<A NAME="1741"></A>
+<A NAME="1742"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawGouraudLine(<FONT ID="Int">int</FONT> y, <FONT ID="Int">int</FONT> color) {
+<A NAME="1743"></A>    <FONT ID="If">if</FONT> ((y &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (y &lt; h)) {
+<A NAME="1744"></A>      <FONT ID="Int">int</FONT> xL = LEdgeBuffer[y];
+<A NAME="1745"></A>      <FONT ID="Int">int</FONT> xR = REdgeBuffer[y];
+<A NAME="1746"></A>      <FONT ID="Int">int</FONT> zL = ZEdgeBufferL[y];
+<A NAME="1747"></A>      <FONT ID="Int">int</FONT> zR = ZEdgeBufferR[y];
+<A NAME="1748"></A>      <FONT ID="Int">int</FONT> iL = IEdgeBufferL[y];
+<A NAME="1749"></A>      <FONT ID="Int">int</FONT> iR = IEdgeBufferR[y];
+<A NAME="1750"></A>      <FONT ID="If">if</FONT> ((xL != xR)) {
+<A NAME="1751"></A>        <FONT ID="If">if</FONT> (xL &gt; xR) {
+<A NAME="1752"></A>          <FONT ID="Int">int</FONT> temp;
+<A NAME="1753"></A>          temp = xL;
+<A NAME="1754"></A>          xL = xR;
+<A NAME="1755"></A>          xR = temp;
+<A NAME="1756"></A>          temp = zL;
+<A NAME="1757"></A>          zL = zR;
+<A NAME="1758"></A>          zR = temp;
+<A NAME="1759"></A>          temp = iL;
+<A NAME="1760"></A>          iL = iR;
+<A NAME="1761"></A>          iR = temp;
+<A NAME="1762"></A>        }
+<A NAME="1763"></A>        <FONT ID="Int">int</FONT> dx = (xR - xL);
+<A NAME="1764"></A>        <FONT ID="Int">int</FONT> dz = (zR - zL) / dx;
+<A NAME="1765"></A>        <FONT ID="Int">int</FONT> di = (iR - iL) / dx;
+<A NAME="1766"></A>        <FONT ID="Int">int</FONT> z = zL;
+<A NAME="1767"></A>        <FONT ID="Int">int</FONT> i = iL;
+<A NAME="1768"></A>
+<A NAME="1769"></A>        xL = crop(xL, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="1770"></A>        xR = crop(xR, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="1771"></A>
+<A NAME="1772"></A>        <FONT ID="Int">int</FONT> offset = y * w;
+<A NAME="1773"></A>
+<A NAME="1774"></A>        <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> x = xL; x &lt; xR; x++) {
+<A NAME="1775"></A>          <FONT ID="If">if</FONT> (z &lt; zBuffer[x][y]) {
+<A NAME="1776"></A>            TargetPixel[x + offset] = getColor(color, i &gt;&gt; <FONT ID="IntegerLiteral">8</FONT>);
+<A NAME="1777"></A>            zBuffer[x][y] = z;
+<A NAME="1778"></A>          }
+<A NAME="1779"></A>          z += dz;
+<A NAME="1780"></A>          i += di;
+<A NAME="1781"></A>        }
+<A NAME="1782"></A>      }
+<A NAME="1783"></A>    }
+<A NAME="1784"></A>  }
+<A NAME="1785"></A>
+<A NAME="1786"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawPhongLine(<FONT ID="Int">int</FONT> y, <FONT ID="Int">int</FONT> color) {
+<A NAME="1787"></A>    <FONT ID="If">if</FONT> ((y &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (y &lt; h)) {
+<A NAME="1788"></A>      <FONT ID="Int">int</FONT> xL = LEdgeBuffer[y];
+<A NAME="1789"></A>      <FONT ID="Int">int</FONT> xR = REdgeBuffer[y];
+<A NAME="1790"></A>      <FONT ID="Int">int</FONT> zL = ZEdgeBufferL[y];
+<A NAME="1791"></A>      <FONT ID="Int">int</FONT> zR = ZEdgeBufferR[y];
+<A NAME="1792"></A>      <FONT ID="Int">int</FONT> nxL = NXEdgeBufferL[y];
+<A NAME="1793"></A>      <FONT ID="Int">int</FONT> nxR = NXEdgeBufferR[y];
+<A NAME="1794"></A>      <FONT ID="Int">int</FONT> nyL = NYEdgeBufferL[y];
+<A NAME="1795"></A>      <FONT ID="Int">int</FONT> nyR = NYEdgeBufferR[y];
+<A NAME="1796"></A>      <FONT ID="If">if</FONT> ((xL != xR)) {
+<A NAME="1797"></A>        <FONT ID="If">if</FONT> (xL &gt; xR) {
+<A NAME="1798"></A>          <FONT ID="Int">int</FONT> temp;
+<A NAME="1799"></A>          temp = xL;
+<A NAME="1800"></A>          xL = xR;
+<A NAME="1801"></A>          xR = temp;
+<A NAME="1802"></A>          temp = zL;
+<A NAME="1803"></A>          zL = zR;
+<A NAME="1804"></A>          zR = temp;
+<A NAME="1805"></A>          temp = nxL;
+<A NAME="1806"></A>          nxL = nxR;
+<A NAME="1807"></A>          nxR = temp;
+<A NAME="1808"></A>          temp = nyL;
+<A NAME="1809"></A>          nyL = nyR;
+<A NAME="1810"></A>          nyR = temp;
+<A NAME="1811"></A>        }
+<A NAME="1812"></A>        <FONT ID="Int">int</FONT> dx = (xR - xL);
+<A NAME="1813"></A>        <FONT ID="Int">int</FONT> dz = (zR - zL) / dx;
+<A NAME="1814"></A>        <FONT ID="Int">int</FONT> dnx = (nxR - nxL) / dx;
+<A NAME="1815"></A>        <FONT ID="Int">int</FONT> dny = (nyR - nyL) / dx;
+<A NAME="1816"></A>        <FONT ID="Int">int</FONT> z = zL;
+<A NAME="1817"></A>        <FONT ID="Int">int</FONT> nx = nxL;
+<A NAME="1818"></A>        <FONT ID="Int">int</FONT> ny = nyL;
+<A NAME="1819"></A>
+<A NAME="1820"></A>        xL = crop(xL, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="1821"></A>        xR = crop(xR, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="1822"></A>
+<A NAME="1823"></A>        <FONT ID="Int">int</FONT> offset = y * w;
+<A NAME="1824"></A>
+<A NAME="1825"></A>        <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> x = xL; x &lt; xR; x++) {
+<A NAME="1826"></A>          <FONT ID="If">if</FONT> (z &lt; zBuffer[x][y]) {
+<A NAME="1827"></A>            TargetPixel[x + offset] = getColor(color, getIntensity(nx / <FONT ID="IntegerLiteral">256</FONT>, ny / <FONT ID="IntegerLiteral">256</FONT>));
+<A NAME="1828"></A>            zBuffer[x][y] = z;
+<A NAME="1829"></A>          }
+<A NAME="1830"></A>          z += dz;
+<A NAME="1831"></A>          nx += dnx;
+<A NAME="1832"></A>          ny += dny;
+<A NAME="1833"></A>        }
+<A NAME="1834"></A>      }
+<A NAME="1835"></A>    }
+<A NAME="1836"></A>  }
+<A NAME="1837"></A>
+<A NAME="1838"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawEnvmappedLine(<FONT ID="Int">int</FONT> y, <FONT ID="Int">int</FONT> color) {
+<A NAME="1839"></A>    <FONT ID="If">if</FONT> ((y &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (y &lt; h)) {
+<A NAME="1840"></A>      <FONT ID="Int">int</FONT> xL = LEdgeBuffer[y];
+<A NAME="1841"></A>      <FONT ID="Int">int</FONT> xR = REdgeBuffer[y];
+<A NAME="1842"></A>      <FONT ID="Int">int</FONT> zL = ZEdgeBufferL[y];
+<A NAME="1843"></A>      <FONT ID="Int">int</FONT> zR = ZEdgeBufferR[y];
+<A NAME="1844"></A>      <FONT ID="Int">int</FONT> nxL = NXEdgeBufferL[y];
+<A NAME="1845"></A>      <FONT ID="Int">int</FONT> nxR = NXEdgeBufferR[y];
+<A NAME="1846"></A>      <FONT ID="Int">int</FONT> nyL = NYEdgeBufferL[y];
+<A NAME="1847"></A>      <FONT ID="Int">int</FONT> nyR = NYEdgeBufferR[y];
+<A NAME="1848"></A>      <FONT ID="If">if</FONT> ((xL != xR)) {
+<A NAME="1849"></A>        <FONT ID="If">if</FONT> (xL &gt; xR) {
+<A NAME="1850"></A>          <FONT ID="Int">int</FONT> temp;
+<A NAME="1851"></A>          temp = xL;
+<A NAME="1852"></A>          xL = xR;
+<A NAME="1853"></A>          xR = temp;
+<A NAME="1854"></A>          temp = zL;
+<A NAME="1855"></A>          zL = zR;
+<A NAME="1856"></A>          zR = temp;
+<A NAME="1857"></A>          temp = nxL;
+<A NAME="1858"></A>          nxL = nxR;
+<A NAME="1859"></A>          nxR = temp;
+<A NAME="1860"></A>          temp = nyL;
+<A NAME="1861"></A>          nyL = nyR;
+<A NAME="1862"></A>          nyR = temp;
+<A NAME="1863"></A>        }
+<A NAME="1864"></A>        <FONT ID="Int">int</FONT> dx = (xR - xL);
+<A NAME="1865"></A>        <FONT ID="Int">int</FONT> dz = (zR - zL) / dx;
+<A NAME="1866"></A>        <FONT ID="Int">int</FONT> dnx = (nxR - nxL) / dx;
+<A NAME="1867"></A>        <FONT ID="Int">int</FONT> dny = (nyR - nyL) / dx;
+<A NAME="1868"></A>        <FONT ID="Int">int</FONT> z = zL;
+<A NAME="1869"></A>        <FONT ID="Int">int</FONT> nx = nxL;
+<A NAME="1870"></A>        <FONT ID="Int">int</FONT> ny = nyL;
+<A NAME="1871"></A>
+<A NAME="1872"></A>        xL = crop(xL, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="1873"></A>        xR = crop(xR, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="1874"></A>
+<A NAME="1875"></A>        <FONT ID="Int">int</FONT> offset = y * w;
+<A NAME="1876"></A>
+<A NAME="1877"></A>        <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> x = xL; x &lt; xR; x++) {
+<A NAME="1878"></A>          <FONT ID="If">if</FONT> (z &lt; zBuffer[x][y]) {
+<A NAME="1879"></A>            TargetPixel[x + offset] = getColor(color, getEnvironment(nx / <FONT ID="IntegerLiteral">256</FONT>, ny / <FONT ID="IntegerLiteral">256</FONT>));
+<A NAME="1880"></A>            zBuffer[x][y] = z;
+<A NAME="1881"></A>          }
+<A NAME="1882"></A>          z += dz;
+<A NAME="1883"></A>          nx += dnx;
+<A NAME="1884"></A>          ny += dny;
+<A NAME="1885"></A>        }
+<A NAME="1886"></A>      }
+<A NAME="1887"></A>    }
+<A NAME="1888"></A>  }
+<A NAME="1889"></A>
+<A NAME="1890"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawGouraudTextureLine(<FONT ID="Int">int</FONT> y, <FONT ID="Int">int</FONT> t) {
+<A NAME="1891"></A>    <FONT ID="If">if</FONT> ((y &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (y &lt; h)) {
+<A NAME="1892"></A>      <FONT ID="Int">int</FONT> xL = LEdgeBuffer[y];
+<A NAME="1893"></A>      <FONT ID="Int">int</FONT> xR = REdgeBuffer[y];
+<A NAME="1894"></A>      <FONT ID="Int">int</FONT> zL = ZEdgeBufferL[y];
+<A NAME="1895"></A>      <FONT ID="Int">int</FONT> zR = ZEdgeBufferR[y];
+<A NAME="1896"></A>      <FONT ID="Int">int</FONT> iL = IEdgeBufferL[y];
+<A NAME="1897"></A>      <FONT ID="Int">int</FONT> iR = IEdgeBufferR[y];
+<A NAME="1898"></A>      <FONT ID="Int">int</FONT> txL = TXEdgeBufferL[y];
+<A NAME="1899"></A>      <FONT ID="Int">int</FONT> txR = TXEdgeBufferR[y];
+<A NAME="1900"></A>      <FONT ID="Int">int</FONT> tyL = TYEdgeBufferL[y];
+<A NAME="1901"></A>      <FONT ID="Int">int</FONT> tyR = TYEdgeBufferR[y];
+<A NAME="1902"></A>      <FONT ID="If">if</FONT> ((xL != xR)) {
+<A NAME="1903"></A>        <FONT ID="If">if</FONT> (xL &gt; xR) {
+<A NAME="1904"></A>          <FONT ID="Int">int</FONT> temp;
+<A NAME="1905"></A>          temp = xL;
+<A NAME="1906"></A>          xL = xR;
+<A NAME="1907"></A>          xR = temp;
+<A NAME="1908"></A>          temp = zL;
+<A NAME="1909"></A>          zL = zR;
+<A NAME="1910"></A>          zR = temp;
+<A NAME="1911"></A>          temp = iL;
+<A NAME="1912"></A>          iL = iR;
+<A NAME="1913"></A>          iR = temp;
+<A NAME="1914"></A>          temp = txL;
+<A NAME="1915"></A>          txL = txR;
+<A NAME="1916"></A>          txR = temp;
+<A NAME="1917"></A>          temp = tyL;
+<A NAME="1918"></A>          tyL = tyR;
+<A NAME="1919"></A>          tyR = temp;
+<A NAME="1920"></A>        }
+<A NAME="1921"></A>        <FONT ID="Int">int</FONT> dx = (xR - xL);
+<A NAME="1922"></A>        <FONT ID="Int">int</FONT> dz = (zR - zL) / dx;
+<A NAME="1923"></A>        <FONT ID="Int">int</FONT> di = (iR - iL) / dx;
+<A NAME="1924"></A>        <FONT ID="Int">int</FONT> dtx = (txR - txL) / dx;
+<A NAME="1925"></A>        <FONT ID="Int">int</FONT> dty = (tyR - tyL) / dx;
+<A NAME="1926"></A>        <FONT ID="Int">int</FONT> z = zL;
+<A NAME="1927"></A>        <FONT ID="Int">int</FONT> i = iL;
+<A NAME="1928"></A>        <FONT ID="Int">int</FONT> tx = txL;
+<A NAME="1929"></A>        <FONT ID="Int">int</FONT> ty = tyL;
+<A NAME="1930"></A>
+<A NAME="1931"></A>        xL = crop(xL, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="1932"></A>        xR = crop(xR, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="1933"></A>
+<A NAME="1934"></A>        <FONT ID="Int">int</FONT> offset = y * w;
+<A NAME="1935"></A>
+<A NAME="1936"></A>        <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> x = xL; x &lt; xR; x++) {
+<A NAME="1937"></A>          <FONT ID="If">if</FONT> (z &lt; zBuffer[x][y]) {
+<A NAME="1938"></A>            tx = (<FONT ID="Int">int</FONT>) Math.abs(tx);
+<A NAME="1939"></A>            ty = (<FONT ID="Int">int</FONT>) Math.abs(ty);
+<A NAME="1940"></A>            TargetPixel[x + offset] = getColor(texture[t].pixel[(tx &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>) % texture[t].w][(ty &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>) % texture[t].h], i &gt;&gt; <FONT ID="IntegerLiteral">8</FONT>);
+<A NAME="1941"></A>            zBuffer[x][y] = z;
+<A NAME="1942"></A>          }
+<A NAME="1943"></A>          z += dz;
+<A NAME="1944"></A>          i += di;
+<A NAME="1945"></A>          tx += dtx;
+<A NAME="1946"></A>          ty += dty;
+<A NAME="1947"></A>        }
+<A NAME="1948"></A>      }
+<A NAME="1949"></A>    }
+<A NAME="1950"></A>  }
+<A NAME="1951"></A>
+<A NAME="1952"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawPhongTextureLine(<FONT ID="Int">int</FONT> y, <FONT ID="Int">int</FONT> t) {
+<A NAME="1953"></A>    <FONT ID="If">if</FONT> ((y &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (y &lt; h)) {
+<A NAME="1954"></A>      <FONT ID="Int">int</FONT> xL = LEdgeBuffer[y];
+<A NAME="1955"></A>      <FONT ID="Int">int</FONT> xR = REdgeBuffer[y];
+<A NAME="1956"></A>      <FONT ID="Int">int</FONT> zL = ZEdgeBufferL[y];
+<A NAME="1957"></A>      <FONT ID="Int">int</FONT> zR = ZEdgeBufferR[y];
+<A NAME="1958"></A>      <FONT ID="Int">int</FONT> nxL = NXEdgeBufferL[y];
+<A NAME="1959"></A>      <FONT ID="Int">int</FONT> nxR = NXEdgeBufferR[y];
+<A NAME="1960"></A>      <FONT ID="Int">int</FONT> nyL = NYEdgeBufferL[y];
+<A NAME="1961"></A>      <FONT ID="Int">int</FONT> nyR = NYEdgeBufferR[y];
+<A NAME="1962"></A>      <FONT ID="Int">int</FONT> txL = TXEdgeBufferL[y];
+<A NAME="1963"></A>      <FONT ID="Int">int</FONT> txR = TXEdgeBufferR[y];
+<A NAME="1964"></A>      <FONT ID="Int">int</FONT> tyL = TYEdgeBufferL[y];
+<A NAME="1965"></A>      <FONT ID="Int">int</FONT> tyR = TYEdgeBufferR[y];
+<A NAME="1966"></A>      <FONT ID="If">if</FONT> ((xL != xR)) {
+<A NAME="1967"></A>        <FONT ID="If">if</FONT> (xL &gt; xR) {
+<A NAME="1968"></A>          <FONT ID="Int">int</FONT> temp;
+<A NAME="1969"></A>          temp = xL;
+<A NAME="1970"></A>          xL = xR;
+<A NAME="1971"></A>          xR = temp;
+<A NAME="1972"></A>          temp = zL;
+<A NAME="1973"></A>          zL = zR;
+<A NAME="1974"></A>          zR = temp;
+<A NAME="1975"></A>          temp = nxL;
+<A NAME="1976"></A>          nxL = nxR;
+<A NAME="1977"></A>          nxR = temp;
+<A NAME="1978"></A>          temp = nyL;
+<A NAME="1979"></A>          nyL = nyR;
+<A NAME="1980"></A>          nyR = temp;
+<A NAME="1981"></A>          temp = txL;
+<A NAME="1982"></A>          txL = txR;
+<A NAME="1983"></A>          txR = temp;
+<A NAME="1984"></A>          temp = tyL;
+<A NAME="1985"></A>          tyL = tyR;
+<A NAME="1986"></A>          tyR = temp;
+<A NAME="1987"></A>        }
+<A NAME="1988"></A>        <FONT ID="Int">int</FONT> dx = (xR - xL);
+<A NAME="1989"></A>        <FONT ID="Int">int</FONT> dz = (zR - zL) / dx;
+<A NAME="1990"></A>        <FONT ID="Int">int</FONT> dtx = (txR - txL) / dx;
+<A NAME="1991"></A>        <FONT ID="Int">int</FONT> dty = (tyR - tyL) / dx;
+<A NAME="1992"></A>        <FONT ID="Int">int</FONT> dnx = (nxR - nxL) / dx;
+<A NAME="1993"></A>        <FONT ID="Int">int</FONT> dny = (nyR - nyL) / dx;
+<A NAME="1994"></A>        <FONT ID="Int">int</FONT> z = zL;
+<A NAME="1995"></A>        <FONT ID="Int">int</FONT> nx = nxL;
+<A NAME="1996"></A>        <FONT ID="Int">int</FONT> ny = nyL;
+<A NAME="1997"></A>        <FONT ID="Int">int</FONT> tx = txL;
+<A NAME="1998"></A>        <FONT ID="Int">int</FONT> ty = tyL;
+<A NAME="1999"></A>
+<A NAME="2000"></A>        xL = crop(xL, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="2001"></A>        xR = crop(xR, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="2002"></A>
+<A NAME="2003"></A>        <FONT ID="Int">int</FONT> offset = y * w;
+<A NAME="2004"></A>
+<A NAME="2005"></A>        <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> x = xL; x &lt; xR; x++) {
+<A NAME="2006"></A>          <FONT ID="If">if</FONT> (z &lt; zBuffer[x][y]) {
+<A NAME="2007"></A>            tx = (<FONT ID="Int">int</FONT>) Math.abs(tx);
+<A NAME="2008"></A>            ty = (<FONT ID="Int">int</FONT>) Math.abs(ty);
+<A NAME="2009"></A>            TargetPixel[x + offset] = getColor(texture[t].pixel[(tx &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>) % texture[t].w][(ty &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>) % texture[t].h], getIntensity(nx / <FONT ID="IntegerLiteral">256</FONT>, ny / <FONT ID="IntegerLiteral">256</FONT>));
+<A NAME="2010"></A>            zBuffer[x][y] = z;
+<A NAME="2011"></A>          }
+<A NAME="2012"></A>          z += dz;
+<A NAME="2013"></A>          nx += dnx;
+<A NAME="2014"></A>          ny += dny;
+<A NAME="2015"></A>          tx += dtx;
+<A NAME="2016"></A>          ty += dty;
+<A NAME="2017"></A>        }
+<A NAME="2018"></A>      }
+<A NAME="2019"></A>    }
+<A NAME="2020"></A>  }
+<A NAME="2021"></A>
+<A NAME="2022"></A>  <FONT ID="Private">private</FONT> <FONT ID="Void">void</FONT> drawEnvmappedTextureLine(<FONT ID="Int">int</FONT> y, <FONT ID="Int">int</FONT> t) {
+<A NAME="2023"></A>    <FONT ID="If">if</FONT> ((y &gt;= <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (y &lt; h)) {
+<A NAME="2024"></A>      <FONT ID="Int">int</FONT> xL = LEdgeBuffer[y];
+<A NAME="2025"></A>      <FONT ID="Int">int</FONT> xR = REdgeBuffer[y];
+<A NAME="2026"></A>      <FONT ID="Int">int</FONT> zL = ZEdgeBufferL[y];
+<A NAME="2027"></A>      <FONT ID="Int">int</FONT> zR = ZEdgeBufferR[y];
+<A NAME="2028"></A>      <FONT ID="Int">int</FONT> nxL = NXEdgeBufferL[y];
+<A NAME="2029"></A>      <FONT ID="Int">int</FONT> nxR = NXEdgeBufferR[y];
+<A NAME="2030"></A>      <FONT ID="Int">int</FONT> nyL = NYEdgeBufferL[y];
+<A NAME="2031"></A>      <FONT ID="Int">int</FONT> nyR = NYEdgeBufferR[y];
+<A NAME="2032"></A>      <FONT ID="Int">int</FONT> txL = TXEdgeBufferL[y];
+<A NAME="2033"></A>      <FONT ID="Int">int</FONT> txR = TXEdgeBufferR[y];
+<A NAME="2034"></A>      <FONT ID="Int">int</FONT> tyL = TYEdgeBufferL[y];
+<A NAME="2035"></A>      <FONT ID="Int">int</FONT> tyR = TYEdgeBufferR[y];
+<A NAME="2036"></A>      <FONT ID="If">if</FONT> ((xL != xR)) {
+<A NAME="2037"></A>        <FONT ID="If">if</FONT> (xL &gt; xR) {
+<A NAME="2038"></A>          <FONT ID="Int">int</FONT> temp;
+<A NAME="2039"></A>          temp = xL;
+<A NAME="2040"></A>          xL = xR;
+<A NAME="2041"></A>          xR = temp;
+<A NAME="2042"></A>          temp = zL;
+<A NAME="2043"></A>          zL = zR;
+<A NAME="2044"></A>          zR = temp;
+<A NAME="2045"></A>          temp = nxL;
+<A NAME="2046"></A>          nxL = nxR;
+<A NAME="2047"></A>          nxR = temp;
+<A NAME="2048"></A>          temp = nyL;
+<A NAME="2049"></A>          nyL = nyR;
+<A NAME="2050"></A>          nyR = temp;
+<A NAME="2051"></A>          temp = txL;
+<A NAME="2052"></A>          txL = txR;
+<A NAME="2053"></A>          txR = temp;
+<A NAME="2054"></A>          temp = tyL;
+<A NAME="2055"></A>          tyL = tyR;
+<A NAME="2056"></A>          tyR = temp;
+<A NAME="2057"></A>        }
+<A NAME="2058"></A>        <FONT ID="Int">int</FONT> dx = (xR - xL);
+<A NAME="2059"></A>        <FONT ID="Int">int</FONT> dz = (zR - zL) / dx;
+<A NAME="2060"></A>        <FONT ID="Int">int</FONT> dtx = (txR - txL) / dx;
+<A NAME="2061"></A>        <FONT ID="Int">int</FONT> dty = (tyR - tyL) / dx;
+<A NAME="2062"></A>        <FONT ID="Int">int</FONT> dnx = (nxR - nxL) / dx;
+<A NAME="2063"></A>        <FONT ID="Int">int</FONT> dny = (nyR - nyL) / dx;
+<A NAME="2064"></A>        <FONT ID="Int">int</FONT> z = zL;
+<A NAME="2065"></A>        <FONT ID="Int">int</FONT> nx = nxL;
+<A NAME="2066"></A>        <FONT ID="Int">int</FONT> ny = nyL;
+<A NAME="2067"></A>        <FONT ID="Int">int</FONT> tx = txL;
+<A NAME="2068"></A>        <FONT ID="Int">int</FONT> ty = tyL;
+<A NAME="2069"></A>
+<A NAME="2070"></A>        xL = crop(xL, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="2071"></A>        xR = crop(xR, <FONT ID="IntegerLiteral">0</FONT>, w);
+<A NAME="2072"></A>
+<A NAME="2073"></A>        <FONT ID="Int">int</FONT> offset = y * w;
+<A NAME="2074"></A>
+<A NAME="2075"></A>        <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> x = xL; x &lt; xR; x++) {
+<A NAME="2076"></A>          <FONT ID="If">if</FONT> (z &lt; zBuffer[x][y]) {
+<A NAME="2077"></A>            tx = (<FONT ID="Int">int</FONT>) Math.abs(tx);
+<A NAME="2078"></A>            ty = (<FONT ID="Int">int</FONT>) Math.abs(ty);
+<A NAME="2079"></A>            TargetPixel[x + offset] = getColor(texture[t].pixel[(tx &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>) % texture[t].w][(ty &gt;&gt; <FONT ID="IntegerLiteral">16</FONT>) % texture[t].h], getEnvironment(nx / <FONT ID="IntegerLiteral">256</FONT>, ny / <FONT ID="IntegerLiteral">256</FONT>));
+<A NAME="2080"></A>            zBuffer[x][y] = z;
+<A NAME="2081"></A>          }
+<A NAME="2082"></A>          z += dz;
+<A NAME="2083"></A>          nx += dnx;
+<A NAME="2084"></A>          ny += dny;
+<A NAME="2085"></A>          tx += dtx;
+<A NAME="2086"></A>          ty += dty;
+<A NAME="2087"></A>        }
+<A NAME="2088"></A>      }
+<A NAME="2089"></A>    }
+<A NAME="2090"></A>  }
+<A NAME="2091"></A>
+<A NAME="2092"></A>  <FONT ID="SingleLineComment">// SPECIAL FUNCTIONS TO CREATE OBJECTS
+<A NAME="2093"></A></FONT>
+<A NAME="2094"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> generateField(<FONT ID="Float">float</FONT> data[][], <FONT ID="Int">int</FONT> xmax, <FONT ID="Int">int</FONT> ymax, <FONT ID="Int">int</FONT> rm, <FONT ID="Int">int</FONT> c) {
+<A NAME="2095"></A>    <FONT ID="Float">float</FONT> xtemp;
+<A NAME="2096"></A>    <FONT ID="Float">float</FONT> ytemp;
+<A NAME="2097"></A>    <FONT ID="Float">float</FONT> ztemp;
+<A NAME="2098"></A>    <FONT ID="Int">int</FONT> q1;
+<A NAME="2099"></A>    <FONT ID="Int">int</FONT> q2;
+<A NAME="2100"></A>    <FONT ID="Int">int</FONT> q3;
+<A NAME="2101"></A>    <FONT ID="Int">int</FONT> q4;
+<A NAME="2102"></A>    idx3d_node v;
+<A NAME="2103"></A>    addObject(rm, c);
+<A NAME="2104"></A>    rotateObject(objects, (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">90</FONT>, <FONT ID="IntegerLiteral">0</FONT>, <FONT ID="IntegerLiteral">0</FONT>);
+<A NAME="2105"></A>    <FONT ID="Float">float</FONT> xscale = <FONT ID="IntegerLiteral">2</FONT> / (<FONT ID="Float">float</FONT>) (xmax - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="2106"></A>    <FONT ID="Float">float</FONT> yscale = <FONT ID="IntegerLiteral">2</FONT> / (<FONT ID="Float">float</FONT>) (ymax - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="2107"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; xmax; i++) {
+<A NAME="2108"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">0</FONT>; j &lt; ymax; j++) {
+<A NAME="2109"></A>        xtemp = -<FONT ID="IntegerLiteral">1</FONT> + xscale * (<FONT ID="Float">float</FONT>) i;
+<A NAME="2110"></A>        ytemp = -<FONT ID="IntegerLiteral">1</FONT> + yscale * (<FONT ID="Float">float</FONT>) j;
+<A NAME="2111"></A>        ztemp = data[i][j];
+<A NAME="2112"></A>        v = <FONT ID="New">new</FONT> idx3d_node(xtemp, ytemp, ztemp);
+<A NAME="2113"></A>        <FONT ID="If">if</FONT> ((j &gt; <FONT ID="IntegerLiteral">0</FONT>) &amp;&amp; (i &gt; <FONT ID="IntegerLiteral">0</FONT>)) {
+<A NAME="2114"></A>          v.n.x = (data[i - <FONT ID="IntegerLiteral">1</FONT>][j] - data[i][j]) / xscale;
+<A NAME="2115"></A>          v.n.y = (data[i][j - <FONT ID="IntegerLiteral">1</FONT>] - data[i][j]) / yscale;
+<A NAME="2116"></A>          v.n.z = (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2117"></A>        }
+<A NAME="2118"></A>        v.n.z = (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2119"></A>        v.tx = (<FONT ID="Float">float</FONT>) i / (<FONT ID="Float">float</FONT>) (xmax - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="2120"></A>        v.ty = (<FONT ID="Float">float</FONT>) j / (<FONT ID="Float">float</FONT>) (ymax - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="2121"></A>        addNode(objects, v);
+<A NAME="2122"></A>      }
+<A NAME="2123"></A>    }
+<A NAME="2124"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; (xmax - <FONT ID="IntegerLiteral">1</FONT>); i++) {
+<A NAME="2125"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">0</FONT>; j &lt; (ymax - <FONT ID="IntegerLiteral">1</FONT>); j++) {
+<A NAME="2126"></A>        q1 = j + xmax * i + <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2127"></A>        q2 = j + <FONT ID="IntegerLiteral">1</FONT> + xmax * i + <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2128"></A>        q3 = j + xmax * (i + <FONT ID="IntegerLiteral">1</FONT>) + <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2129"></A>        q4 = j + <FONT ID="IntegerLiteral">1</FONT> + xmax * (i + <FONT ID="IntegerLiteral">1</FONT>) + <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2130"></A>
+<A NAME="2131"></A>        addTriangle(objects, q1, q2, q3);
+<A NAME="2132"></A>        addTriangle(objects, q3, q2, q4);
+<A NAME="2133"></A>      }
+<A NAME="2134"></A>    }
+<A NAME="2135"></A>  }
+<A NAME="2136"></A>
+<A NAME="2137"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> generateScanObject(<FONT ID="Int">int</FONT> obj, <FONT ID="Int">int</FONT> rows, <FONT ID="Int">int</FONT> cols) {
+<A NAME="2138"></A>    <FONT ID="Int">int</FONT> start = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2139"></A>    <FONT ID="Int">int</FONT> k;
+<A NAME="2140"></A>    <FONT ID="Int">int</FONT> sw = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="2141"></A>    <FONT ID="Int">int</FONT> end = object[obj].nodes + <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2142"></A>    <FONT ID="Int">int</FONT> t_nodes = object[obj].nodes;
+<A NAME="2143"></A>    <FONT ID="Float">float</FONT> tmpx, tmpy, tmpz, dx, dy;
+<A NAME="2144"></A>
+<A NAME="2145"></A>    <FONT ID="SingleLineComment">//normalize the whole thing
+<A NAME="2146"></A></FONT>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">0</FONT>; j &lt; cols; j++)
+<A NAME="2147"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">1</FONT>; i &lt; rows; i++) {
+<A NAME="2148"></A>        k = j * rows + i;
+<A NAME="2149"></A>        tmpx = object[obj].node[k].v.x;
+<A NAME="2150"></A>        tmpz = object[obj].node[k].v.z;
+<A NAME="2151"></A>        <FONT ID="If">if</FONT> (i == <FONT ID="IntegerLiteral">1</FONT>)
+<A NAME="2152"></A>          object[obj].node[k].n = normalize(<FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>(tmpx, <FONT ID="IntegerLiteral">1</FONT>, tmpz));
+<A NAME="2153"></A>        <FONT ID="Else">else</FONT> <FONT ID="If">if</FONT> (i == rows - <FONT ID="IntegerLiteral">1</FONT>)
+<A NAME="2154"></A>          object[obj].node[k].n = normalize(<FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>(tmpx, -<FONT ID="IntegerLiteral">1</FONT>, tmpz));
+<A NAME="2155"></A>        <FONT ID="Else">else</FONT> {
+<A NAME="2156"></A>          dx = object[obj].node[k - <FONT ID="IntegerLiteral">1</FONT>].v.x - object[obj].node[k + <FONT ID="IntegerLiteral">1</FONT>].v.x;
+<A NAME="2157"></A>          dy = object[obj].node[k - <FONT ID="IntegerLiteral">1</FONT>].v.y - object[obj].node[k + <FONT ID="IntegerLiteral">1</FONT>].v.y;
+<A NAME="2158"></A>          object[obj].node[k].n = normalize(<FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>(tmpx, dx / dy, tmpz));
+<A NAME="2159"></A>        }
+<A NAME="2160"></A>        object[obj].node[k].tx = (<FONT ID="Float">float</FONT>) (j) / (<FONT ID="Float">float</FONT>) (cols - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="2161"></A>        object[obj].node[k].ty = (<FONT ID="Float">float</FONT>) (i - <FONT ID="IntegerLiteral">1</FONT>) / (<FONT ID="Float">float</FONT>) (rows - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="2162"></A>      }
+<A NAME="2163"></A>
+<A NAME="2164"></A>    <FONT ID="SingleLineComment">// Create triangles
+<A NAME="2165"></A></FONT>
+<A NAME="2166"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> col = <FONT ID="IntegerLiteral">0</FONT>; col &lt; cols; col++) {
+<A NAME="2167"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> row = <FONT ID="IntegerLiteral">1</FONT>; row &lt; rows; row++) {
+<A NAME="2168"></A>        <FONT ID="SingleLineComment">//don't add triangles if the x or z of it are 0, thus solving the holes
+<A NAME="2169"></A></FONT>        sw = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="2170"></A>        k = col * rows + row;
+<A NAME="2171"></A>        tmpx = object[obj].node[k].v.x;
+<A NAME="2172"></A>        tmpz = object[obj].node[k].v.z;
+<A NAME="2173"></A>        <FONT ID="If">if</FONT> ((tmpx == <FONT ID="IntegerLiteral">0</FONT>) || (tmpz == <FONT ID="IntegerLiteral">0</FONT>)) sw = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2174"></A>        k = (col + <FONT ID="IntegerLiteral">1</FONT>) * rows + row;
+<A NAME="2175"></A>        tmpx = object[obj].node[k].v.x;
+<A NAME="2176"></A>        tmpz = object[obj].node[k].v.z;
+<A NAME="2177"></A>        <FONT ID="If">if</FONT> ((tmpx == <FONT ID="IntegerLiteral">0</FONT>) || (tmpz == <FONT ID="IntegerLiteral">0</FONT>)) sw = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2178"></A>        k = col * rows + row + <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2179"></A>        tmpx = object[obj].node[k].v.x;
+<A NAME="2180"></A>        tmpz = object[obj].node[k].v.z;
+<A NAME="2181"></A>        <FONT ID="If">if</FONT> ((tmpx == <FONT ID="IntegerLiteral">0</FONT>) || (tmpz == <FONT ID="IntegerLiteral">0</FONT>)) sw = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2182"></A>        <FONT ID="If">if</FONT> (sw == <FONT ID="IntegerLiteral">0</FONT>) {
+<A NAME="2183"></A>          addTriangle(obj, (rows * col + row), (rows * (col + <FONT ID="IntegerLiteral">1</FONT>) + row), (rows * col + row + <FONT ID="IntegerLiteral">1</FONT>));
+<A NAME="2184"></A>          addTriangle(obj, (rows * col + row + <FONT ID="IntegerLiteral">1</FONT>), (rows * (col + <FONT ID="IntegerLiteral">1</FONT>) + row), (rows * (col + <FONT ID="IntegerLiteral">1</FONT>) + row + <FONT ID="IntegerLiteral">1</FONT>));
+<A NAME="2185"></A>        }
+<A NAME="2186"></A>      }
+<A NAME="2187"></A>    }
+<A NAME="2188"></A>  }
+<A NAME="2189"></A>
+<A NAME="2190"></A>
+<A NAME="2191"></A>  <FONT ID="Public">public</FONT> <FONT ID="Void">void</FONT> generateRotationObject(<FONT ID="Int">int</FONT> obj, <FONT ID="Int">int</FONT> steps) {
+<A NAME="2192"></A>    <FONT ID="Double">double</FONT> alpha = <FONT ID="IntegerLiteral">2</FONT> * pi / ((<FONT ID="Double">double</FONT>) steps);
+<A NAME="2193"></A>
+<A NAME="2194"></A>    <FONT ID="Int">int</FONT> start = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2195"></A>    <FONT ID="Int">int</FONT> end = object[obj].nodes + <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2196"></A>    <FONT ID="Int">int</FONT> t_nodes = object[obj].nodes;
+<A NAME="2197"></A>
+<A NAME="2198"></A>    <FONT ID="SingleLineComment">//Adjust normals of existing points
+<A NAME="2199"></A></FONT>    object[obj].node[<FONT ID="IntegerLiteral">1</FONT>].n = normalize(<FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>(object[obj].node[<FONT ID="IntegerLiteral">1</FONT>].v.x, (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">1</FONT>, object[obj].node[<FONT ID="IntegerLiteral">1</FONT>].v.z));
+<A NAME="2200"></A>    object[obj].node[t_nodes].n = normalize(<FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>(object[obj].node[t_nodes].v.x, (<FONT ID="Float">float</FONT>) -<FONT ID="IntegerLiteral">1</FONT>, object[obj].node[t_nodes].v.z));
+<A NAME="2201"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">2</FONT>; i &lt; t_nodes; i++) {
+<A NAME="2202"></A>      object[obj].node[i].n = normalize(<FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>(object[obj].node[i].v.x, (object[obj].node[i - <FONT ID="IntegerLiteral">1</FONT>].v.x - object[obj].node[i + <FONT ID="IntegerLiteral">1</FONT>].v.x) / (object[obj].node[i - <FONT ID="IntegerLiteral">1</FONT>].v.y - object[obj].node[i + <FONT ID="IntegerLiteral">1</FONT>].v.y), object[obj].node[i].v.z));
+<A NAME="2203"></A>      object[obj].node[i].tx = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="2204"></A>      object[obj].node[i].ty = (<FONT ID="Float">float</FONT>) (i - <FONT ID="IntegerLiteral">1</FONT>) / (<FONT ID="Float">float</FONT>) (t_nodes - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="2205"></A>    }
+<A NAME="2206"></A>
+<A NAME="2207"></A>    <FONT ID="SingleLineComment">//Create new nodes
+<A NAME="2208"></A></FONT>
+<A NAME="2209"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> j = <FONT ID="IntegerLiteral">1</FONT>; j &lt; (steps + <FONT ID="IntegerLiteral">1</FONT>); j++) {
+<A NAME="2210"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = start; i &lt; end; i++) {
+<A NAME="2211"></A>        <FONT ID="Float">float</FONT> qx = (<FONT ID="Float">float</FONT>) (object[obj].node[i].v.x * Math.cos(j * alpha) + object[obj].node[i].v.z * Math.sin(j * alpha));
+<A NAME="2212"></A>        <FONT ID="Float">float</FONT> qz = (<FONT ID="Float">float</FONT>) (object[obj].node[i].v.z * Math.cos(j * alpha) - object[obj].node[i].v.x * Math.sin(j * alpha));
+<A NAME="2213"></A>        idx3d_node w = <FONT ID="New">new</FONT> idx3d_node(qx, object[obj].node[i].v.y, qz);
+<A NAME="2214"></A>        <FONT ID="If">if</FONT> (i == start)
+<A NAME="2215"></A>          w.n = normalize(<FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>(qx, <FONT ID="IntegerLiteral">1</FONT>, qz));
+<A NAME="2216"></A>        <FONT ID="Else">else</FONT> <FONT ID="If">if</FONT> (i == end - <FONT ID="IntegerLiteral">1</FONT>)
+<A NAME="2217"></A>          w.n = normalize(<FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>(qx, -<FONT ID="IntegerLiteral">1</FONT>, qz));
+<A NAME="2218"></A>        <FONT ID="Else">else</FONT>
+<A NAME="2219"></A>          w.n = normalize(<FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>(qx, (object[obj].node[i - <FONT ID="IntegerLiteral">1</FONT>].v.x - object[obj].node[i + <FONT ID="IntegerLiteral">1</FONT>].v.x) / (object[obj].node[i - <FONT ID="IntegerLiteral">1</FONT>].v.y - object[obj].node[i + <FONT ID="IntegerLiteral">1</FONT>].v.y), qz));
+<A NAME="2220"></A>        w.ty = (<FONT ID="Float">float</FONT>) (i - <FONT ID="IntegerLiteral">1</FONT>) / (<FONT ID="Float">float</FONT>) (t_nodes - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="2221"></A>        w.tx = (<FONT ID="Float">float</FONT>) (j - <FONT ID="IntegerLiteral">1</FONT>) / (<FONT ID="Float">float</FONT>) (steps - <FONT ID="IntegerLiteral">1</FONT>);
+<A NAME="2222"></A>        addNode(obj, w);
+<A NAME="2223"></A>      }
+<A NAME="2224"></A>    }
+<A NAME="2225"></A>
+<A NAME="2226"></A>    <FONT ID="SingleLineComment">// Create triangles
+<A NAME="2227"></A></FONT>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> col = <FONT ID="IntegerLiteral">0</FONT>; col &lt; steps; col++) {
+<A NAME="2228"></A>      <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> row = <FONT ID="IntegerLiteral">1</FONT>; row &lt; t_nodes; row++) {
+<A NAME="2229"></A>        addTriangle(obj, (t_nodes * col + row), (t_nodes * (col + <FONT ID="IntegerLiteral">1</FONT>) + row), (t_nodes * col + row + <FONT ID="IntegerLiteral">1</FONT>));
+<A NAME="2230"></A>        addTriangle(obj, (t_nodes * col + row + <FONT ID="IntegerLiteral">1</FONT>), (t_nodes * (col + <FONT ID="IntegerLiteral">1</FONT>) + row), (t_nodes * (col + <FONT ID="IntegerLiteral">1</FONT>) + row + <FONT ID="IntegerLiteral">1</FONT>));
+<A NAME="2231"></A>      }
+<A NAME="2232"></A>    }
+<A NAME="2233"></A>  }
+<A NAME="2234"></A>
+<A NAME="2235"></A>  <FONT ID="SingleLineComment">// BEMCHMARK
+<A NAME="2236"></A></FONT>
+<A NAME="2237"></A>  <FONT ID="Public">public</FONT> String getFPS(<FONT ID="Int">int</FONT> frames) {
+<A NAME="2238"></A>    <FONT ID="Long">long</FONT> idx_time1;
+<A NAME="2239"></A>    <FONT ID="Long">long</FONT> idx_time2;
+<A NAME="2240"></A>    <FONT ID="Double">double</FONT> fps;
+<A NAME="2241"></A>    Image temp;
+<A NAME="2242"></A>
+<A NAME="2243"></A>    idx_time1 = <FONT ID="New">new</FONT> Date().getTime();
+<A NAME="2244"></A>
+<A NAME="2245"></A>    <FONT ID="For">for</FONT> (<FONT ID="Int">int</FONT> i = <FONT ID="IntegerLiteral">0</FONT>; i &lt; frames; i++) {
+<A NAME="2246"></A>      rotateWorld((<FONT ID="Float">float</FONT>) Math.random(), (<FONT ID="Float">float</FONT>) Math.random(), (<FONT ID="Float">float</FONT>) Math.random());
+<A NAME="2247"></A>      temp = renderScene();
+<A NAME="2248"></A>    }
+<A NAME="2249"></A>
+<A NAME="2250"></A>    idx_time2 = <FONT ID="New">new</FONT> Date().getTime();
+<A NAME="2251"></A>
+<A NAME="2252"></A>    fps = (<FONT ID="Double">double</FONT>) frames / ((<FONT ID="Double">double</FONT>) (idx_time2 - idx_time1) / <FONT ID="IntegerLiteral">1000</FONT>);
+<A NAME="2253"></A>    fps = (<FONT ID="Double">double</FONT>) ((<FONT ID="Int">int</FONT>) (fps * <FONT ID="IntegerLiteral">100</FONT>)) / <FONT ID="IntegerLiteral">100</FONT>;
+<A NAME="2254"></A>    <FONT ID="Return">return</FONT> <FONT ID="New">new</FONT> String(<FONT ID="StringLiteral">"Benchmark: "</FONT> + fps + <FONT ID="StringLiteral">" FPS"</FONT>);
+<A NAME="2255"></A>  }
+<A NAME="2256"></A>}
+<A NAME="2257"></A>
+<A NAME="2258"></A>
+<A NAME="2259"></A><FONT ID="Class">class</FONT> idx3d_matrix {
+<A NAME="2260"></A>  <FONT ID="Float">float</FONT> matrix[][] = <FONT ID="New">new</FONT> <FONT ID="Float">float</FONT>[<FONT ID="IntegerLiteral">4</FONT>][<FONT ID="IntegerLiteral">4</FONT>];
+<A NAME="2261"></A>
+<A NAME="2262"></A>  <FONT ID="Public">public</FONT> idx3d_matrix() {
+<A NAME="2263"></A>    matrix[<FONT ID="IntegerLiteral">0</FONT>][<FONT ID="IntegerLiteral">0</FONT>] = (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2264"></A>    matrix[<FONT ID="IntegerLiteral">1</FONT>][<FONT ID="IntegerLiteral">1</FONT>] = (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2265"></A>    matrix[<FONT ID="IntegerLiteral">2</FONT>][<FONT ID="IntegerLiteral">2</FONT>] = (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2266"></A>    matrix[<FONT ID="IntegerLiteral">3</FONT>][<FONT ID="IntegerLiteral">3</FONT>] = (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2267"></A>  }
+<A NAME="2268"></A>}
+<A NAME="2269"></A>
+<A NAME="2270"></A><FONT ID="Class">class</FONT> idx3d_object {
+<A NAME="2271"></A>  <FONT ID="Int">int</FONT> mode = <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2272"></A>  <FONT ID="Int">int</FONT> color;
+<A NAME="2273"></A>
+<A NAME="2274"></A>  idx3d_triangle triangle[];
+<A NAME="2275"></A>  idx3d_node node[];
+<A NAME="2276"></A>
+<A NAME="2277"></A>  <FONT ID="Int">int</FONT> triangles = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="2278"></A>  <FONT ID="Int">int</FONT> maxtriangles = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="2279"></A>  <FONT ID="Int">int</FONT> nodes = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="2280"></A>  <FONT ID="Int">int</FONT> maxnodes = <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="2281"></A>  <FONT ID="Int">int</FONT> texture;
+<A NAME="2282"></A>  idx3d_matrix matrix = <FONT ID="New">new</FONT> idx3d_matrix();
+<A NAME="2283"></A>  idx3d_matrix matrix2 = <FONT ID="New">new</FONT> idx3d_matrix();
+<A NAME="2284"></A>
+<A NAME="2285"></A>  <FONT ID="Public">public</FONT> idx3d_object(<FONT ID="Int">int</FONT> rm, <FONT ID="Int">int</FONT> col) {
+<A NAME="2286"></A>    mode = rm;
+<A NAME="2287"></A>    color = col;
+<A NAME="2288"></A>  }
+<A NAME="2289"></A>}
+<A NAME="2290"></A>
+<A NAME="2291"></A><FONT ID="Class">class</FONT> idx3d_node {
+<A NAME="2292"></A>  <A HREF="idx3d_vector.java.html">idx3d_vector</A> v = <FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>();
+<A NAME="2293"></A>  <A HREF="idx3d_vector.java.html">idx3d_vector</A> n = <FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>();
+<A NAME="2294"></A>  <A HREF="idx3d_vector.java.html">idx3d_vector</A> n2 = <FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>();
+<A NAME="2295"></A>  <FONT ID="Int">int</FONT> xx;   <FONT ID="SingleLineComment">//Coordinates of the
+<A NAME="2296"></A></FONT>  <FONT ID="Int">int</FONT> yy;   <FONT ID="SingleLineComment">// screen projection
+<A NAME="2297"></A></FONT>  <FONT ID="Int">int</FONT> zz;   <FONT ID="SingleLineComment">//distance for z-buffer
+<A NAME="2298"></A></FONT>  <FONT ID="Float">float</FONT> tx;    <FONT ID="SingleLineComment">// Horizontal texture position (0..1+)
+<A NAME="2299"></A></FONT>  <FONT ID="Float">float</FONT> ty;    <FONT ID="SingleLineComment">// Vertical texture position   (0..1+)
+<A NAME="2300"></A></FONT>
+<A NAME="2301"></A>  <FONT ID="Public">public</FONT> idx3d_node(<FONT ID="Float">float</FONT> x, <FONT ID="Float">float</FONT> y, <FONT ID="Float">float</FONT> z) {
+<A NAME="2302"></A>    v.x = x;
+<A NAME="2303"></A>    v.y = y;
+<A NAME="2304"></A>    v.z = z;
+<A NAME="2305"></A>    n.x = (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="2306"></A>    n.y = (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">0</FONT>;
+<A NAME="2307"></A>    n.z = (<FONT ID="Float">float</FONT>) <FONT ID="IntegerLiteral">1</FONT>;
+<A NAME="2308"></A>  }
+<A NAME="2309"></A>}
+<A NAME="2310"></A>
+<A NAME="2311"></A><FONT ID="Class">class</FONT> idx3d_triangle {
+<A NAME="2312"></A>  <FONT ID="Int">int</FONT> p1;
+<A NAME="2313"></A>  <FONT ID="Int">int</FONT> p2;
+<A NAME="2314"></A>  <FONT ID="Int">int</FONT> p3;
+<A NAME="2315"></A>  <A HREF="idx3d_vector.java.html">idx3d_vector</A> n = <FONT ID="New">new</FONT> <A HREF="idx3d_vector.java.html">idx3d_vector</A>();
+<A NAME="2316"></A>
+<A NAME="2317"></A>  <FONT ID="Public">public</FONT> idx3d_triangle(<FONT ID="Int">int</FONT> q1, <FONT ID="Int">int</FONT> q2, <FONT ID="Int">int</FONT> q3) {
+<A NAME="2318"></A>    p1 = q1;
+<A NAME="2319"></A>    p2 = q2;
+<A NAME="2320"></A>    p3 = q3;
+<A NAME="2321"></A>  }
+<A NAME="2322"></A>}
+<A NAME="2323"></A>
+<A NAME="2324"></A><FONT ID="Class">class</FONT> idx3d_light {
+<A NAME="2325"></A>  <FONT ID="Int">int</FONT> x;
+<A NAME="2326"></A>  <FONT ID="Int">int</FONT> y;
+<A NAME="2327"></A>  <FONT ID="Int">int</FONT> z;
+<A NAME="2328"></A>  <FONT ID="Int">int</FONT> mode = <FONT ID="IntegerLiteral">0</FONT>;              <FONT ID="SingleLineComment">//0=parallel light, 1=point light
+<A NAME="2329"></A></FONT>  <FONT ID="Int">int</FONT> intensity = <FONT ID="IntegerLiteral">255</FONT>;
+<A NAME="2330"></A>
+<A NAME="2331"></A>  <FONT ID="Public">public</FONT> idx3d_light(<A HREF="idx3d_vector.java.html">idx3d_vector</A> lvect, <FONT ID="Int">int</FONT> lmode, <FONT ID="Int">int</FONT> lintensity) {
+<A NAME="2332"></A>    x = (<FONT ID="Int">int</FONT>) (lvect.x * <FONT ID="IntegerLiteral">255</FONT>);
+<A NAME="2333"></A>    y = (<FONT ID="Int">int</FONT>) (lvect.y * <FONT ID="IntegerLiteral">255</FONT>);
+<A NAME="2334"></A>    z = (<FONT ID="Int">int</FONT>) (lvect.z * <FONT ID="IntegerLiteral">255</FONT>);
+<A NAME="2335"></A>    mode = lmode;
+<A NAME="2336"></A>    intensity = lintensity;
+<A NAME="2337"></A>  }
+<A NAME="2338"></A>}
+<A NAME="2339"></A>
+<A NAME="2340"></A><FONT ID="Class">class</FONT> idx3d_texture {
+<A NAME="2341"></A>  <FONT ID="Int">int</FONT> w;
+<A NAME="2342"></A>  <FONT ID="Int">int</FONT> h;
+<A NAME="2343"></A>  <FONT ID="Int">int</FONT> pixel[][];
+<A NAME="2344"></A>}
+<A NAME="2345"></A></pre>
+</BODY>
+
+<!-- Mirrored from www.docjava.com/book/cgij/doc/graphics/idx/idx3d.java.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 15 Oct 2019 16:21:23 GMT -->
+</HTML>
