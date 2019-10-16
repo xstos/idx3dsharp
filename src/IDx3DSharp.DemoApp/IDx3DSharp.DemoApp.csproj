@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Demos\BaseDemo.cs" />
     <Compile Include="Demos\Demo8.cs" />
+    <Compile Include="Demos\PlusWrapper.cs" />
     <Compile Include="Demos\TestComponent2.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

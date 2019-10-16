@@ -34,19 +34,7 @@ namespace IDx3DSharp.DemoApp.Demos
             scene.normalize();
         }
     }
-    public class PlusWrapper<T>
-    {
-        public List<T> inner;
-        public static implicit operator PlusWrapper<T>(List<T> list)
-        {
-            return new PlusWrapper<T>(){inner=list};
-        }
-        public static PlusWrapper<T> operator +(PlusWrapper<T> o, T c1)
-        {
-            o.inner.Add(c1);
-            return o;
-        } 
-    }
+
     public class TestComponent2 : BaseDemo
     {
         public SceneObject MakeCube()
@@ -166,40 +154,9 @@ namespace IDx3DSharp.DemoApp.Demos
             return obj;
         }
 
-        public static void Sphere(Scene scene)
-        {
-            var sobj = new SceneObject();
-            scene.addObject("Sphere1",sobj);
-            
-            
-            PlusWrapper<(float,float,float)> list = new List<(float, float, float)>();
-            list += (-20f,0f,45f);
-            list += (10f,0f,45f);
-            list += (0f,10f,42f);
-            //list = sphereVerts(list);
-
-            foreach (var v in list.inner)
-            {
-                sobj.addVertex(v.Item1,v.Item2,v.Item3);
-            }
-            PlusWrapper<(int,int,int)> ptNums = new List<(int,int,int)>();
-            //var ptNums = new (int, int, int)[224];
-
-            ptNums += (0, 1, 2);
-            //ptNums = spherePoints(ptNums);
-            foreach (var item in ptNums.inner)
-            {
-                sobj.addTriangle(
-                    sobj.vertexData[item.Item1],
-                    sobj.vertexData[item.Item2],
-                    sobj.vertexData[item.Item3]);
-            }
-            
-        }
-
+        
         public override void PopulateScene(Scene scene)
         {
-            var cube = MakeCube();
             scene.addMaterial("Stone1", new Material(new Texture("stone1.jpg")));
             scene.addMaterial("Stone2", new Material(new Texture("stone2.jpg")));
             scene.addMaterial("Stone3", new Material(new Texture("stone3.jpg")));
@@ -223,7 +180,37 @@ namespace IDx3DSharp.DemoApp.Demos
             //scene.normalize();
         }
 
-        
+        public static void Sphere(Scene scene)
+        {
+            var sobj = new SceneObject();
+            scene.addObject("Sphere1",sobj);
+            
+            
+            PlusWrapper<(float,float,float)> list = new List<(float, float, float)>();
+            list += (-50f,0f,100f);
+            list += (0f,0f,100f);
+            list += (0f,5f,100f);
+            //list = sphereVerts(list);
+
+            foreach (var v in list.inner)
+            {
+                sobj.addVertex(v.Item1,v.Item2,v.Item3);
+            }
+            PlusWrapper<(int,int,int)> ptNums = new List<(int,int,int)>();
+            //var ptNums = new (int, int, int)[224];
+
+            ptNums += (0, 1, 2);
+            //ptNums = spherePoints(ptNums);
+            foreach (var item in ptNums.inner)
+            {
+                sobj.addTriangle(
+                    sobj.vertexData[item.Item1],
+                    sobj.vertexData[item.Item2],
+                    sobj.vertexData[item.Item3]);
+            }
+            
+        }
+
         static PlusWrapper<(float, float, float)> sphereVerts(PlusWrapper<(float, float, float)> list)
         {
             list += (6.508263f, -22.09559f, 44.21677f);
