@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Threading;
+using Timer = System.Timers.Timer;
 
 namespace IDx3DSharp.DemoApp.Demos
 {
@@ -37,6 +40,76 @@ namespace IDx3DSharp.DemoApp.Demos
 
     public class TestComponent2 : BaseDemo
     {
+        
+        
+        public override void PopulateScene(Scene scene)
+        {
+            scene.addMaterial("Stone1", new Material(new Texture("stone1.jpg")));
+            scene.addMaterial("Stone2", new Material(new Texture("stone2.jpg")));
+            scene.addMaterial("Stone3", new Material(new Texture("stone3.jpg")));
+            scene.addMaterial("Stone4", new Material(new Texture("stone4.jpg")));
+            var texture = new Texture(2,2)[Color.Red,Color.Blue,Color.Yellow,Color.Green];
+            scene.addMaterial("tiny",new Material(texture));
+            scene.addLight("Light1", new Light(new Vector(0.2f, 0.2f, 1f), 0xFFFFFF, 144, 120));
+            scene.addLight("Light2", new Light(new Vector(-1f, -1f, 1f), 0x332211, 100, 40));
+            scene.addLight("Light3", new Light(new Vector(-1f, -1f, 1f), 0x666666, 200, 120));
+            var box = Square(scene);
+            Timer tmr = new Timer(1);
+            
+            tmr.Elapsed += (sender, args) =>
+            {
+                box.rotate(0,0f,0.1f);
+                box.shift(0,0,5);
+            };
+            tmr.Start();
+            //new Importer3ds().importFromStream(File.OpenRead("wobble.3ds"), scene);
+
+            //scene.addObject("tri", cube);
+            scene.rebuild();
+            for (var i = 0; i < scene.objects; i++)
+                TextureProjector.ProjectFrontal(scene._object[i]);
+            scene.Object("Sphere1").setMaterial(scene.material("tiny"));
+            //scene.Object("Wobble1").setMaterial(scene.material("Stone2"));
+            //scene.Object("Wobble2").setMaterial(scene.material("Stone3"));
+            //scene.Object("Wobble3").setMaterial(scene.material("Stone4"));
+            //scene.Object("tri").setMaterial(scene.material("Stone4"));
+            //scene.normalize();
+        }
+
+        public static SceneObject Square(Scene scene)
+        {
+            var sceneObject = new SceneObject();
+            scene.addObject("Sphere1",sceneObject);
+            
+            
+            PlusWrapper<(float,float,float)> list = new List<(float, float, float)>();
+            list += (0f, 0f, 100f);
+            list += (-50f,50f,100f);
+            list += (-50f,0f,100f);
+            list += (0f,50f,100f);
+
+            //list = sphereVerts(list);
+
+            foreach (var v in list.inner)
+            {
+                sceneObject.addVertex(v.Item1,v.Item2,v.Item3);
+            }
+            PlusWrapper<(int,int,int)> ptNums = new List<(int,int,int)>();
+            //var ptNums = new (int, int, int)[224];
+
+            ptNums += (0, 1, 2);
+            ptNums += (0, 3, 1);
+            //ptNums = spherePoints(ptNums);
+            foreach (var item in ptNums.inner)
+            {
+                sceneObject.addTriangle(
+                    sceneObject.vertexData[item.Item1],
+                    sceneObject.vertexData[item.Item2],
+                    sceneObject.vertexData[item.Item3]);
+            }
+
+            return sceneObject;
+        }
         public SceneObject MakeCube()
         {
             //Create a 'Cube' mesh...
@@ -152,63 +225,6 @@ namespace IDx3DSharp.DemoApp.Demos
             //mesh.uv = uvs;
             //mesh.Optimize();
             return obj;
-        }
-
-        
-        public override void PopulateScene(Scene scene)
-        {
-            scene.addMaterial("Stone1", new Material(new Texture("stone1.jpg")));
-            scene.addMaterial("Stone2", new Material(new Texture("stone2.jpg")));
-            scene.addMaterial("Stone3", new Material(new Texture("stone3.jpg")));
-            scene.addMaterial("Stone4", new Material(new Texture("stone4.jpg")));
-
-            scene.addLight("Light1", new Light(new Vector(0.2f, 0.2f, 1f), 0xFFFFFF, 144, 120));
-            scene.addLight("Light2", new Light(new Vector(-1f, -1f, 1f), 0x332211, 100, 40));
-            scene.addLight("Light3", new Light(new Vector(-1f, -1f, 1f), 0x666666, 200, 120));
-            Sphere(scene);
-            //new Importer3ds().importFromStream(File.OpenRead("wobble.3ds"), scene);
-
-            //scene.addObject("tri", cube);
-            scene.rebuild();
-            for (var i = 0; i < scene.objects; i++)
-                TextureProjector.ProjectFrontal(scene._object[i]);
-            scene.Object("Sphere1").setMaterial(scene.material("Stone1"));
-            //scene.Object("Wobble1").setMaterial(scene.material("Stone2"));
-            //scene.Object("Wobble2").setMaterial(scene.material("Stone3"));
-            //scene.Object("Wobble3").setMaterial(scene.material("Stone4"));
-            //scene.Object("tri").setMaterial(scene.material("Stone4"));
-            //scene.normalize();
-        }
-
-        public static void Sphere(Scene scene)
-        {
-            var sobj = new SceneObject();
-            scene.addObject("Sphere1",sobj);
-            
-            
-            PlusWrapper<(float,float,float)> list = new List<(float, float, float)>();
-            list += (-50f,0f,100f);
-            list += (0f,0f,100f);
-            list += (0f,5f,100f);
-            //list = sphereVerts(list);
-
-            foreach (var v in list.inner)
-            {
-                sobj.addVertex(v.Item1,v.Item2,v.Item3);
-            }
-            PlusWrapper<(int,int,int)> ptNums = new List<(int,int,int)>();
-            //var ptNums = new (int, int, int)[224];
-
-            ptNums += (0, 1, 2);
-            //ptNums = spherePoints(ptNums);
-            foreach (var item in ptNums.inner)
-            {
-                sobj.addTriangle(
-                    sobj.vertexData[item.Item1],
-                    sobj.vertexData[item.Item2],
-                    sobj.vertexData[item.Item3]);
-            }
-            
         }
 
         static PlusWrapper<(float, float, float)> sphereVerts(PlusWrapper<(float, float, float)> list)

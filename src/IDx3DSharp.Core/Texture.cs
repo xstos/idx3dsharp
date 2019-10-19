@@ -42,7 +42,21 @@ using System.Net;
 
 namespace IDx3DSharp
 {
-
+    public struct IdxColor
+    {
+        public uint color;
+        public static implicit operator IdxColor(Color color)
+        {
+            return new IdxColor()
+            {
+                color = ColorUtility.getColor(color.R, color.G, color.B)
+            };
+        }
+        public static implicit operator uint(IdxColor color)
+        {
+            return color.color;
+        }
+    }
 	public class Texture
 	// defines a texture
 	{
@@ -66,6 +80,21 @@ namespace IDx3DSharp
 			cls();
 		}
 
+        public Texture this[params IdxColor[] colors]
+        {
+            get
+            {
+                for (int i = 0; i < colors.Length; i++)
+                {
+                    pixel[i] = colors[i];
+                }
+                return this;
+            }
+            set
+            {
+                
+            }
+        }
 		public Texture(int w, int h, uint[] data)
 		{
 			height = h;
@@ -241,7 +270,7 @@ namespace IDx3DSharp
                     int num6 = numPtr[0];
                     int num7 = numPtr[1];
                     int num8 = numPtr[2];
-						        pixel[num3++] = (uint) (((ColorUtility.ALPHA | (num8 << 0x10)) | (num7 << 8)) | num6);
+                    pixel[num3++] = (uint) (((ColorUtility.ALPHA | (num8 << 0x10)) | (num7 << 8)) | num6);
                     numPtr += 3;
                 }
                 numPtr += num2;

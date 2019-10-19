@@ -35,7 +35,7 @@ namespace IDx3DSharp.DemoApp
             this.KeyPreview = true;
             Controls.Add(ctl);
             ctl.Dock = DockStyle.Fill;
-			Size = new Size(800, 600);
+			Size = new Size(800, 800);
 			Text = "IDx3DSharp Demos";
             Shown += (sender, args) => { _handle = Handle; };
 			// BUILD SCENE
