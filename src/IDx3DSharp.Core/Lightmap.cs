@@ -61,24 +61,26 @@ public sealed class Lightmap
 		rebuildLightmap();
 	}
 
+    const float divBy128 = 1f / 128f;
     void buildSphereMap()
 	{
 		float fnx,fny,fnz;
 		int pos;
 		for (var ny=-128;ny<128;ny++)
 		{
-			fny=(float)ny/128;
+			fny=(float)ny*divBy128;
 			for (var nx=-128;nx<128;nx++)
 			{
 				pos=nx+128+((ny+128)<<8);
-				fnx=(float)nx/128;
+				fnx=nx*divBy128;
 				fnz=(float)(1-Math.Sqrt(fnx*fnx+fny*fny));
 				sphere[pos]=(fnz>0)?fnz:0;
 			}
 		}
 	}
-		
-	
+
+    const float divBy255 = 1f / 255f;
+    const float divBy4096 = 1f / 4096f;
 	public void rebuildLightmap()
 	{
 		Console.WriteLine(">> Rebuilding Light Map  ...  ["+lights+" light sources]");
@@ -87,13 +89,13 @@ public sealed class Lightmap
 		uint diffuse, specular, cos, dr, dg, db, sr, sg, sb;
 		for (var ny=-128;ny<128;ny++)
 		{
-			fny=(float)ny/128;
+			fny=(float)ny*divBy128;
 			for (var nx=-128;nx<128;nx++)
 			{
 				pos=nx+128+((ny+128)<<8);
-				fnx=(float)nx/128;
+				fnx=nx*divBy128;
 				sr=sg=sb=0;
-				dr=ColorUtility.getRed(ambient);
+				dr = ColorUtility.getRed(ambient);
 				dg = ColorUtility.getGreen(ambient);
 				db = ColorUtility.getBlue(ambient);
 				for (var i=0;i<lights;i++)
@@ -101,15 +103,15 @@ public sealed class Lightmap
 					l=light[i].v;
 					diffuse=light[i].diffuse;
 					specular=light[i].specular;
-					sheen=light[i].highlightSheen/255f;
-					spread=(float)light[i].highlightSpread/4096;
+					sheen=light[i].highlightSheen*divBy255;
+					spread=(float)light[i].highlightSpread*divBy4096;
 					spread=(spread<0.01f)?0.01f:spread;
 					cos=(uint)(255*Vector.Angle(light[i].v,new Vector(fnx,fny,sphere[pos])));
 					cos=(cos>0)?cos:0;
 					dr += (ColorUtility.getRed(diffuse) * cos) >> 8;
 					dg += (ColorUtility.getGreen(diffuse) * cos) >> 8;
 					db += (ColorUtility.getBlue(diffuse) * cos) >> 8;
-					phongfact=sheen*(float)Math.Pow(cos/255f,1/spread);
+					phongfact=sheen*(float)Math.Pow(cos*divBy255,1/spread);
 					sr += (uint) (ColorUtility.getRed(specular) * phongfact);
 					sg += (uint) (ColorUtility.getGreen(specular) * phongfact);
 					sb += (uint) (ColorUtility.getBlue(specular) * phongfact);

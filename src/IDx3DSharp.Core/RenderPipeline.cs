@@ -140,28 +140,26 @@ namespace IDx3DSharp
 			for (uint id = 0, length = scene.objects; id < length; id++)
 			{
 				obj = scene._object[id];
-				if (obj.visible)
-				{
-					vertexProjection = obj.matrix.Clone();
-					normalProjection = obj.normalmatrix.Clone();
-					vertexProjection.transform(m);
-					normalProjection.transform(nm);
+                if (!obj.visible) continue;
+                vertexProjection = obj.matrix.Clone();
+                normalProjection = obj.normalmatrix.Clone();
+                vertexProjection.transform(m);
+                normalProjection.transform(nm);
 
-					for (int i = 0, innerlength = obj.numVertices; i < innerlength; i++)
-					{
-						v = obj.vertices[i];
-						v.Project(vertexProjection, normalProjection, cam);
-						v.clipFrustrum(w, h);
-					}
-					for (uint i = 0, innerlength = obj.numTriangles; i < innerlength; i++)
-					{
-						t = obj.triangles[i];
-						t.Project(normalProjection);
-						t.ClipFrustrum(w, h);
-						enqueueTriangle(t);
-					}
-				}
-			}
+                for (int i = 0, innerlength = obj.numVertices; i < innerlength; i++)
+                {
+                    v = obj.vertices[i];
+                    v.Project(vertexProjection, normalProjection, cam);
+                    v.clipFrustrum(w, h);
+                }
+                for (uint i = 0, innerlength = obj.numTriangles; i < innerlength; i++)
+                {
+                    t = obj.triangles[i];
+                    t.Project(normalProjection);
+                    t.ClipFrustrum(w, h);
+                    enqueueTriangle(t);
+                }
+            }
 
 			var tri = getOpaqueQueue();
 			if (tri != null)

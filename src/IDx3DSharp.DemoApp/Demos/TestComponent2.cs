@@ -44,6 +44,18 @@ namespace IDx3DSharp.DemoApp.Demos
         
         public override void PopulateScene(Scene scene)
         {
+            void transformDemo(SceneObject sceneObject)
+            {
+                Timer tmr = new Timer(1);
+
+                tmr.Elapsed += (sender, args) =>
+                {
+                    sceneObject.rotate(0, 0f, 0.1f);
+                    sceneObject.shift(0, 0, 5);
+                };
+                tmr.Start();
+            }
+
             scene.addMaterial("Stone1", new Material(new Texture("stone1.jpg")));
             scene.addMaterial("Stone2", new Material(new Texture("stone2.jpg")));
             scene.addMaterial("Stone3", new Material(new Texture("stone3.jpg")));
@@ -54,14 +66,6 @@ namespace IDx3DSharp.DemoApp.Demos
             scene.addLight("Light2", new Light(new Vector(-1f, -1f, 1f), 0x332211, 100, 40));
             scene.addLight("Light3", new Light(new Vector(-1f, -1f, 1f), 0x666666, 200, 120));
             var box = Square(scene);
-            Timer tmr = new Timer(1);
-            
-            tmr.Elapsed += (sender, args) =>
-            {
-                box.rotate(0,0f,0.1f);
-                box.shift(0,0,5);
-            };
-            tmr.Start();
             //new Importer3ds().importFromStream(File.OpenRead("wobble.3ds"), scene);
 
             //scene.addObject("tri", cube);
