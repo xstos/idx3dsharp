@@ -66,12 +66,12 @@ namespace IDx3DSharp
 		// Rasterizer hints
 
         int mode;
-        const int F = 0;   	// FLAT
-        const int W = 1;	// WIREFRAME
-        const int P = 2;  	// PHONG
-        const int E = 4;  	// ENVMAP
-        const int T = 8; 	// TEXTURED
-        const int SHADED = P | E | T;
+        const int Flat = 0;   	// FLAT
+        const int Wireframe = 1;	// WIREFRAME
+        const int Phong = 2;  	// PHONG
+        const int EnvMap = 4;  	// ENVMAP
+        const int Textured = 8; 	// TEXTURED
+        const int SHADED = Phong | EnvMap | Textured;
 
 		//  R E G I S T E R S
 
@@ -158,10 +158,10 @@ namespace IDx3DSharp
 			}
 
 			mode = 0;
-			if (!material.flat) mode |= P;
-			if (envmap != null) mode |= E;
-			if (texture != null) mode |= T;
-			if (material.wireframe) mode |= W;
+			if (!material.flat) mode |= Phong;
+			if (envmap != null) mode |= EnvMap;
+			if (texture != null) mode |= Textured;
+			if (material.wireframe) mode |= Wireframe;
 			materialLoaded = true;
 			ready = lightmapLoaded && materialLoaded;
 		}
@@ -170,10 +170,10 @@ namespace IDx3DSharp
 		{
 			if (!ready) return;
 			if (tri.getParent() == null) return;
-			if ((mode & W) != 0)
+			if ((mode & Wireframe) != 0)
 			{
 				drawWireframe(tri, color);
-				if ((mode & W) == 0) return;
+				if ((mode & Wireframe) == 0) return;
 
 			}
 
@@ -189,7 +189,7 @@ namespace IDx3DSharp
 			if (p3.Y < 0) return;
 			if (p1.Y == p3.Y) return;
 
-			if (mode == F)
+			if (mode == Flat)
 			{
 				lutID = (int) (tri.n2.X * 127 + 127) + ((int) (tri.n2.Y * 127 + 127) << 8);
 				c = ColorUtility.multiply(color, diffuse[lutID]);
@@ -353,13 +353,13 @@ namespace IDx3DSharp
 			}
 			xR = (xR < width) ? xR : width;
 
-			if (mode == F) renderLineF();
-			else if ((mode & SHADED) == P) renderLineP();
-			else if ((mode & SHADED) == E) renderLineE();
-			else if ((mode & SHADED) == T) renderLineT();
-			else if ((mode & SHADED) == (P | E)) renderLinePE();
-			else if ((mode & SHADED) == (P | T)) renderLinePT();
-			else if ((mode & SHADED) == (P | E | T)) renderLinePET();
+			if (mode == Flat) renderLineF();
+			else if ((mode & SHADED) == Phong) renderLineP();
+			else if ((mode & SHADED) == EnvMap) renderLineE();
+			else if ((mode & SHADED) == Textured) renderLineT();
+			else if ((mode & SHADED) == (Phong | EnvMap)) renderLinePE();
+			else if ((mode & SHADED) == (Phong | Textured)) renderLinePT();
+			else if ((mode & SHADED) == (Phong | EnvMap | Textured)) renderLinePET();
 
 			offset += width;
 			xBase += dxL;
