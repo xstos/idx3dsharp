@@ -574,29 +574,32 @@ namespace IDx3DSharp
 				}
 				z = a.Z;
 				y = a.Y << 16;
-				for (x = a.X; x <= b.X; x++)
+                var bX = b.X;
+                int xPlusOffset;
+                for (x = a.X; x <= bX; x++)
 				{
 					y2 = y >> 16;
 					if (MathUtility.inrange(x, 0, width - 1) && MathUtility.inrange(y2, 0, height - 1))
 					{
 						offset = y2 * width;
-						if (z < zBuffer[x + offset])
+                        xPlusOffset = x + offset;
+                        if (z < zBuffer[xPlusOffset])
 						{
 							if (!screen.antialias)
 							{
-								screen.p[x + offset] = color;
-								zBuffer[x + offset] = (uint) z;
+								screen.p[xPlusOffset] = color;
+								zBuffer[xPlusOffset] = (uint) z;
 							}
 							else
 							{
-								screen.p[x + offset] = color;
-								screen.p[x + offset + 1] = color;
-								screen.p[x + offset + width] = color;
-								screen.p[x + offset + width + 1] = color;
-								zBuffer[x + offset] = (uint) z;
+								screen.p[xPlusOffset] = color;
+								screen.p[xPlusOffset + 1] = color;
+								screen.p[xPlusOffset + width] = color;
+								screen.p[xPlusOffset + width + 1] = color;
+								zBuffer[xPlusOffset] = (uint) z;
 							}
 						}
-						if (useIdBuffer) idBuffer[x + offset] = currentId;
+						if (useIdBuffer) idBuffer[xPlusOffset] = currentId;
 					}
 					z += dz; y += dy;
 				}
@@ -611,29 +614,32 @@ namespace IDx3DSharp
 				}
 				z = a.Z;
 				x = a.X << 16;
-				for (y = a.Y; y <= b.Y; y++)
+                int bY = b.Y;
+                int x2PlusOffset;
+				for (y = a.Y; y <= bY; y++)
 				{
 					x2 = x >> 16;
 					if (MathUtility.inrange(x2, 0, width - 1) && MathUtility.inrange(y, 0, height - 1))
 					{
 						offset = y * width;
-						if (z < zBuffer[x2 + offset])
+                        x2PlusOffset = x2 + offset;
+                        if (z < zBuffer[x2PlusOffset])
 						{
 							if (!screen.antialias)
 							{
-								screen.p[x2 + offset] = color;
-								zBuffer[x2 + offset] = (uint) z;
+								screen.p[x2PlusOffset] = color;
+								zBuffer[x2PlusOffset] = (uint) z;
 							}
 							else
 							{
-								screen.p[x2 + offset] = color;
-								screen.p[x2 + offset + 1] = color;
-								screen.p[x2 + offset + width] = color;
-								screen.p[x2 + offset + width + 1] = color;
-								zBuffer[x2 + offset] = (uint) z;
+								screen.p[x2PlusOffset] = color;
+								screen.p[x2PlusOffset + 1] = color;
+								screen.p[x2PlusOffset + width] = color;
+								screen.p[x2PlusOffset + width + 1] = color;
+								zBuffer[x2PlusOffset] = (uint) z;
 							}
 						}
-						if (useIdBuffer) idBuffer[x2 + offset] = currentId;
+						if (useIdBuffer) idBuffer[x2PlusOffset] = currentId;
 					}
 					z += dz; x += dx;
 				}
