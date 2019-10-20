@@ -184,14 +184,19 @@ namespace IDx3DSharp
 			float nx = 0;
 			float ny = 0;
 			float nz = 0;
-			foreach (var tri in Info.neighbor)
-			{
-				var wn = tri.getWeightedNormal();
-				nx += wn.X;
-				ny += wn.Y;
-				nz += wn.Z;
-			}
-			n = new Vector(nx, ny, nz).Normalize();
+            var neighborCount = Info.neighbor.Count;
+            Triangle tri;
+            Vector wn;
+            for (var index = 0; index < neighborCount; index++)
+            {
+                tri = Info.neighbor[index];
+                wn = tri.getWeightedNormal();
+                nx += wn.X;
+                ny += wn.Y;
+                nz += wn.Z;
+            }
+
+            n = new Vector(nx, ny, nz).Normalize();
 		}
 
 		public void scaleTextureCoordinates(float fx, float fy)
@@ -218,7 +223,7 @@ namespace IDx3DSharp
 
 		public override string ToString()
 		{
-			return "<vertex  x=" + pos.X + " y=" + pos.Y + " z=" + pos.Z + " u=" + Tu + " v=" + Tv + ">\r\n";
+			return $"<vertex x{pos.X} y{pos.Y} z{pos.Z} u{Tu} v{Tv}>\r\n";
 		}
 
 		public bool equals(Vertex v)

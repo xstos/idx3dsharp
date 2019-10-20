@@ -116,6 +116,11 @@ namespace IDx3DSharp
 			env.resize(256, 256);
 		}
 
+        public Material setColor(IdxColor color)
+        {
+            this.color = color;
+            return this;
+        }
 		public void setColor(uint c)
 		{
 			color = c;
@@ -137,10 +142,11 @@ namespace IDx3DSharp
 			this.flat = flat;
 		}
 
-		public void setWireframe(bool wireframe)
+		public Material setWireframe(bool wireframe)
 		{
 			this.wireframe = wireframe;
-		}
+            return this;
+        }
 
 		// Getters
 

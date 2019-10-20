@@ -61,7 +61,7 @@ namespace IDx3DSharp.DemoApp.Demos
             scene.addMaterial("Stone3", new Material(new Texture("stone3.jpg")));
             scene.addMaterial("Stone4", new Material(new Texture("stone4.jpg")));
             var texture = new Texture(2,2)[Color.Red,Color.Blue,Color.Yellow,Color.Green];
-            scene.addMaterial("tiny",new Material(texture));
+            scene.addMaterial("tiny",new Material(texture).setWireframe(true).setColor(Color.DeepPink));
             scene.addLight("Light1", new Light(new Vector(0.2f, 0.2f, 1f), 0xFFFFFF, 144, 120));
             scene.addLight("Light2", new Light(new Vector(-1f, -1f, 1f), 0x332211, 100, 40));
             scene.addLight("Light3", new Light(new Vector(-1f, -1f, 1f), 0x666666, 200, 120));
