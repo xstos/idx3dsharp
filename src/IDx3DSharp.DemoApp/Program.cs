@@ -15,7 +15,7 @@ namespace IDx3DSharp.DemoApp
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm(new TestComponent2()));
+            Application.Run(new MainForm(new TestComponent2Old()));
 		}
 	}
 }

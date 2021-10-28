@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using IDx3DSharp.DemoApp.Demos;
 using RazorGDIControlWF;
@@ -21,7 +22,7 @@ namespace IDx3DSharp.DemoApp
 
         int _oldx;
         int _oldy;
-        bool _autorotation = false;
+        bool _autorotation = true;
         IntPtr _handle;
 		public MainForm(BaseDemo demo)
 		{
@@ -35,35 +36,63 @@ namespace IDx3DSharp.DemoApp
             this.KeyPreview = true;
             Controls.Add(ctl);
             ctl.Dock = DockStyle.Fill;
-			Size = new Size(800, 800);
+			Size = new Size(1920, 1080);
 			Text = "IDx3DSharp Demos";
-            Shown += (sender, args) => { _handle = Handle; };
+            
 			// BUILD SCENE
 
 			_scene = new Scene(Width, Height);
 			demo.PopulateScene(_scene);
 			_initialized = true;
-		}
-        readonly RazorGDIControlWF.RazorPainterWFCtl ctl = new RazorPainterWFCtl();
-
-        protected override void WndProc(ref Message m)
-        {
-            if (m.Msg == 0x000F)
+            timer1.Enabled = true;
+			timer1.Start();
+            timer1.Interval = 100;
+            Shown += (sender, args) =>
             {
-                UpdateScene();
-                lock (ctl.RazorLock)
+                _handle = Handle;
+                
+            };
+            Task.Factory.StartNew(() =>
+            {
+                Action<Image, int, int> drawImageUnscaled = ctl.RazorGFX.DrawImageUnscaled;
+                Action razorPaint = ctl.RazorPaint;
+                var ctlRazorLock = ctl.RazorLock;
+				void Update()
                 {
-                    ctl.RazorGFX.DrawImageUnscaled(GetImage(), 0, 0);
-                    ctl.RazorPaint();
+                    UpdateScene();
+                    lock (ctlRazorLock)
+                    {
+                        
+                        drawImageUnscaled(GetImage(), 0, 0);
+                        razorPaint();
+                    }
                 }
-                //g.DrawImageUnscaled(GetImage(), 0, 0);
-                SendNotifyMessage(_handle, 0x000F, IntPtr.Zero, IntPtr.Zero);
-            }
-            else
-                base.WndProc(ref m);
-
+				while (true)
+                {
+                    Update();
+                }
+			});
         }
-		//protected override void OnPaint(PaintEventArgs e)
+        readonly RazorGDIControlWF.RazorPainterWFCtl ctl = new RazorPainterWFCtl();
+		
+   //     protected override void WndProc(ref Message m)
+   //     {
+   //         base.WndProc(ref m);
+   //         return;
+
+			//if (m.Msg == 0x000F)
+   //         {
+                
+   //             //g.DrawImageUnscaled(GetImage(), 0, 0);
+   //             SendNotifyMessage(_handle, 0x000F, IntPtr.Zero, IntPtr.Zero);
+   //         }
+   //         else
+   //             base.WndProc(ref m);
+
+   //     }
+
+        
+        //protected override void OnPaint(PaintEventArgs e)
 		//{
 		//	//e.Graphics.DrawImageUnscaled(GetImage(), 0, 0);
 		//	base.OnPaint(e);
@@ -71,7 +100,8 @@ namespace IDx3DSharp.DemoApp
 
         float dxyFrac = 1f / 20f;
         float tickFrac = 1f / 1000f;
-		public void UpdateScene()
+
+        public void UpdateScene()
 		{
 			//lock (this)
 			{
@@ -79,8 +109,9 @@ namespace IDx3DSharp.DemoApp
 				if (_autorotation)
 				{
 					const float speed = 1;
-					var dx = (float) Math.Sin(Environment.TickCount * tickFrac) * dxyFrac;
-					var dy = (float) Math.Cos(Environment.TickCount * tickFrac) * dxyFrac;
+                    var tickCount = Environment.TickCount * tickFrac;
+                    var dx = (float) Math.Sin(tickCount) * dxyFrac;
+					var dy = (float) Math.Cos(tickCount) * dxyFrac;
 					_scene.rotate(-speed * dx, speed * dy, speed * 0.04f);
 				}
 				_scene.render();
@@ -155,5 +186,10 @@ namespace IDx3DSharp.DemoApp
             _scene?.resize(Size.Width, Size.Height);
             base.OnResize(e);
 		}
-	}
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            Console.WriteLine(_scene.getFPS());
+        }
+    }
 }
